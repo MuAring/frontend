@@ -1,15 +1,64 @@
-*.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+# Gradle
+.gradle/
+build/
+**/build/
+!gradle/wrapper/gradle-wrapper.jar
+.gradle/
 local.properties
+
+# Android Studio
+.idea/
+*.iml
+.idea/workspace.xml
+.idea/tasks.xml
+.idea/dictionaries
+.idea/libraries
+.idea/caches
+.idea/modules.xml
+.idea/assetWizardSettings.xml
+
+# OS 파일
+.DS_Store
+Thumbs.db
+
+# Log / Capture 파일
+*.log
+*.trace
+captures/
+
+# NDK / CMake
+.externalNativeBuild/
+.cxx/
+
+# Keystore (서명 파일)
+*.jks
+*.keystore
+
+# Generated Files
+generated/
+bin/
+gen/
+
+# Firebase / Google 서비스 설정 (개인 키 포함)
+app/google-services.json
+app/google-services.plist
+
+# 기타
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+*.jar
+*.war
+*.ear
+*.so
+*.o
+*.obj
+
+# Lint / Reports
+lint/intermediates/
+lint/generated/
+lint/tmp/
+lint/outputs/
+lint-results.xml
