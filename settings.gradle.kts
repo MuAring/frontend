@@ -11,6 +11,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -21,3 +22,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "Muaring"
 include(":app")
+include(":core")
+include(":data")
+include(":design")
+include(":feature")
