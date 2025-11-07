@@ -1,6 +1,6 @@
 # 🎵 Muaring frontend
 
-# 📁 Project Structure
+## 📁 Project Structure
 
 ```text
 muaring/
@@ -43,3 +43,13 @@ muaring/
 ├─ settings.gradle          # 모듈 등록(include)
 └─ build.gradle             # 루트 빌드 스크립트
 ```
+
+## 모듈 구조 요약
+| 모듈           | 주요 책임                                   |
+| ------------ | --------------------------------------- |
+| **app**      | 런처/네비게이션/DI 루트. 전 모듈의 엔트리               |
+| **core**     | 전역 공통 로직, Util, Network, BaseFragment 등 |
+| **data**     | API·DB 접근 및 Repository 구현               |
+| **design**   | 테마, 색상, 스타일, 공통 UI 구성요소                 |
+| **feature/** | 실제 화면·기능 단위 (검색, 로그인, 홈 등)              |
+| **gradle**   | 버전/빌드 설정 관리                             |
