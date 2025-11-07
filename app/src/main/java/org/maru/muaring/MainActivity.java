@@ -16,6 +16,12 @@ public class MainActivity extends AppCompatActivity {
 
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host);
+
+        if (host == null) {
+            throw new IllegalStateException("NavHostFragment를 찾을 수 없습니다.");
+            // 사용자 환경에서의 안전성 우선하려면 return; 으로 부드럽게 처리 O
+        }
+
         NavController nav = host.getNavController();
 
         BottomNavigationView bottom = findViewById(R.id.bottomNav);
