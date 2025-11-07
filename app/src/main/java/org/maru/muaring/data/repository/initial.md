@@ -1,1 +1,0 @@
-여러 데이터 소스(local/remote)를 통합 관리하는 중간 계층. ViewModel이 여기에만 의존함.

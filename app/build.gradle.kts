@@ -12,8 +12,11 @@ android {
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildFeatures {
+        viewBinding = true
     }
 
     buildTypes {
@@ -25,6 +28,7 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -32,12 +36,24 @@ android {
 }
 
 dependencies {
+    // 다른 내부 모듈들
+    implementation(project(":core"))
+    implementation(project(":data"))
+    implementation(project(":design"))
+    implementation(project(":feature")) // 단일 feature 모듈 (home/search/group 다 포함)
 
+    // Android 기본
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+
+    // Navigation
+    implementation(libs.navigation.fragment)
+    implementation(libs.navigation.ui)
+
+    // 테스트
     testImplementation(libs.junit)
-    androidTestImplementation(libs.ext.junit)
-    androidTestImplementation(libs.espresso.core)
+//    androidTestImplementation(libs["ext-junit"])
+//    androidTestImplementation(libs["espresso-core"])
 }
