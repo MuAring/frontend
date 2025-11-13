@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 8pt 그리드: 4를 서브단위로 -->
+    <dimen name="space_2">2dp</dimen>
+    <dimen name="space_4">4dp</dimen>
+    <dimen name="space_8">8dp</dimen>
+    <dimen name="space_12">12dp</dimen>
+    <dimen name="space_16">16dp</dimen>
+    <dimen name="space_20">20dp</dimen>
+    <dimen name="space_24">24dp</dimen>
+    <dimen name="space_32">32dp</dimen>
+    <dimen name="space_40">40dp</dimen>
+    <dimen name="space_48">48dp</dimen> <!-- 터치 타겟 최소 -->
+
+    <!-- 라운드/자간/선 굵기 -->
+    <dimen name="radius_8">8dp</dimen>
+    <dimen name="radius_12">12dp</dimen>
+    <dimen name="radius_16">16dp</dimen>
+
+    <dimen name="divider_1">1dp</dimen>
+    <dimen name="elevation_1">1dp</dimen>
+    <dimen name="elevation_3">3dp</dimen>
+    <dimen name="elevation_6">6dp</dimen>
+
+    <!-- 이미지/카드 권장 사이즈 -->
+    <dimen name="avatar_40">40dp</dimen>
+    <dimen name="avatar_56">56dp</dimen>
+    <dimen name="card_min_height">80dp</dimen>
+</resources>
