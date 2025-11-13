@@ -6,28 +6,23 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="org.maru.muaring.feature.home.ui.HomeFragment"
-        android:label="Home" />
+        android:name="org.maru.muaring.feature.home.ui.HomeFragment" />
 
     <fragment
         android:id="@+id/searchFragment"
-        android:name="org.maru.muaring.feature.search.ui.SearchFragment"
-        android:label="Search" />
+        android:name="org.maru.muaring.feature.search.ui.SearchFragment" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/archiveFragment"-->
-<!--        android:name="org.maru.muaring.feature.archive.ui.ArchiveFragment"-->
-<!--        android:label="Archive" />-->
+    <fragment
+        android:id="@+id/archiveFragment"
+        android:name="org.maru.muaring.feature.archive.ui.ArchiveFragment" />
 
-<!--    <fragment-->
-<!--        android:id="@+id/profileFragment"-->
-<!--        android:name="org.maru.muaring.feature.profile.ui.ProfileFragment"-->
-<!--        android:label="Profile" />-->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="org.maru.muaring.feature.profile.ui.ProfileFragment" />
 
     <!-- 가운데 업로드 FAB 목적지 -->
     <fragment
         android:id="@+id/uploadFragment"
-        android:name="org.maru.muaring.feature.upload.ui.UploadFragment"
-        android:label="Upload" />
+        android:name="org.maru.muaring.feature.upload.ui.UploadFragment" />
 
 </navigation>

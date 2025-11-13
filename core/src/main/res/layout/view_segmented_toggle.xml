@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 큰 캡슐(외곽) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layout_segment_container"
+    android:layout_width="wrap_content"
+    android:layout_height="40dp"
+    android:orientation="horizontal"
+    android:padding="2dp"
+    android:background="@drawable/bg_segment_container">
+
+    <Button
+        android:id="@+id/btn_group"
+        style="@style/Widget.Muaring.SegmentedButton.Left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="그룹"
+        android:layout_marginEnd="-4dp" />
+
+    <Button
+        android:id="@+id/btn_user"
+        style="@style/Widget.Muaring.SegmentedButton.Right"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="사용자"
+        android:layout_marginStart="-4dp" />
+</LinearLayout>

@@ -1,38 +1,76 @@
 package org.maru.muaring.feature.search.ui;
 
 import android.os.Bundle;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.viewpager2.widget.ViewPager2;
-import com.google.android.material.button.MaterialButtonToggleGroup;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
+
+import org.maru.muaring.core.ui.SegmentedToggleView;
 import org.maru.muaring.feature.R;
 
 public class SearchFragment extends Fragment {
-    public SearchFragment() { super(R.layout.fragment_search); }
 
-    @Override public void onViewCreated(@NonNull View v, @Nullable Bundle s) {
-        ViewPager2 pager = v.findViewById(R.id.pager);
-        pager.setAdapter(new org.maru.muaring.feature.search.ui.adapter.SearchPagerAdapter(this));
+    private SegmentedToggleView segmentedToggleView;
+    private ImageButton btnBack;
+    private TextInputLayout textInputLayoutSearch;
+    private TextInputEditText editSearch;
+    private RecyclerView recyclerSearchResult;
 
-        MaterialButtonToggleGroup toggle = v.findViewById(R.id.toggleGroup);
-        toggle.check(R.id.btnGroup);
-        toggle.addOnButtonCheckedListener((g, id, checked) -> {
-            if (checked) pager.setCurrentItem(id == R.id.btnGroup ? 0 : 1, true);
-        });
-        pager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
-            @Override public void onPageSelected(int pos) { toggle.check(pos==0?R.id.btnGroup:R.id.btnUser); }
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        return inflater.inflate(R.layout.fragment_search, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        segmentedToggleView = view.findViewById(R.id.segmentedToggle);
+        btnBack = view.findViewById(R.id.btn_back);
+        textInputLayoutSearch = view.findViewById(R.id.textInputLayoutSearch);
+        editSearch = view.findViewById(R.id.editSearch);
+//        recyclerSearchResult = view.findViewById(R.id.recyclerSearchResult);
+
+        // 초기 상태: "사용자" 선택으로 맞추기 (리스너 설정 전!)
+        segmentedToggleView.selectUser();
+
+        // 뒤로가기
+        btnBack.setOnClickListener(v -> {
+            NavController navController = NavHostFragment.findNavController(SearchFragment.this);
+            navController.popBackStack();
         });
 
-        TextInputEditText et = v.findViewById(R.id.etSearch);
-        et.setOnEditorActionListener((tv, actionId, event) -> {
-            boolean enter = event!=null && event.getKeyCode()== KeyEvent.KEYCODE_ENTER;
-            if (actionId== EditorInfo.IME_ACTION_SEARCH || enter) { /* TODO: call VM */ return true; }
-            return false;
+        // 토글 리스너
+        segmentedToggleView.setOnSegmentSelectedListener(new SegmentedToggleView.OnSegmentSelectedListener() {
+            @Override
+            public void onGroupSelected() {
+                // 그룹 탭으로 이동 (네비게이션 그래프 액션 ID 에 맞게 수정)
+                NavController navController = NavHostFragment.findNavController(SearchFragment.this);
+                // 예시: navController.navigate(R.id.action_searchFragment_to_groupSearchFragment);
+                // 실제 액션 id 로 바꿔줘야 함
+            }
+
+            @Override
+            public void onUserSelected() {
+                // 지금이 "사용자" 화면이라면 아무 동작 안 해도 됨
+            }
         });
+
+        // TODO: editSearch 텍스트 변경 리스너, 검색 실행, RecyclerView 어댑터 설정 등 구현
     }
 }
