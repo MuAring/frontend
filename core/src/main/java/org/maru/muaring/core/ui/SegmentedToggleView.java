@@ -3,6 +3,7 @@ package org.maru.muaring.core.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
@@ -19,6 +20,10 @@ public class SegmentedToggleView extends LinearLayout {
 
     private Button btnGroup;
     private Button btnUser;
+
+    // ✅ 선택 배경 뷰
+    private View bgGroupSelected;
+    private View bgUserSelected;
 
     private OnSegmentSelectedListener listener;
     private boolean isGroupSelected = true;
@@ -39,39 +44,49 @@ public class SegmentedToggleView extends LinearLayout {
     }
 
     private void init(Context context) {
+        setOrientation(VERTICAL); // 혹시라도 레이아웃 깨지는 것 방지용
         LayoutInflater.from(context).inflate(R.layout.view_segmented_toggle, this, true);
 
         btnGroup = findViewById(R.id.btn_group);
         btnUser = findViewById(R.id.btn_user);
 
+        bgGroupSelected = findViewById(R.id.bg_group_selected);
+        bgUserSelected = findViewById(R.id.bg_user_selected);
+
         btnGroup.setOnClickListener(v -> selectGroup());
         btnUser.setOnClickListener(v -> selectUser());
 
         // 초기: 그룹 선택
+        isGroupSelected = true;
         applyState();
     }
+
     private void applyState() {
         if (isGroupSelected) {
-            btnGroup.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_segment_selected);
-            btnGroup.setTextColor(getResources().getColor(org.maru.muaring.design.R.color.surface));
+            // ✅ 그룹 선택
+            bgGroupSelected.setVisibility(View.VISIBLE);
+            bgUserSelected.setVisibility(View.INVISIBLE);
 
-            btnUser.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_segment_unselected);
-            btnUser.setTextColor(getResources().getColor(org.maru.muaring.design.R.color.muaring_primary_2));
-
-            // 선택된 애를 위로 올리기
-            btnGroup.bringToFront();
+            btnGroup.setTextColor(
+                    getResources().getColor(org.maru.muaring.design.R.color.surface) // white
+            );
+            btnUser.setTextColor(
+                    getResources().getColor(org.maru.muaring.design.R.color.black) // black
+            );
         } else {
-            btnGroup.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_segment_unselected);
-            btnGroup.setTextColor(getResources().getColor(org.maru.muaring.design.R.color.muaring_primary_2));
+            // ✅ 사용자 선택
+            bgGroupSelected.setVisibility(View.INVISIBLE);
+            bgUserSelected.setVisibility(View.VISIBLE);
 
-            btnUser.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_segment_selected);
-            btnUser.setTextColor(getResources().getColor(org.maru.muaring.design.R.color.surface));
-
-            // 선택된 애를 위로 올리기
-            btnUser.bringToFront();
+            btnGroup.setTextColor(
+                    getResources().getColor(org.maru.muaring.design.R.color.black)
+            );
+            btnUser.setTextColor(
+                    getResources().getColor(org.maru.muaring.design.R.color.surface)
+            );
         }
 
-        // 부모 레이아웃 다시 그리기
+        // 위치는 고정 / z-index는 이미 XML에서 배경 -> 버튼 순서로 해결됨
         invalidate();
         requestLayout();
     }
