@@ -3,33 +3,52 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
 
+    <!-- NavHostFragment -->
     <fragment
         android:id="@+id/nav_host"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        app:defaultNavHost="true"
-        app:navGraph="@navigation/nav_main"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_main" />
 
-    <!-- ✅ 가운데 업로드 버튼 -->
+    <!-- ✅ 하단 네비게이션 바 -->
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/bottomAppBar"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_gravity="bottom"
+        android:backgroundTint="@color/white"
+        app:fabAlignmentMode="center"
+        app:fabCradleMargin="8dp"
+        app:fabCradleRoundedCornerRadius="24dp"
+        app:fabCradleVerticalOffset="10dp"
+        app:hideOnScroll="false" >
+
+        <!-- ✅ 네비게이션 메뉴 -->
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottomNav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/transparent"
+            app:menu="@menu/menu_bottom_nav"
+            app:itemIconTint="@color/black"
+            app:itemTextColor="@color/black"
+            app:labelVisibilityMode="unlabeled" />
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+    <!-- ✅ 중앙 업로드 버튼 -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnUpload"
         android:layout_width="70dp"
         android:layout_height="70dp"
-        android:layout_gravity="bottom|center"
-        android:layout_marginBottom="36dp"
         android:src="@drawable/ic_upload"
+        app:layout_anchor="@id/bottomAppBar"
+        app:layout_anchorGravity="center"
+        app:backgroundTint="@color/muaring_primary_2"
         app:tint="@android:color/white" />
-
-    <!-- ✅ 하단 네비게이션 (양쪽 4개만) -->
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        app:menu="@menu/menu_bottom_nav"
-        app:labelVisibilityMode="labeled"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

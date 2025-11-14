@@ -10,4 +10,7 @@ android {
 dependencies {
     implementation(libs.appcompat)
     implementation(libs.material)
+
+    implementation(project(":data"))
+    implementation(project(":design"))
 }
