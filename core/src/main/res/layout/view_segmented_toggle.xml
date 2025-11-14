@@ -1,26 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- 큰 캡슐(외곽) -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/layout_segment_container"
-    android:layout_width="wrap_content"
-    android:layout_height="40dp"
-    android:orientation="horizontal"
-    android:padding="2dp"
-    android:background="@drawable/bg_segment_container">
+    android:layout_width="220dp"
+    android:layout_height="50dp"
+    android:background="@drawable/bg_segment_container"
+    android:padding="2dp">
 
-    <Button
-        android:id="@+id/btn_group"
-        style="@style/Widget.Muaring.SegmentedButton.Left"
-        android:layout_width="wrap_content"
+    <!-- ✅ 선택된 쪽 배경 레이어 (그룹/사용자 각각 반쪽 캡슐) -->
+    <LinearLayout
+        android:id="@+id/layout_selected_bg"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="그룹"
-        android:layout_marginEnd="-4dp" />
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/btn_user"
-        style="@style/Widget.Muaring.SegmentedButton.Right"
-        android:layout_width="wrap_content"
+        <!-- 왼쪽 선택 배경 (그룹 선택일 때만 보이게) -->
+        <View
+            android:id="@+id/bg_group_selected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_segment_selected" />
+
+        <!-- 오른쪽 선택 배경 (사용자 선택일 때만 보이게) -->
+        <View
+            android:id="@+id/bg_user_selected"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@drawable/bg_segment_selected" />
+    </LinearLayout>
+
+    <!-- ✅ 텍스트 + 터치 레이어 (항상 맨 위에, 위치 고정) -->
+    <LinearLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="사용자"
-        android:layout_marginStart="-4dp" />
-</LinearLayout>
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_group"
+            style="@style/Widget.Muaring.SegmentedButton.Left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:includeFontPadding="false"
+            android:paddingVertical="8dp"
+            android:text="그룹" />
+
+        <Button
+            android:id="@+id/btn_user"
+            style="@style/Widget.Muaring.SegmentedButton.Right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:gravity="center"
+            android:minHeight="0dp"
+            android:includeFontPadding="false"
+            android:paddingVertical="8dp"
+            android:text="사용자" />
+    </LinearLayout>
+
+</FrameLayout>
