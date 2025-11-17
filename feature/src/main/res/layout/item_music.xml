@@ -28,7 +28,7 @@
             android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Runawat Baby"
+            android:text="노래 제목"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -37,13 +37,13 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:alpha="0.7"
-            android:text="bruno mars"
+            android:text="아티스트"
             android:textSize="11sp" />
     </LinearLayout>
 
 <!--    사용자 프로필-->
     <ImageView
-        android:id="@+id/ivProfileCircle"
+        android:id="@+id/ivProfile"
         android:layout_width="25dp"
         android:layout_height="25dp"
         android:src="@drawable/profile"
