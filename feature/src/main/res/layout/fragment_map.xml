@@ -4,6 +4,35 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+<!--    핀버튼-->
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/musicCard"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginBottom="3dp">
+
+    <ImageButton
+            android:id="@+id/btnShowMusic"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/pin_button"
+            android:background="@android:color/transparent"
+            />
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="3"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="24sp"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
 <!--    프레임-->
     <androidx.cardview.widget.CardView
         android:id="@+id/musicCard"
@@ -14,7 +43,9 @@
         app:cardCornerRadius="10dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:visibility="invisible"
+        >
 
         <LinearLayout
             android:layout_width="match_parent"
