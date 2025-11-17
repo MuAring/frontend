@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="kakao_yellow">#FEE500</color>
+    <color name="spotify_black">#121212</color>
+    <color name="spotify_green">#1ED760</color>
+    <color name="dark_green">#183C27</color>
+
     <!-- 브랜드 -->
     <color name="muaring_primary">#72A775</color>
     <color name="muaring_primary_2">#183C27</color>
