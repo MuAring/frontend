@@ -2,9 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:padding="24dp"
-    >
+    android:padding="24dp">
 
     <TextView
         android:id="@+id/muaringTitle"
@@ -27,24 +27,34 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:orientation="vertical"
-        android:layout_marginBottom="48dp">
+        android:layout_marginBottom="60dp">
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnKakaoLogin"
-            android:layout_width="196dp"
-            android:layout_height="48dp"
+            android:layout_width="204dp"
+            android:layout_height="60dp"
             android:text="카카오 로그인"
-            android:background="@drawable/bg_login_button"
             android:backgroundTint="@color/kakao_yellow"
-            android:layout_marginBottom="10dp"/>
+            android:textColor="@color/kakao_black"
+            style="@style/Widget.MaterialComponents.Button"
+            app:cornerRadius="12dp"
+            app:rippleColor="@android:color/transparent"
+            android:stateListAnimator="@null"
+
+            android:layout_marginBottom="1dp"
+            />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSpotifyLogin"
-            android:layout_width="196dp"
-            android:layout_height="48dp"
+            android:layout_width="204dp"
+            android:layout_height="60dp"
             android:text="스포티파이 로그인"
             android:backgroundTint="@color/spotify_black"
-            android:background="@drawable/bg_login_button"
-            android:textColor="@color/spotify_green"/>
+            android:textColor="@color/spotify_green"
+            style="@style/Widget.MaterialComponents.Button"
+            app:cornerRadius="12dp"
+            app:rippleColor="@android:color/transparent"
+            android:stateListAnimator="@null"
+            />
     </LinearLayout>
 </LinearLayout>

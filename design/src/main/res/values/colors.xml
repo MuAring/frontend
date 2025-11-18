@@ -26,5 +26,7 @@
     <color name="warning">#F59E0B</color>
     <color name="error">#EF4444</color>
     <color name="on_status">#FFFFFF</color>
+
+    <color name="kakao_black">@color/black</color>
 </resources>
 
