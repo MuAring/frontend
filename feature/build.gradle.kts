@@ -25,4 +25,6 @@ dependencies {
 
     implementation ("com.google.dagger:hilt-android:2.52")
     annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
+
+    implementation("com.kakao.sdk:v2-user:2.20.1")
 }
