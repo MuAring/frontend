@@ -11,6 +11,18 @@
     </style>
 
 
+    <!-- nav바 관련 스타일 -->
+    <style name="Widget.Muaring.BottomNav" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemActiveIndicatorStyle">@style/BottomNavIndicatorGone</item>
+    </style>
+
+    <style name="BottomNavIndicatorGone" parent="">
+        <item name="android:width">0dp</item>
+        <item name="android:height">0dp</item>
+        <item name="android:color">@android:color/transparent</item>
+    </style>
+
+
     <!-- 🔎 검색창 스타일-->
     <!-- 공통 세그먼트 버튼 스타일 -->
     <style name="Widget.Muaring.SegmentedButton" parent="@style/Widget.AppCompat.Button">

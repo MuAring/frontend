@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 선택된 상태 -->
+    <item
+        android:state_checked="true"
+        android:drawable="@drawable/ic_nav_archive_active" />
+
+    <!-- 선택 안된 상태 -->
+    <item android:drawable="@drawable/ic_nav_archive_inactive" />
+</selector>
