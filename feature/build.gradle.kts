@@ -1,4 +1,7 @@
-plugins { alias(libs.plugins.android.library) }
+plugins {
+    alias(libs.plugins.android.library)
+    alias(libs.plugins.hilt.android)
+}
 
 android {
     namespace = "org.maru.muaring.feature"
@@ -19,4 +22,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":data"))
     implementation(project(":design"))
+
+    implementation ("com.google.dagger:hilt-android:2.52")
+    annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
 }

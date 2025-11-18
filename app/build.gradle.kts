@@ -1,5 +1,9 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -56,4 +60,7 @@ dependencies {
     testImplementation(libs.junit)
 //    androidTestImplementation(libs["ext-junit"])
 //    androidTestImplementation(libs["espresso-core"])
+
+    implementation ("com.google.dagger:hilt-android:2.52")
+    annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
 }
