@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/white"
+    android:padding="24dp">
+
+    <!-- 상단 여백 -->
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="76dp"/>
+
+    <!-- 프로필 이미지와 체크 아이콘 컨테이너 -->
+    <FrameLayout
+        android:layout_width="150dp"
+        android:layout_height="150dp">
+
+        <!-- 상단 프로필 이미지 -->
+        <ImageView
+            android:id="@+id/ivProfileImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/profile"
+            android:background="@drawable/profile_circle_bg"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"/>
+
+        <!-- 체크 아이콘 -->
+        <ImageView
+            android:id="@+id/ivCheckmark"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_check_circle"
+            android:layout_gravity="end|bottom"
+            android:layout_marginEnd="0dp"
+            android:layout_marginBottom="0dp"/>
+    </FrameLayout>
+
+    <!-- 그룹 생성 완료 텍스트 -->
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="그룹 생성이 완료되었습니다."
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/black"/>
+
+    <!-- 설명 텍스트 -->
+    <TextView
+        android:id="@+id/tvSubtitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="오늘의 음악을 올려 첫 게시물을 남겨보세요."
+        android:textSize="14sp"
+        android:textColor="@color/gray"/>
+
+    <!-- 홈으로 버튼 -->
+    <Button
+        android:id="@+id/btnGoHome"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="48dp"
+        android:text="홈으로"
+        android:background="@drawable/bg_button_green"/>
+
+    <!-- 또는 구분선 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="32dp"
+        android:gravity="center_vertical">
+
+        <View
+            android:id="@+id/dividerLeft"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="16dp"
+            android:background="@color/light_gray"/>
+
+        <TextView
+            android:id="@+id/tvOr"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="또는"
+            android:textColor="@color/gray"/>
+
+        <View
+            android:id="@+id/dividerRight"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"
+            android:layout_marginStart="16dp"
+            android:background="@color/light_gray"/>
+    </LinearLayout>
+
+    <!-- 친구 초대하기 버튼 -->
+    <Button
+        android:id="@+id/btnInviteFriend"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="24dp"
+        android:text="친구 초대하기"
+        android:textColor="@color/green"
+        android:background="@drawable/bg_button_outline_green"/>
+
+    <!-- 초대 링크 복사 버튼 -->
+    <Button
+        android:id="@+id/btnCopyLink"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:text="초대 링크 복사"
+        android:textColor="@color/dark_gray"
+        android:background="@drawable/bg_button_outline_gray"/>
+
+</LinearLayout>

@@ -13,4 +13,15 @@ dependencies {
 
     implementation(project(":data"))
     implementation(project(":design"))
+
+    // Retrofit (네트워크 통신)
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // OkHttp (HTTP 클라이언트)
+    implementation("com.squareup.okhttp3:okhttp:4.11.0")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.11.0")
+
+    // Gson (JSON 파싱)
+    implementation("com.google.code.gson:gson:2.10.1")
 }
