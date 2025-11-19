@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:orientation="horizontal"
+    >
+
+    <!-- 앨범 이미지 -->
+    <ImageView
+        android:id="@+id/ivAlbum"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:src="@drawable/ic_launcher_foreground"
+        android:background="@drawable/album_image"
+        android:layout_marginVertical="10dp"
+        android:layout_marginLeft="15dp"/>
+
+    <!-- 제목 + 아티스트 -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginVertical="8dp"
+        android:layout_marginLeft="20dp"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="노래 제목"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/tvArtist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.7"
+            android:text="아티스트"
+            android:textSize="11sp" />
+    </LinearLayout>
+
+<!--    사용자 프로필-->
+    <ImageView
+        android:id="@+id/ivProfile"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/profile"
+        android:scaleType="centerCrop"
+        android:background="@drawable/profile_circle_bg"
+        android:clipToOutline="true"
+        android:layout_marginRight="7dp"
+        android:layout_marginVertical="15dp"/>
+
+<!--    보관함 추가 버튼-->
+    <ImageView
+        android:id="@+id/btnAdd"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@drawable/add_button"
+        android:layout_marginVertical="15dp"
+        android:layout_marginRight="17dp"
+        android:contentDescription="추가 버튼"
+        />
+
+</LinearLayout>

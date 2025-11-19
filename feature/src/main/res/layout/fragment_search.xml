@@ -54,7 +54,7 @@
         app:boxCornerRadiusTopEnd="24dp"
         app:boxCornerRadiusBottomStart="24dp"
         app:boxCornerRadiusBottomEnd="24dp"
-        app:startIconDrawable="@drawable/ic_search"
+        app:startIconDrawable="@drawable/ic_search_bar_gray"
         app:startIconTint="@color/search_input_outline"
         app:layout_constraintTop_toBottomOf="@id/text_title"
         app:layout_constraintStart_toStartOf="parent"
