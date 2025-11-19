@@ -15,40 +15,19 @@
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_main" />
 
-    <!-- ✅ 하단 네비게이션 바 -->
-    <com.google.android.material.bottomappbar.BottomAppBar
-        android:id="@+id/bottomAppBar"
+    <!-- 하단 네비게이션 바 (BottomAppBar 제거하고 이걸 직접 사용) -->
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        style="@style/Widget.Muaring.BottomNav"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="90dp"
         android:layout_gravity="bottom"
-        android:backgroundTint="@color/white"
-        app:fabAlignmentMode="center"
-        app:fabCradleMargin="8dp"
-        app:fabCradleRoundedCornerRadius="24dp"
-        app:fabCradleVerticalOffset="10dp"
-        app:hideOnScroll="false" >
-
-        <!-- ✅ 네비게이션 메뉴 -->
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/bottomNav"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:menu="@menu/menu_bottom_nav"
-            app:itemIconTint="@color/black"
-            app:itemTextColor="@color/black"
-            app:labelVisibilityMode="unlabeled" />
-    </com.google.android.material.bottomappbar.BottomAppBar>
-
-    <!-- ✅ 중앙 업로드 버튼 -->
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/btnUpload"
-        android:layout_width="70dp"
-        android:layout_height="70dp"
-        android:src="@drawable/ic_upload"
-        app:layout_anchor="@id/bottomAppBar"
-        app:layout_anchorGravity="center"
-        app:backgroundTint="@color/muaring_primary_2"
-        app:tint="@android:color/white" />
+        android:paddingHorizontal="18dp"
+        android:background="@color/white"
+        app:menu="@menu/menu_bottom_nav"
+        app:itemIconTint="@null"
+        app:itemTextColor="@null"
+        app:labelVisibilityMode="unlabeled"
+        app:itemIconSize="30dp" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
