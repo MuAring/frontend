@@ -8,10 +8,15 @@
     <color name="dark_gray">#555555</color>
     <color name="light_gray">#D6D6D6</color>
     <color name="black">#000000</color>
+    <color name="kakao_yellow">#FEE500</color>
+    <color name="spotify_black">#121212</color>
+    <color name="spotify_green">#1ED760</color>
 
     <!-- 브랜드 -->
     <color name="muaring_primary">@color/green</color>
     <color name="muaring_primary_2">@color/dark_green</color>
+
+    <color name="kakao_black">@color/black</color>
 
     <!-- 표면/배경 -->
     <color name="surface">@color/white</color>

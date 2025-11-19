@@ -1,14 +1,16 @@
 pluginManagement {
     repositories {
-        google {
-            content {
-                includeGroupByRegex("com\\.android.*")
-                includeGroupByRegex("com\\.google.*")
-                includeGroupByRegex("androidx.*")
-            }
-        }
+        google()
         mavenCentral()
         gradlePluginPortal()
+
+        // 카카오 SDK만 제한적으로 받기
+        maven {
+            url = uri("https://devrepo.kakao.com/nexus/content/groups/public/")
+            content {
+                includeGroup("com.kakao.sdk")
+            }
+        }
     }
 }
 
@@ -17,6 +19,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+
+        // 카카오 SDK만 제한적으로 받기
+        maven {
+            url = uri("https://devrepo.kakao.com/nexus/content/groups/public/")
+            content {
+                includeGroup("com.kakao.sdk")
+            }
+        }
     }
 }
 

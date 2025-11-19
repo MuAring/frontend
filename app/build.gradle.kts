@@ -1,5 +1,9 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     alias(libs.plugins.android.application)
+    alias(libs.plugins.hilt.android)
 }
 
 android {
@@ -13,10 +17,19 @@ android {
         versionCode = 1
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        val localProperties = Properties()
+        localProperties.load(FileInputStream(rootProject.file("local.properties")))
+        val kakaoKey = localProperties.getProperty("KAKAO_NATIVE_APP_KEY") ?: ""
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoKey\"")
+
+        manifestPlaceholders["kakao_scheme"] =
+            "kakao${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}"
     }
 
     buildFeatures {
         viewBinding = true
+        buildConfig = true
     }
 
     buildTypes {
@@ -54,6 +67,9 @@ dependencies {
 
     // 테스트
     testImplementation(libs.junit)
-//    androidTestImplementation(libs["ext-junit"])
-//    androidTestImplementation(libs["espresso-core"])
+
+    implementation("com.kakao.sdk:v2-user:2.20.1")
+
+    implementation ("com.google.dagger:hilt-android:2.52")
+    annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
 }
