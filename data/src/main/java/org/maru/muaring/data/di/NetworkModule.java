@@ -1,8 +1,11 @@
 package org.maru.muaring.data.di;
 
 import org.maru.muaring.data.api.AuthApi;
+import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
+import org.maru.muaring.data.repository.GroupRepository;
+import org.maru.muaring.data.repository.GroupRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -36,5 +39,17 @@ public class NetworkModule {
     @Singleton
     public AuthRepository provideAuthRepository(AuthApi api) {
         return new AuthRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public GroupApi provideGroupApi(Retrofit retrofit) {
+        return retrofit.create(GroupApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public GroupRepository provideGroupRepository(GroupApi api) {
+        return new GroupRepositoryImpl(api);
     }
 }
