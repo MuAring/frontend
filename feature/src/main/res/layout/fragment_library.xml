@@ -37,15 +37,36 @@
             android:fontFamily="@font/pretendard_medium" />
 
         <TextView
-            android:id="@+id/btnSelect"
+            android:id="@+id/btnSelectAll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="선택"
+            android:text="전체 선택"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_medium"
+            android:paddingHorizontal="4dp"
+            android:clickable="true"
+            android:focusable="true"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="|"
+            android:textSize="12sp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/pretendard_medium"/>
+
+        <TextView
+            android:id="@+id/btnClearSelect"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="선택 해제"
             android:textSize="12sp"
             android:textColor="@color/black"
             android:fontFamily="@font/pretendard_medium"
             android:background="@android:color/transparent"
-            android:paddingHorizontal="40dp"
+            android:layout_marginRight="38dp"
+            android:paddingHorizontal="4dp"
             android:clickable="true"
             android:focusable="true"/>
 
@@ -54,7 +75,8 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvArchiveMusic"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:paddingBottom="6dp" />
 
 </LinearLayout>

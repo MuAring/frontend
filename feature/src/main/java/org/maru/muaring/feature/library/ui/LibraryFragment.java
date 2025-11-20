@@ -22,6 +22,10 @@ public class LibraryFragment extends Fragment {
 
     private RecyclerView rvLibrary;
     private TextView tvTotalCount;
+    private TextView btnSelectAll;
+    private TextView btnClearSelect;
+
+    private LibraryAdapter adapter;
 
     @Nullable
     @Override
@@ -33,6 +37,8 @@ public class LibraryFragment extends Fragment {
 
         rvLibrary = view.findViewById(R.id.rvArchiveMusic);
         tvTotalCount = view.findViewById(R.id.tvTotalCount);
+        btnSelectAll = view.findViewById(R.id.btnSelectAll);
+        btnClearSelect = view.findViewById(R.id.btnClearSelect);
 
         return view;
     }
@@ -47,10 +53,26 @@ public class LibraryFragment extends Fragment {
                 new Music("Perfect", "Ed Sheeran", R.drawable.album_image)
         );
 
-        tvTotalCount.setText("총 " + musicList.size() + "곡");
+        int totalCount = musicList.size();
+        tvTotalCount.setText("총 " + totalCount + "곡");
 
-        LibraryAdapter adapter = new LibraryAdapter(musicList);
+        adapter = new LibraryAdapter(musicList, selectedCount -> {
+            if (selectedCount == 0) {
+                tvTotalCount.setText("총 " + totalCount + "곡");
+            } else {
+                tvTotalCount.setText("총 " + selectedCount + "곡");
+            }
+        });
+
         rvLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
         rvLibrary.setAdapter(adapter);
+
+        btnSelectAll.setOnClickListener(v -> {
+            adapter.selectAll();
+        });
+
+        btnClearSelect.setOnClickListener(v -> {
+            adapter.clearSelection();
+        });
     }
 }
