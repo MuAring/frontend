@@ -25,4 +25,14 @@
         android:id="@+id/uploadFragment"
         android:name="org.maru.muaring.feature.upload.ui.UploadFragment" />
 
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="org.maru.muaring.feature.nearby.ui.MapFragment"
+        />
+
+    <fragment
+        android:id="@+id/libraryFragment"
+        android:name="org.maru.muaring.feature.library.ui.LibraryFragment"
+        />
+
 </navigation>
