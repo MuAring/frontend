@@ -1,0 +1,177 @@
+package org.maru.muaring.feature.search.ui.adapter;
+
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.search.ui.model.SearchResultItem;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
+
+    public interface OnItemActionClickListener {
+        void onActionClick(SearchResultItem item);
+    }
+
+    private final List<SearchResultItem> items = new ArrayList<>();
+    private final OnItemActionClickListener listener;
+
+    public SearchResultAdapter(OnItemActionClickListener listener) {
+        this.listener = listener;
+    }
+
+    public void setItems(List<SearchResultItem> newItems) {
+        items.clear();
+        if (newItems != null) items.addAll(newItems);
+        notifyDataSetChanged();
+    }
+
+    public void clear() {
+        items.clear();
+        notifyDataSetChanged();
+    }
+
+    @NonNull
+    @Override
+    public ResultViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext())
+                .inflate(R.layout.item_search_result_card, parent, false);
+        return new ResultViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ResultViewHolder holder, int position) {
+        holder.bind(items.get(position));
+    }
+
+    @Override
+    public int getItemCount() {
+        return items.size();
+    }
+
+    class ResultViewHolder extends RecyclerView.ViewHolder {
+
+        ImageView ivThumbnail;
+        TextView tvTitle;
+        FrameLayout containerExtra;
+        Button btnAction;
+
+        ResultViewHolder(@NonNull View itemView) {
+            super(itemView);
+            ivThumbnail = itemView.findViewById(R.id.ivThumbnail);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            containerExtra = itemView.findViewById(R.id.containerExtra);
+            btnAction = itemView.findViewById(R.id.btnAction);
+        }
+
+        void bind(SearchResultItem item) {
+            LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
+
+            tvTitle.setText(item.getTitle());
+            btnAction.setText(item.getActionText());
+
+            containerExtra.removeAllViews();
+
+            if (item.getType() == SearchResultItem.Type.GROUP) {
+                // 그룹용 extra
+                View extra = inflater.inflate(
+                        R.layout.view_search_group_extra,
+                        containerExtra,
+                        false
+                );
+                LinearLayout tagContainer = extra.findViewById(R.id.layoutTagContainer);
+                tagContainer.removeAllViews();
+
+                List<String> tags = item.getCategoryNames();
+                if (tags != null) {
+                    for (String name : tags) {
+                        TextView chip = (TextView) inflater.inflate(
+                                R.layout.view_category_chip,
+                                tagContainer,
+                                false
+                        );
+                        chip.setText(name);
+
+                        LinearLayout.LayoutParams params =
+                                new LinearLayout.LayoutParams(
+                                        LinearLayout.LayoutParams.WRAP_CONTENT,
+                                        LinearLayout.LayoutParams.WRAP_CONTENT
+                                );
+                        params.setMarginEnd(8);
+                        chip.setLayoutParams(params);
+
+                        tagContainer.addView(chip);
+                    }
+                }
+                containerExtra.addView(extra);
+
+                boolean joined = Boolean.TRUE.equals(item.getIsJoined());
+
+                if (joined) {
+                    btnAction.setText("가입 중");
+                    btnAction.setEnabled(false);
+                    btnAction.setBackgroundResource(
+                            org.maru.muaring.design.R.drawable.bg_button_group_joined
+                    );
+                    btnAction.setTextColor(
+                            itemView.getResources().getColor(
+                                    org.maru.muaring.design.R.color.black)
+                    );
+                } else {
+                    btnAction.setText("가입");
+                    btnAction.setEnabled(true);
+                    btnAction.setBackgroundResource(
+                            org.maru.muaring.design.R.drawable.bg_button_group_join
+                    );
+                    btnAction.setTextColor(
+                            itemView.getResources().getColor(android.R.color.white)
+                    );
+                }
+
+            } else { // USER
+                View extra = inflater.inflate(
+                        R.layout.view_search_user_extra,
+                        containerExtra,
+                        false
+                );
+                ImageView ivMusicIcon = extra.findViewById(R.id.ivMusicIcon);
+                TextView tvMusicInfo = extra.findViewById(R.id.tvMusicInfo);
+
+                String today = item.getTodayMusicText();
+                if (today != null && !today.isEmpty()) {
+                    ivMusicIcon.setImageResource(org.maru.muaring.design.R.drawable.ic_today_music_active);
+                    tvMusicInfo.setText(today);
+                    tvMusicInfo.setTextColor(
+                            itemView.getResources().getColor(org.maru.muaring.design.R.color.green)
+                    );
+                } else {
+                    ivMusicIcon.setImageResource(org.maru.muaring.design.R.drawable.ic_today_music_inactive);
+                    tvMusicInfo.setText("오늘의 음악을 등록하지 않았습니다.");
+                    tvMusicInfo.setTextColor(
+                            itemView.getResources().getColor(org.maru.muaring.design.R.color.text_light_gray)
+                    );
+                }
+
+                containerExtra.addView(extra);
+            }
+
+            btnAction.setOnClickListener(v -> {
+                // 이미 참여 중이면 클릭 막기
+                if (Boolean.TRUE.equals(item.getIsJoined())) return;
+
+                if (listener != null) listener.onActionClick(item);
+            });
+        }
+    }
+}
