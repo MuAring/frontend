@@ -2,8 +2,7 @@ package org.maru.muaring;
 
 import android.content.Intent;
 import android.os.Bundle;
-import org.maru.muaring.data.local.TokenManager;
-
+import org.maru.muaring.core.TokenManager;
 
 import androidx.appcompat.app.AppCompatActivity;
 

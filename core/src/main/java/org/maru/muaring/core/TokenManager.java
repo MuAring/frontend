@@ -1,4 +1,4 @@
-package org.maru.muaring.data.local;
+package org.maru.muaring.core;
 
 import android.content.Context;
 import android.content.SharedPreferences;

@@ -1,5 +1,6 @@
 package org.maru.muaring.data.di;
 
+import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
@@ -10,6 +11,7 @@ import dagger.Module;
 import dagger.Provides;
 import dagger.hilt.InstallIn;
 import dagger.hilt.components.SingletonComponent;
+import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -36,5 +38,13 @@ public class NetworkModule {
     @Singleton
     public AuthRepository provideAuthRepository(AuthApi api) {
         return new AuthRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)   // 모든 요청에 자동 토큰 첨부
+                .build();
     }
 }
