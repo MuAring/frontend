@@ -2,6 +2,7 @@ package org.maru.muaring.data.repository;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,6 +10,11 @@ import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
+import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.GroupSummary;
+
+import java.util.Collections;
+import java.util.List;
 
 import javax.inject.Inject;
 
@@ -78,4 +84,44 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         return result;
     }
+
+    // 그룹 검색
+    @Override
+    public void searchGroups(String name, int page, int size, SearchGroupsCallback callback) {
+        Call<ApiResponse<GroupListResponse>> call =
+                groupApi.searchGroups(name, true, null, page, size);
+
+        call.enqueue(new Callback<ApiResponse<GroupListResponse>>() {
+            @Override
+            public void onResponse(
+                    @NonNull Call<ApiResponse<GroupListResponse>> call,
+                    @NonNull Response<ApiResponse<GroupListResponse>> response
+            ) {
+                if (response.isSuccessful() && response.body() != null) {
+
+                    ApiResponse<GroupListResponse> body = response.body();
+                    GroupListResponse data = body.getData();
+
+                    List<GroupSummary> groups =
+                            (data != null && data.getGroups() != null)
+                                    ? data.getGroups()
+                                    : Collections.emptyList();
+
+                    callback.onSuccess(groups);
+
+                } else {
+                    callback.onError(new RuntimeException("검색 실패: " + response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    @NonNull Call<ApiResponse<GroupListResponse>> call,
+                    @NonNull Throwable t
+            ) {
+                callback.onError(t);
+            }
+        });
+    }
+
 }

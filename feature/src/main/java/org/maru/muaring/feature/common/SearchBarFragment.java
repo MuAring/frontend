@@ -28,9 +28,8 @@ public class SearchBarFragment extends Fragment {
 
     private OnSearchClickListener listener;
 
-    public SearchBarFragment() {
-        // 빈 생성자 필수
-    }
+    // 빈 생성자 필수
+    public SearchBarFragment() {}
 
     public static SearchBarFragment newInstance(String hint) {
         SearchBarFragment fragment = new SearchBarFragment();
@@ -71,7 +70,7 @@ public class SearchBarFragment extends Fragment {
             }
         });
 
-        // 루트 뷰 눌렀을 때 포커스 해제 → 색도 자동 원복
+        // 루트 뷰 눌렀을 때 포커스 해제
         view.setOnTouchListener((v, event) -> {
             if (etSearch.hasFocus()) etSearch.clearFocus();
             return false;
@@ -85,7 +84,7 @@ public class SearchBarFragment extends Fragment {
             }
         }
 
-        // 아이콘 클릭 시 콜백
+        // 아이콘 클릭 시 검색
         ivSearch.setOnClickListener(v -> {
             if (listener != null) {
                 listener.onSearchClick(etSearch.getText().toString());

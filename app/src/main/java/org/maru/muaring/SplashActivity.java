@@ -2,10 +2,14 @@ package org.maru.muaring;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+
 import org.maru.muaring.data.local.TokenManager;
 
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.kakao.sdk.common.util.Utility;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -17,12 +21,16 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        String keyHash = Utility.INSTANCE.getKeyHash(this);
+        Log.d("KAKAO_KEY_HASH", "keyHash = " + keyHash);
+
         try {
             String token = TokenManager.getAccessToken(this);
 
             if (token == null) {
                 startActivity(new Intent(this, LoginActivity.class));
             } else {
+                Log.d("ACESS_TOKEN", "token 있어요 ㅜㅜ: " + token);
                 startActivity(new Intent(this, MainActivity.class));
             }
 
@@ -35,3 +43,16 @@ public class SplashActivity extends AppCompatActivity {
     }
 }
 
+// 로그인 넘어가서 테스트
+//@AndroidEntryPoint
+//public class SplashActivity extends AppCompatActivity {
+//
+//    @Override
+//    protected void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//
+//        // ✅ 테스트용: 항상 메인으로
+//        startActivity(new Intent(this, MainActivity.class));
+//        finish();
+//    }
+//}
