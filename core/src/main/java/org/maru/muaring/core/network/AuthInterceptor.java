@@ -6,24 +6,24 @@ import org.maru.muaring.core.TokenManager;
 
 import java.io.IOException;
 
+import jakarta.inject.Inject;
 import okhttp3.Interceptor;
 import okhttp3.Request;
 import okhttp3.Response;
 
 public class AuthInterceptor implements Interceptor {
 
-    private final Context context;
     private final TokenManager tokenManager;
 
-    public AuthInterceptor(TokenManager tokenManager, Context context) {
+    @Inject
+    public AuthInterceptor(TokenManager tokenManager) {
         this.tokenManager = tokenManager;
-        this.context = context;
     }
 
 
     @Override
     public Response intercept(Chain chain) throws IOException {
-        String token = TokenManager.getAccessToken(context);
+        String token = tokenManager.getAccessToken();
 
         Request original = chain.request();
         Request.Builder builder = original.newBuilder();

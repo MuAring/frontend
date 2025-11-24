@@ -24,9 +24,10 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public Retrofit provideRetrofit() {
+    public Retrofit provideRetrofit(OkHttpClient client) {
         return new Retrofit.Builder()
                 .baseUrl("http://10.0.2.2:8080")
+                .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
     }

@@ -7,10 +7,14 @@ import android.util.Log;
 import androidx.appcompat.app.AppCompatActivity;
 import com.kakao.sdk.common.util.Utility;
 import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
 
 // ✨ 앱 처음 열릴 때. 로그인 여부에 따라 적절한 activity로 전환
 @AndroidEntryPoint
 public class SplashActivity extends AppCompatActivity {
+
+    @Inject
+    TokenManager tokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,7 +24,7 @@ public class SplashActivity extends AppCompatActivity {
         Log.d("KAKAO_KEY_HASH", "keyHash = " + keyHash);
 
         try {
-            String token = TokenManager.getAccessToken(this);
+            String token = tokenManager.getAccessToken();
 
             if (token == null) {
                 startActivity(new Intent(this, LoginActivity.class));
