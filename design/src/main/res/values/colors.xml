@@ -4,9 +4,14 @@
     <color name="white">#FFFFFF</color>
     <color name="dark_green">#183C27</color>
     <color name="green">#72A775</color>
+    <color name="green_blur">#3D72A775</color>
+    <color name="light_green">#F0F9F1</color>
     <color name="gray">#909090</color>
     <color name="dark_gray">#555555</color>
     <color name="light_gray">#D6D6D6</color>
+    <color name="text_light_gray">#ADADAD</color>
+    <color name="light_gray_search">#F4F4F4</color>
+    <color name="light_gray_stroke">#00000026</color>
     <color name="black">#000000</color>
     <color name="kakao_yellow">#FEE500</color>
     <color name="spotify_black">#121212</color>
@@ -20,10 +25,19 @@
 
     <!-- 표면/배경 -->
     <color name="surface">@color/white</color>
-    <color name="selected_box">#3D72A775</color> <!-- 불투명도 24% -->
     <color name="outline_primary">@color/green</color>
     <color name="outline_primary_2">@color/dark_green</color>
     <color name="search_input_outline">@color/light_gray</color>
+
+    <!-- 검색창 -->
+    <color name="search_bar_fill">@color/light_gray_search</color>
+    <color name="search_bar_stroke">@color/light_gray_stroke</color>
+    <color name="search_bar_active">@color/green_blur</color>
+    <color name="search_bar_active_stroke">@color/green</color>
+
+    <!-- 검색 결과창 -->
+    <color name="category_chip_background">@color/light_green</color>
+    <color name="text_today_music">@color/text_light_gray</color>
 
     <!-- 글자색 -->
     <color name="placeholder">@color/gray</color>

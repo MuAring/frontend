@@ -1,13 +1,12 @@
 package org.maru.muaring.feature.search.ui;
 
 import android.os.Bundle;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,23 +16,36 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
-
 import org.maru.muaring.core.ui.SegmentedToggleView;
+import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.common.SearchBarFragment;
+import org.maru.muaring.feature.search.ui.adapter.SearchResultAdapter;
+import org.maru.muaring.feature.search.ui.model.SearchResultItem;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class SearchFragment extends Fragment {
 
-    private SegmentedToggleView segmentedToggleView;
-    private ImageButton btnBack;
+    private SegmentedToggleView segmentedToggleView;    // 상단 토글
+    private ImageButton btnBack;                        // 뒤로가기 버튼
     private TextView textTitle;
-    private TextInputLayout textInputLayoutSearch;
-    private TextInputEditText editSearch;
-    private RecyclerView recyclerSearchResult;
+    private RecyclerView recyclerSearchResult;          // 하단 리사이클러뷰
 
-    // 검색 어댑터 (나중에 구현)
-    // private SearchAdapter searchAdapter;
+    private SearchBarFragment searchBarFragment;        // 검색창
+    private SearchResultAdapter searchResultAdapter;
+
+    @Inject
+    GroupRepository groupRepository;
 
     @Nullable
     @Override
@@ -58,15 +70,28 @@ public class SearchFragment extends Fragment {
         segmentedToggleView = view.findViewById(R.id.segmentedToggle);
         btnBack = view.findViewById(R.id.btn_back);
         textTitle = view.findViewById(R.id.text_title);
-        textInputLayoutSearch = view.findViewById(R.id.textInputLayoutSearch);
-        editSearch = view.findViewById(R.id.editSearch);
+        searchBarFragment = (SearchBarFragment) getChildFragmentManager()
+                .findFragmentById(R.id.fragmentSearchBar);
         recyclerSearchResult = view.findViewById(R.id.recyclerSearchResult);
     }
 
     private void setupInitialState() {
-        // 초기 상태: "사용자" 선택으로 맞추기 (리스너 설정 전!)
-        segmentedToggleView.selectUser();
-        updateUIForUserSearch();
+        // 초기 상태: "그룹" 선택
+        segmentedToggleView.selectGroup();
+        updateUIForGroupSearch();
+    }
+
+    private void setupRecyclerView() {
+        recyclerSearchResult.setLayoutManager(new LinearLayoutManager(requireContext()));
+        searchResultAdapter = new SearchResultAdapter(item -> {
+            if (item.getType() == SearchResultItem.Type.GROUP) {
+                // TODO: 그룹 가입/상세 이동
+                // navigateToGroupDetail(item.getId());
+            } else {
+                // TODO: 사용자 팔로우/프로필 이동
+            }
+        });
+        recyclerSearchResult.setAdapter(searchResultAdapter);
     }
 
     private void setupListeners() {
@@ -91,45 +116,34 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        // 검색어 입력 리스너
-        editSearch.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                performSearch(s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {}
-        });
-    }
-
-    private void setupRecyclerView() {
-        if (recyclerSearchResult != null) {
-            recyclerSearchResult.setLayoutManager(new LinearLayoutManager(requireContext()));
-            // TODO: 어댑터 설정
-            // searchAdapter = new SearchAdapter();
-            // recyclerSearchResult.setAdapter(searchAdapter);
+        // 검색바 콜백
+        if (searchBarFragment != null) {
+            searchBarFragment.setOnSearchClickListener(query -> {
+                performSearch(query);
+            });
         }
     }
 
     private void updateUIForGroupSearch() {
         textTitle.setText("어떤 그룹을 찾아볼까요?");
-        textInputLayoutSearch.setHint("그룹 검색");
-        editSearch.setText("");
+        if (searchBarFragment != null) {
+//            searchBarFragment.setHint("그룹 이름 검색");
+            searchBarFragment.clearQuery();
+        }
     }
 
     private void updateUIForUserSearch() {
         textTitle.setText("어떤 사용자를 찾아볼까요?");
-        textInputLayoutSearch.setHint("사용자 검색");
-        editSearch.setText("");
+        if (searchBarFragment != null) {
+//            searchBarFragment.setHint("사용자 닉네임 검색");
+            searchBarFragment.clearQuery();
+        }
     }
 
     private void clearSearchResults() {
-        // TODO: RecyclerView 데이터 클리어
-        // searchAdapter.clearData();
+        if (searchResultAdapter != null) {
+            searchResultAdapter.clear();
+        }
     }
 
     private void performSearch(String query) {
@@ -146,18 +160,55 @@ public class SearchFragment extends Fragment {
     }
 
     private void searchGroups(String query) {
-        // TODO: 그룹 검색 API 호출 및 결과 표시
-        // 예시:
-        // searchViewModel.searchGroups(query).observe(getViewLifecycleOwner(), results -> {
-        //     searchAdapter.updateData(results);
-        // });
+        groupRepository.searchGroups(query, 0, 10,
+                new GroupRepository.SearchGroupsCallback() {
+                    @Override
+                    public void onSuccess(List<GroupSummary> groups) {
+                        if (!isAdded()) return;
+
+                        List<SearchResultItem> items = new ArrayList<>();
+                        for (GroupSummary g : groups) {
+                            List<String> categoryNames = g.getCategoryNames();
+
+                            boolean joined = Boolean.TRUE.equals(g.getIsJoined());
+                            String actionText = joined ? "가입 중" : "가입";
+
+                            items.add(new SearchResultItem(
+                                    SearchResultItem.Type.GROUP,
+                                    g.getGroupId(),
+                                    g.getName(),
+                                    categoryNames,
+                                    null,
+                                    actionText,
+                                    joined
+                            ));
+                        }
+                        searchResultAdapter.setItems(items);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (!isAdded()) return;
+                        Toast.makeText(requireContext(), "그룹 검색 실패", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
+
     private void searchUsers(String query) {
-        // TODO: 사용자 검색 API 호출 및 결과 표시
-        // 예시:
-        // searchViewModel.searchUsers(query).observe(getViewLifecycleOwner(), results -> {
-        //     searchAdapter.updateData(results);
-        // });
+        // TODO: 사용자 검색 API 연동 후 SearchResultItem.Type.USER 로 매핑
+
+//        items.add(new SearchResultItem(
+//                SearchResultItem.Type.USER,
+//                u.getUserId(),
+//                u.getNickname(),
+//                null,
+//                todayMusic,
+//                "팔로우",
+//                null   // isJoined 안 씀
+//        ));
+
+        // 지금은 빈 처리
+        Toast.makeText(requireContext(), "사용자 검색 API 연결 예정", Toast.LENGTH_SHORT).show();
     }
 }

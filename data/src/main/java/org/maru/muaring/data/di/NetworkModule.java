@@ -2,8 +2,11 @@ package org.maru.muaring.data.di;
 
 import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
+import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
+import org.maru.muaring.data.repository.GroupRepository;
+import org.maru.muaring.data.repository.GroupRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -30,6 +33,14 @@ public class NetworkModule {
 
     @Provides
     @Singleton
+    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
+        return new OkHttpClient.Builder()
+                .addInterceptor(authInterceptor)   // 모든 요청에 자동 토큰 첨부
+                .build();
+    }
+
+    @Provides
+    @Singleton
     public AuthApi provideAuthApi(Retrofit retrofit) {
         return retrofit.create(AuthApi.class);
     }
@@ -42,9 +53,13 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public OkHttpClient provideOkHttpClient(AuthInterceptor authInterceptor) {
-        return new OkHttpClient.Builder()
-                .addInterceptor(authInterceptor)   // 모든 요청에 자동 토큰 첨부
-                .build();
+    public GroupApi provideGroupApi(Retrofit retrofit) {
+        return retrofit.create(GroupApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public GroupRepository provideGroupRepository(GroupApi api) {
+        return new GroupRepositoryImpl(api);
     }
 }

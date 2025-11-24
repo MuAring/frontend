@@ -16,7 +16,7 @@
         android:title="@string/nav_upload" />
 
     <item
-        android:id="@+id/archiveFragment"
+        android:id="@+id/libraryFragment"
         android:icon="@drawable/nav_archive_selector"
         android:title="@string/nav_archive" />
 
