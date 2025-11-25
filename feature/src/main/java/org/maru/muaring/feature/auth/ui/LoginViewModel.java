@@ -9,7 +9,7 @@ import java.util.concurrent.Executors;
 import javax.inject.Inject;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 
-import org.maru.muaring.data.local.TokenManager;
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.dto.LoginResponse;
 import org.maru.muaring.data.repository.AuthRepository;
 

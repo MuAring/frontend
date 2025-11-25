@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutTodayMusic"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingTop="2dp">
+
+    <ImageView
+        android:id="@+id/ivMusicIcon"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:src="@drawable/ic_today_music_inactive" />
+
+    <TextView
+        android:id="@+id/tvMusicInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:text="오늘의 음악을 등록하지 않았습니다."
+        android:textSize="12sp"
+        android:textColor="@color/text_today_music"
+        android:includeFontPadding="false"
+        android:gravity="center_vertical"
+        android:paddingBottom="2sp"/>
+
+</LinearLayout>
