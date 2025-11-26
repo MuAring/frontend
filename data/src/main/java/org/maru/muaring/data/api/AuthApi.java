@@ -1,6 +1,7 @@
 package org.maru.muaring.data.api;
 
 import org.maru.muaring.data.api.dto.LoginRequest;
+import org.maru.muaring.data.api.dto.KakaoLoginRequest;
 import org.maru.muaring.data.api.dto.LoginResponse;
 import org.maru.muaring.data.api.dto.ApiResponse;
 
@@ -12,4 +13,5 @@ public interface AuthApi {
 
     @POST("/auth/login/kakao")
     Call<ApiResponse<LoginResponse>> loginWithKakao(@Body LoginRequest request);
+    Call<ApiResponse<LoginResponse>> loginWithKakao(@Body KakaoLoginRequest request);
 }
