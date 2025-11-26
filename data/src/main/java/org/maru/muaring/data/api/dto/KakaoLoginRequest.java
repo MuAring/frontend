@@ -1,10 +1,10 @@
 package org.maru.muaring.data.api.dto;
 
-public class LoginRequest {
+public class KakaoLoginRequest {
 
     private String kakaoAccessToken;
 
-    public LoginRequest(String accessToken) {
+    public KakaoLoginRequest(String accessToken) {
         this.kakaoAccessToken = accessToken;
     }
 }

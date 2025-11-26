@@ -1,8 +1,8 @@
 package org.maru.muaring.feature.auth.ui;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -21,7 +22,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class LoginFragment extends Fragment {
 
-    private LoginViewModel viewModel;
+    private LoginViewModel loginViewModel;
     private LoginNavigator navigator;
 
     @Override
@@ -33,43 +34,34 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // HiltViewModel 가져오기
-        viewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+
+        // 카카오 로그인
         Button kakaoLoginBtn = view.findViewById(R.id.btnKakaoLogin);
         kakaoLoginBtn.setOnClickListener(v -> {
-            Log.d("KAKAO_FLOW", "카카오 로그인 버튼 클릭됨");
+            UserApiClient.getInstance().loginWithKakaoTalk(requireActivity(), (token, error) -> {
+                if (error != null) {
+                    // 카톡 앱 로그인 실패 -> 웹 로그인
+                    UserApiClient.getInstance().loginWithKakaoAccount(requireActivity(), (accountToken, accountError) -> {
+                        if (accountToken != null) {
+                            loginViewModel.loginWithKakao(accountToken.getAccessToken(), requireContext());
+                        }
+                        return null;
+                    });
+                } else if (token != null) {
+                    loginViewModel.loginWithKakao(token.getAccessToken(), requireContext());
+                }
+                return null;
+            });
+        });
 
-            if (UserApiClient.getInstance().isKakaoTalkLoginAvailable(requireContext())) {
-                // 카카오톡으로
-                UserApiClient.getInstance().loginWithKakaoTalk(requireActivity(), (token, error) -> {
-                    if (error != null) {
-                        Log.e("KAKAO_FLOW", "카카오톡 로그인 실패", error);
-                        loginWithKakaoAccount();
-                    } else if (token != null) {
-                        Log.d("KAKAO_FLOW", "카카오톡 로그인 성공, accessToken=" + token.getAccessToken());
-                        viewModel.loginWithKakao(token.getAccessToken(), requireContext());
-                    }
-                    return null;
-                });
-            } else {
-                // 웹 계정 로그인
-                Log.d("KAKAO_FLOW", "카카오톡 미설치, 웹 로그인 진행");
-                loginWithKakaoAccount();
-            }
+        // 스포티파이 로그인
+        Button spotifyLoginBtn = view.findViewById(R.id.btnSpotifyLogin);
+        spotifyLoginBtn.setOnClickListener(v -> {
+            loginViewModel.startSpotifyLogin(requireContext());
         });
 
         observeLoginState();
-    }
-
-    private void loginWithKakaoAccount() {
-        UserApiClient.getInstance().loginWithKakaoAccount(requireActivity(), (accountToken, accountError) -> {
-            if (accountError != null) {
-                Log.e("KAKAO_FLOW", "카카오 계정 로그인 실패", accountError);
-            } else if (accountToken != null) {
-                Log.d("KAKAO_FLOW", "카카오 계정 로그인 성공, accessToken=" + accountToken.getAccessToken());
-                viewModel.loginWithKakao(accountToken.getAccessToken(), requireContext());
-            }
-            return null;
-        });
     }
 
     @Override
@@ -86,7 +78,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void observeLoginState() {
-        viewModel.getLoginState().observe(getViewLifecycleOwner(), state -> {
+        loginViewModel.getLoginState().observe(getViewLifecycleOwner(), state -> {
 
             if (state instanceof LoginState.Loading) {
                 // TODO: 로딩 progress bar 표시 (컴포넌트 이용 예정)
@@ -97,6 +89,11 @@ public class LoginFragment extends Fragment {
 
                 // 로그인 화면 Activity 종료
                 requireActivity().finish();
+            }
+            else if (state instanceof  LoginState.SpotifyUrl) {
+                String url = ((LoginState.SpotifyUrl) state).url;
+                CustomTabsIntent intent = new CustomTabsIntent.Builder().build();
+                intent.launchUrl(requireContext(), Uri.parse(url));
             }
             else if (state instanceof LoginState.Error) {
                 String msg = ((LoginState.Error) state).message;

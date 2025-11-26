@@ -22,7 +22,17 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".LoginActivity"/>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="muaring" android:host="spotify-redirect" />
+            </intent-filter>
+        </activity>
         <activity android:name=".MainActivity"/>
 
         <!--카카오 로그인 콜백 처리 액티비티-->

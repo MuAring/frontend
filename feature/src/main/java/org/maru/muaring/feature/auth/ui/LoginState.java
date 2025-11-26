@@ -23,4 +23,11 @@ public abstract class LoginState {
             this.message = message;
         }
     }
+
+    public static class SpotifyUrl extends LoginState {
+        public final String url;
+        public SpotifyUrl(String url) {
+            this.url = url;
+        }
+    }
 }
