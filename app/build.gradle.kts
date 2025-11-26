@@ -22,6 +22,7 @@ android {
         localProperties.load(FileInputStream(rootProject.file("local.properties")))
         val kakaoKey = localProperties.getProperty("KAKAO_NATIVE_APP_KEY") ?: ""
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoKey\"")
+        buildConfigField ("String", "SPOTIFY_REDIRECT_URI", "\"muaring://spotify-redirect\"")
 
         manifestPlaceholders["kakao_scheme"] =
             "kakao${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}"

@@ -7,5 +7,7 @@ public interface AuthRepository {
 
     void loginWithKakao(String kakaoToken, Callback<LoginResponse> callback);
 
-    LoginResponse loginWithKakao(String kakaoToken) throws Exception;
+    void getSpotifyAuthorizeUrl(Callback<String> callback);
+
+    void loginWithSpotifyCode(String spotifyCode, Callback<LoginResponse> callback);
 }

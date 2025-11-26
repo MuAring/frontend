@@ -1,8 +1,8 @@
 package org.maru.muaring.feature.auth.ui;
 
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -63,18 +64,6 @@ public class LoginFragment extends Fragment {
         observeLoginState();
     }
 
-    private void loginWithKakaoAccount() {
-        UserApiClient.getInstance().loginWithKakaoAccount(requireActivity(), (accountToken, accountError) -> {
-            if (accountError != null) {
-                Log.e("KAKAO_FLOW", "카카오 계정 로그인 실패", accountError);
-            } else if (accountToken != null) {
-                Log.d("KAKAO_FLOW", "카카오 계정 로그인 성공, accessToken=" + accountToken.getAccessToken());
-                viewModel.loginWithKakao(accountToken.getAccessToken(), requireContext());
-            }
-            return null;
-        });
-    }
-
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -89,7 +78,7 @@ public class LoginFragment extends Fragment {
     }
 
     private void observeLoginState() {
-        viewModel.getLoginState().observe(getViewLifecycleOwner(), state -> {
+        loginViewModel.getLoginState().observe(getViewLifecycleOwner(), state -> {
 
             if (state instanceof LoginState.Loading) {
                 // TODO: 로딩 progress bar 표시 (컴포넌트 이용 예정)
@@ -100,6 +89,11 @@ public class LoginFragment extends Fragment {
 
                 // 로그인 화면 Activity 종료
                 requireActivity().finish();
+            }
+            else if (state instanceof  LoginState.SpotifyUrl) {
+                String url = ((LoginState.SpotifyUrl) state).url;
+                CustomTabsIntent intent = new CustomTabsIntent.Builder().build();
+                intent.launchUrl(requireContext(), Uri.parse(url));
             }
             else if (state instanceof LoginState.Error) {
                 String msg = ((LoginState.Error) state).message;

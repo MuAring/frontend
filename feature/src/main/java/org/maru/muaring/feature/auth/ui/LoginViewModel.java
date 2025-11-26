@@ -52,4 +52,40 @@ public class LoginViewModel extends ViewModel {
             }
         });
     }
+
+    // ⚪ Spotify 로그인 flow 시작 → authorize URL 받기
+    public void startSpotifyLogin(Context context) {
+        loginState.setValue(new LoginState.Loading());
+
+        repository.getSpotifyAuthorizeUrl(new Callback<>() {
+            @Override
+            public void onSuccess(String authorizeUrl) {
+                loginState.postValue(new LoginState.SpotifyUrl(authorizeUrl));
+            }
+
+            @Override
+            public void onError(Exception e) {
+                loginState.postValue(new LoginState.Error("스포티파이 Authorized URL 요청에 실패했습니다. : " + e.getMessage()));
+            }
+        });
+    }
+
+    // ⚪ redirect 후 받은 code 로 서버 로그인
+    public void loginWithSpotifyCode(String code, Context context) {
+        loginState.setValue(new LoginState.Loading());
+
+        repository.loginWithSpotifyCode(code, new Callback<LoginResponse>() {
+            @Override
+            public void onSuccess(LoginResponse response) {
+                // 토큰 저장
+                TokenManager.save(context, response.getAccessToken(), response.getRefreshToken());
+                loginState.postValue(new LoginState.Success(response));
+            }
+
+            @Override
+            public void onError(Exception e) {
+                loginState.postValue(new LoginState.Error("로그인 실패: " + e.getMessage()));
+            }
+        });
+    }
 }

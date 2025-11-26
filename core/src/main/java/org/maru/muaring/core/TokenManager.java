@@ -37,4 +37,10 @@ public class TokenManager {
     public String getAccessToken() {
         return prefs.getString(ACCESS, null);
     }
+
+    // 저장된 토큰 삭제하는 임시 로직
+    public static void clear(Context context) {
+        SharedPreferences pref = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        pref.edit().clear().apply();
+    }
 }
