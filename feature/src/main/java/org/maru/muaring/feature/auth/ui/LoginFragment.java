@@ -34,7 +34,7 @@ public class LoginFragment extends Fragment {
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         // HiltViewModel 가져오기
-        loginViewModel = new ViewModelProvider(this).get(LoginViewModel.class);
+        loginViewModel = new ViewModelProvider(requireActivity()).get(LoginViewModel.class);
 
         // 카카오 로그인
         Button kakaoLoginBtn = view.findViewById(R.id.btnKakaoLogin);

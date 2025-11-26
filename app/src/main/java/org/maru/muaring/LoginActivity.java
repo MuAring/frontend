@@ -30,8 +30,6 @@ public class LoginActivity extends AppCompatActivity implements LoginNavigator {
                     .replace(R.id.login_container, new LoginFragment())
                     .commit();
         }
-
-        observeLoginState();
     }
 
     @Override
@@ -63,16 +61,4 @@ public class LoginActivity extends AppCompatActivity implements LoginNavigator {
             }
         }
     }
-
-    private void observeLoginState() {
-        loginViewModel.getLoginState().observe(this, state -> {
-            if (state instanceof LoginState.Success) {
-                navigateToMain();
-            } else if (state instanceof LoginState.Error) {
-                String msg = ((LoginState.Error) state).message;
-                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
-            }
-        });
-    }
-
 }
