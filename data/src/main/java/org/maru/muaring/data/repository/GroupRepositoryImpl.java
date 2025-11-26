@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.GroupCategoryResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
@@ -122,6 +123,13 @@ public class GroupRepositoryImpl implements GroupRepository {
                 callback.onError(t);
             }
         });
+    }
+
+
+    // 그룹 카테고리 조회
+    @Override
+    public Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories() {
+        return groupApi.getGroupCategories();
     }
 
 }

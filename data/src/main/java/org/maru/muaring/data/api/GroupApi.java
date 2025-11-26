@@ -1,6 +1,7 @@
 package org.maru.muaring.data.api;
 
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.GroupCategoryResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 
@@ -29,5 +30,9 @@ public interface GroupApi {
             @Query("page") Integer page,
             @Query("size") Integer size
     );
+
+    // 그룹 카테고리 조회
+    @GET("/group-categories/seeds")
+    Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
 
 }
