@@ -23,6 +23,9 @@ public class SplashActivity extends AppCompatActivity {
         String keyHash = Utility.INSTANCE.getKeyHash(this);
         Log.d("KAKAO_KEY_HASH", "keyHash = " + keyHash);
 
+        // 앱 시작 시 토큰 삭제 후 시작 (임시)
+        TokenManager.clear(this);
+
         try {
             String token = tokenManager.getAccessToken();
 
@@ -41,17 +44,3 @@ public class SplashActivity extends AppCompatActivity {
         finish(); // SplashActivity 종료
     }
 }
-
-// 로그인 넘어가서 테스트
-//@AndroidEntryPoint
-//public class SplashActivity extends AppCompatActivity {
-//
-//    @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//
-//        // ✅ 테스트용: 항상 메인으로
-//        startActivity(new Intent(this, MainActivity.class));
-//        finish();
-//    }
-//}
