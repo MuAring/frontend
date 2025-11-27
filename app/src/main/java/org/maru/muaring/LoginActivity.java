@@ -4,16 +4,17 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Toast;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
-import org.maru.muaring.feature.auth.navigation.LoginNavigator;
+import org.maru.muaring.feature.common.navigation.CommonNavigator;
+import org.maru.muaring.feature.common.navigation.LoginNavigator;
 import org.maru.muaring.feature.auth.ui.LoginFragment;
-import org.maru.muaring.feature.auth.ui.LoginState;
 import org.maru.muaring.feature.auth.ui.LoginViewModel;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class LoginActivity extends AppCompatActivity implements LoginNavigator {
+public class LoginActivity extends AppCompatActivity implements CommonNavigator, LoginNavigator {
 
     private LoginViewModel loginViewModel;
 
@@ -33,10 +34,10 @@ public class LoginActivity extends AppCompatActivity implements LoginNavigator {
     }
 
     @Override
-    public void navigateToMain() {
-        Intent intent = new Intent(this, MainActivity.class);
+    public void navigateToProfileSetup() {
+        Intent intent = new Intent(this, ProfileSetupActivity.class);
         startActivity(intent);
-        finish();  // 로그인 화면 제거
+        finish();
     }
 
     @Override
@@ -60,5 +61,15 @@ public class LoginActivity extends AppCompatActivity implements LoginNavigator {
                 Toast.makeText(this, "Spotify 로그인 실패", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    @Override
+    public void navigateToMain(@Nullable String nickname) {
+        Intent intent = new Intent(this, MainActivity.class);
+        if (nickname != null) {
+            intent.putExtra("nickname", nickname);
+        }
+        startActivity(intent);
+        finish();
     }
 }

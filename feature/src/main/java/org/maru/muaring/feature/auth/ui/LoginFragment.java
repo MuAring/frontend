@@ -14,8 +14,10 @@ import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import org.maru.muaring.data.api.dto.LoginResponse;
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.auth.navigation.LoginNavigator;
+import org.maru.muaring.feature.common.navigation.CommonNavigator;
+import org.maru.muaring.feature.common.navigation.LoginNavigator;
 import com.kakao.sdk.user.*;
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -23,7 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class LoginFragment extends Fragment {
 
     private LoginViewModel loginViewModel;
-    private LoginNavigator navigator;
+    private LoginNavigator loginNavigator;
+    private CommonNavigator commonNavigator;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -68,12 +71,12 @@ public class LoginFragment extends Fragment {
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
-        // LoginActivity가 LoginNavigator를 구현하고 있나?
         if (context instanceof LoginNavigator) {
-            // 구현했다면 Fragment 내부에서 navigator로 사용할 수 있게 저장
-            navigator = (LoginNavigator) context;
-        } else {
-            throw new IllegalStateException("LoginActivity는 LoginNavigator을 구현하고 있어야 합니다.");
+            loginNavigator = (LoginNavigator) context;
+        }
+
+        if (context instanceof CommonNavigator) {
+            commonNavigator = (CommonNavigator) context;
         }
     }
 
@@ -83,9 +86,16 @@ public class LoginFragment extends Fragment {
             if (state instanceof LoginState.Loading) {
                 // TODO: 로딩 progress bar 표시 (컴포넌트 이용 예정)
             }
-            else if (state instanceof LoginState.Success) {
-                // 로그인된 메인화면으로 이동
-                navigator.navigateToMain();
+            else if (state instanceof LoginState.Success successState) {
+                LoginResponse response = successState.response;
+                if (response.hasNickname()) {
+                    String nickname = response.getNickname();
+                    // 닉네임 있는 경우 로그인된 메인화면으로 이동
+                    commonNavigator.navigateToMain(nickname);
+                } else {
+                    // 닉네임 없는 경우(= 최초 로그인 = 회원가입), 프로필 설정 화면으로 이동
+                    loginNavigator.navigateToProfileSetup();
+                }
 
                 // 로그인 화면 Activity 종료
                 requireActivity().finish();

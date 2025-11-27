@@ -3,10 +3,16 @@ package org.maru.muaring.data.di;
 import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.GroupApi;
+import org.maru.muaring.data.api.ImageApi;
+import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.GroupRepositoryImpl;
+import org.maru.muaring.data.repository.ImageRepository;
+import org.maru.muaring.data.repository.ImageRepositoryImpl;
+import org.maru.muaring.data.repository.MemberRepository;
+import org.maru.muaring.data.repository.MemberRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -62,5 +68,29 @@ public class NetworkModule {
     @Singleton
     public GroupRepository provideGroupRepository(GroupApi api) {
         return new GroupRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public ImageApi provideImageApi(Retrofit retrofit) {
+        return retrofit.create(ImageApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public ImageRepository provideImageRepository(ImageApi api) {
+        return new ImageRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public MemberApi provideMemberApi(Retrofit retrofit) {
+        return retrofit.create(MemberApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public MemberRepository provideMemberRepository(MemberApi api) {
+        return new MemberRepositoryImpl(api);
     }
 }

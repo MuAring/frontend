@@ -1,6 +1,7 @@
 package org.maru.muaring;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        String nickname = getIntent().getStringExtra("nickname");
+
+        if (nickname != null) {
+            Toast.makeText(this, nickname + "님 반가워요 🎉", Toast.LENGTH_SHORT).show();
+        }
 
         NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.nav_host);
