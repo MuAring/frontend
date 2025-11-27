@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- 상단 툴바 -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:background="#FFFFFF"
+            android:elevation="2dp">
+
+            <ImageButton
+                android:id="@+id/btn_back"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_centerVertical="true"
+                android:layout_marginStart="4dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_back"
+                android:contentDescription="뒤로가기"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="그룹 생성"
+                android:textColor="#000000"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
+
+        <!-- 메인 컨텐츠 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- 그룹명 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="그룹명"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/et_group_name"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/edittext_background"
+                android:paddingHorizontal="16dp"
+                android:hint="그룹명을 입력하세요"
+                android:textSize="14sp"
+                android:textColorHint="#AAAAAA"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- 그룹 설명 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="그룹 설명"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:id="@+id/et_group_description"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@drawable/edittext_background"
+                android:padding="16dp"
+                android:hint="그룹에 대한 설명을 입력하세요"
+                android:textSize="14sp"
+                android:textColorHint="#AAAAAA"
+                android:gravity="top"
+                android:inputType="textMultiLine"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- 카테고리 섹션 (include로 삽입) -->
+            <include
+                android:id="@+id/category_section"
+                layout="@layout/item_category_selection"/>
+
+            <!-- 그룹 정원 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="그룹 정원"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp"/>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:background="@drawable/category_button_outline"
+                android:layout_marginBottom="24dp">
+
+                <ImageButton
+                    android:id="@+id/btn_decrease_capacity"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_minus"
+                    android:contentDescription="인원 감소"/>
+
+                <TextView
+                    android:id="@+id/tv_group_capacity"
+                    android:layout_width="40dp"
+                    android:layout_height="36dp"
+                    android:text="10"
+                    android:textSize="18sp"
+                    android:textColor="#000000"
+                    android:gravity="center"/>
+
+                <ImageButton
+                    android:id="@+id/btn_increase_capacity"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:background="@android:color/transparent"
+                    android:src="@drawable/ic_plus"
+                    android:contentDescription="인원 증가"/>
+            </LinearLayout>
+
+            <!-- 그룹 유형 -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="그룹 유형"
+                android:textSize="16sp"
+                android:textColor="#000000"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="32dp">
+
+                <!-- 공개 그룹 -->
+                <LinearLayout
+                    android:id="@+id/layout_public_group"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/group_type_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginEnd="8dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_public_group"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="공개 그룹"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="누구나 참여하고 기입 가능"
+                        android:textSize="12sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+
+                <!-- 비공개 그룹 -->
+                <LinearLayout
+                    android:id="@+id/layout_private_group"
+                    android:layout_width="0dp"
+                    android:layout_height="120dp"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="@drawable/group_type_background"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:layout_marginStart="8dp">
+
+                    <ImageView
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
+                        android:src="@drawable/ic_private_group"
+                        android:layout_marginBottom="8dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="비공개 그룹"
+                        android:textSize="16sp"
+                        android:textColor="#000000"
+                        android:textStyle="bold"
+                        android:layout_marginBottom="4dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="초대 링크로만 기입 가능"
+                        android:textSize="12sp"
+                        android:textColor="#666666"/>
+                </LinearLayout>
+            </LinearLayout>
+
+            <!-- 그룹 생성 버튼 -->
+            <Button
+                android:id="@+id/btn_create_group"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:text="그룹 생성"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:background="@drawable/button_primary_background"
+                android:layout_marginBottom="20dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

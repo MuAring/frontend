@@ -10,6 +10,8 @@ import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.GroupCategoryResponse;
+import org.maru.muaring.data.api.dto.GroupCreateRequest;
+import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
@@ -24,6 +26,11 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class GroupRepositoryImpl implements GroupRepository {
+
+    @Override
+    public Call<ApiResponse<GroupCreateResponse>> createGroup(GroupCreateRequest request) {
+        return groupApi.createGroup(request);
+    }
 
     private static final String TAG = "GroupRepository";
     private final GroupApi groupApi;
