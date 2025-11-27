@@ -1,18 +1,28 @@
 package org.maru.muaring.data.api;
 
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.GroupCategoryResponse;
+import org.maru.muaring.data.api.dto.GroupCreateRequest;
+import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface GroupApi {
+
+    // 그룹 생성
+    @POST("/groups")
+    Call<ApiResponse<GroupCreateResponse>> createGroup(
+            @Body GroupCreateRequest request
+    );
 
     // 초대 링크 생성
     @POST("groups/{groupId}/invites")
@@ -29,5 +39,9 @@ public interface GroupApi {
             @Query("page") Integer page,
             @Query("size") Integer size
     );
+
+    // 그룹 카테고리 조회
+    @GET("/group-categories/seeds")
+    Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
 
 }
