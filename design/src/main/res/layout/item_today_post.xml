@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="16dp"
+    android:layout_marginVertical="8dp"
+    app:cardUseCompatPadding="true"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp">
+
+        <!-- 앨범 이미지 -->
+        <ImageView
+            android:id="@+id/ivAlbum"
+            android:layout_width="96dp"
+            android:layout_height="96dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- 곡 제목 -->
+        <TextView
+            android:id="@+id/tvTitle"
+            style="@style/Type.Title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            app:layout_constraintStart_toEndOf="@id/ivAlbum"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay"
+            app:layout_constraintTop_toTopOf="@id/ivAlbum"
+            android:layout_marginStart="12dp" />
+
+        <!-- 아티스트 -->
+        <TextView
+            android:id="@+id/tvArtist"
+            style="@style/Type.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/dark_gray"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintEnd_toStartOf="@id/btnPlay" />
+
+        <!-- 설명 -->
+        <TextView
+            android:id="@+id/tvDescription"
+            style="@style/Type.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="13sp"
+            android:textColor="@color/dark_gray"
+            android:maxLines="3"
+            android:ellipsize="end"
+            android:layout_marginTop="14dp"
+            app:layout_constraintStart_toStartOf="@id/tvTitle"
+            app:layout_constraintTop_toBottomOf="@id/tvArtist"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 재생 버튼 아이콘 -->
+        <ImageButton
+            android:id="@+id/btnPlay"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_play_circle"
+            app:layout_constraintTop_toTopOf="@id/tvTitle"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 우측 세로 바 아이콘 (파형) -->
+        <ImageView
+            android:id="@+id/ivWave"
+            android:layout_width="22dp"
+            android:layout_height="26dp"
+            android:src="@drawable/ic_wave"
+            app:layout_constraintTop_toBottomOf="@id/btnPlay"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="4dp" />
+
+        <!-- ========== 여기부터 하단 좋아요/댓글/공유/작성자 ========== -->
+
+        <!-- 좋아요 아이콘 + 수 -->
+        <LinearLayout
+            android:id="@+id/likeSection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="12dp"
+            app:layout_constraintStart_toStartOf="@id/ivAlbum"
+            app:layout_constraintTop_toBottomOf="@id/ivAlbum">
+
+            <ImageView
+                android:id="@+id/ivLike"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_heart_outline" />
+
+            <TextView
+                android:id="@+id/tvLikeCount"
+                style="@style/Type.Body"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <!-- 댓글 아이콘 + 수 -->
+        <LinearLayout
+            android:id="@+id/commentSection"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/likeSection"
+            app:layout_constraintTop_toTopOf="@id/likeSection">
+
+            <ImageView
+                android:id="@+id/ivComment"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_comment_outline" />
+
+            <TextView
+                android:id="@+id/tvCommentCount"
+                style="@style/Type.Body"
+                android:textSize="12sp"
+                android:layout_marginStart="4dp"
+                android:text="0" />
+
+        </LinearLayout>
+
+        <!-- 추가하기 아이콘 -->
+        <ImageView
+            android:id="@+id/btnAddMusic"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/ic_add_music"
+            android:layout_marginStart="16dp"
+            app:layout_constraintStart_toEndOf="@id/commentSection"
+            app:layout_constraintTop_toTopOf="@id/commentSection" />
+
+        <!-- 작성자 닉네임 (왼쪽) -->
+        <TextView
+            android:id="@+id/tvWriter"
+            style="@style/Type.Body"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="닉네임입니다."
+            android:textSize="12sp"
+            android:ellipsize="end"
+            android:gravity="end"
+            android:textAlignment="center"
+            android:maxLines="1"
+            android:textColor="@color/dark_gray"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/btnAddMusic"
+            app:layout_constraintEnd_toStartOf="@id/ivWriterProfile"
+            app:layout_constraintBottom_toBottomOf="@id/likeSection" />
+
+        <!-- 작성자 프로필 (오른쪽) -->
+        <ImageView
+            android:id="@+id/ivWriterProfile"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginStart="8dp"
+            android:scaleType="centerCrop"
+            android:background="@drawable/bg_circle_gray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintBottom_toBottomOf="@id/likeSection" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

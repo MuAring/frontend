@@ -15,6 +15,8 @@ import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.MyGroupListResponse;
+import org.maru.muaring.data.api.dto.MyGroupSummary;
 
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +49,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         Log.d(TAG, "초대 링크 생성 시작 - groupId: " + groupId);
 
-        groupApi.createInviteLink(groupId).enqueue(new Callback<ApiResponse<GroupInviteResponse>>() {
+        groupApi.createInviteLink(groupId).enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<ApiResponse<GroupInviteResponse>> call,
                                    Response<ApiResponse<GroupInviteResponse>> response) {
@@ -137,6 +139,34 @@ public class GroupRepositoryImpl implements GroupRepository {
     @Override
     public Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories() {
         return groupApi.getGroupCategories();
+    }
+
+    // 홈 화면용 내 그룹 조회
+    @Override
+    public LiveData<Resource<List<MyGroupSummary>>> getMyGroups() {
+        MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        groupApi.getMyGroups().enqueue(new Callback<ApiResponse<MyGroupListResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
+                                   Response<ApiResponse<MyGroupListResponse>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    List<MyGroupSummary> groups = response.body().getData().getGroups();
+                    result.setValue(Resource.success(groups));
+                } else {
+                    result.setValue(Resource.error("그룹 정보를 불러오지 못했어요.", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
+            }
+        });
+
+        return result;
     }
 
 }
