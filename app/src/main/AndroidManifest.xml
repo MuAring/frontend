@@ -22,6 +22,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity
             android:name=".LoginActivity"
             android:exported="true"
@@ -34,6 +35,10 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity"/>
+
+        <activity
+            android:name=".ProfileSetupActivity"
+            android:exported="false" />
 
         <!--카카오 로그인 콜백 처리 액티비티-->
         <activity

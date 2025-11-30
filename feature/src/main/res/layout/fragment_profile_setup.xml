@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginHorizontal="36dp"
+        android:layout_marginTop="72dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <!-- 닉네임 입력 영역 -->
+        <TextView
+            android:text="우리끼리 부를 닉네임,\n뭐로 할래요?"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="28sp"
+            android:textColor="@color/dark_green"
+            android:textStyle="bold"
+            android:lineSpacingExtra="1dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_button_slim_outline_gray"
+                android:paddingVertical="10dp"
+                android:paddingLeft="20dp"
+                android:paddingRight="12dp">
+                <EditText
+                    android:id="@+id/editNickname"
+                    android:layout_width="match_parent"
+                    android:layout_height="42dp"
+                    android:layout_weight="5"
+                    android:background="@android:color/transparent"
+                    android:hint="닉네임" />
+
+                <Button
+                    android:id="@+id/btnCheckNickname"
+                    android:layout_width="80dp"
+                    android:layout_height="32dp"
+                    android:layout_weight="1"
+                    android:layout_margin="0dp"
+                    android:padding="0dp"
+                    android:background="@drawable/bg_button_slim_outline_green"
+                    android:text="중복확인"
+                    android:textSize="12sp"
+                    android:textColor="@color/dark_gray" />
+            </LinearLayout>
+
+        <TextView
+            android:id="@+id/txtNicknameHint"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="한글, 영문 소문자, 숫자 조합 2~15자"
+            android:textSize="14sp"
+            android:textColor="@color/dark_gray"
+            android:layout_marginTop="6dp"
+            android:paddingLeft="10dp"/>
+
+        <!-- 사진 선택 영역 (중복 확인 후 보이게) -->
+        <LinearLayout
+            android:id="@+id/layoutImageSection"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="40dp"
+            android:visibility="gone">
+            <TextView
+                android:id="@+id/tvProfileImage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="28sp"
+                android:textColor="@color/dark_green"
+                android:textStyle="bold"
+                android:lineSpacingExtra="1dp"/>
+
+            <FrameLayout
+                android:id="@+id/profileImageContainer"
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="40dp">
+                <ImageView
+                    android:id="@+id/imgProfile"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/before_image_register"
+                    android:background="@drawable/circle_shape"
+                    android:clipToOutline="true" />
+
+                <ImageButton
+                    android:id="@+id/btnUploadImage"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="@drawable/photo_edit"
+                    android:layout_gravity="bottom|end"
+                    android:layout_margin="6dp"
+                    android:padding="8dp"
+                    android:contentDescription="사진 선택" />
+            </FrameLayout>
+            <Button
+                android:id="@+id/btnCompleteProfile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="프로필 완성하기"
+                android:textColor="@color/white"
+                android:layout_marginTop="40dp"
+                android:background="@drawable/bg_button_green" />
+        </LinearLayout>
+    </LinearLayout>
+</ScrollView>

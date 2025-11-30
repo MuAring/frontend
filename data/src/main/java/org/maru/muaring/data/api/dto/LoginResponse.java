@@ -6,6 +6,7 @@ public class LoginResponse {
     private String refreshToken;
     private long memberId;
     private String email;
+    private String nickname;
     private boolean hasNickname;
 
     public String getAccessToken() {
@@ -22,6 +23,10 @@ public class LoginResponse {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public boolean hasNickname() {
