@@ -76,6 +76,10 @@ public class CreateGroupActivity extends AppCompatActivity {
         layoutPrivateGroup = findViewById(R.id.layout_private_group);
         btnCreateGroup = findViewById(R.id.btn_create_group);
 
+        // 툴바 제목 설정
+        TextView toolbarTitle = findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("그룹 생성");
+
         // 초기 선택 상태 설정
         layoutPublicGroup.setSelected(true);
         layoutPrivateGroup.setSelected(false);
