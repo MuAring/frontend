@@ -9,6 +9,18 @@ android {
     defaultConfig { minSdk = 24; targetSdk = 36 }
     buildFeatures { viewBinding = true }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_21; targetCompatibility = JavaVersion.VERSION_21 }
+    android {
+
+        packagingOptions {
+            jniLibs.useLegacyPackaging = true
+        }
+
+        defaultConfig {
+            ndk {
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+            }
+        }
+    }
 }
 
 dependencies {
@@ -27,4 +39,6 @@ dependencies {
     annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
 
     implementation("com.kakao.sdk:v2-user:2.20.1")
+    implementation("com.kakao.maps.open:android:2.9.5")
 }
+

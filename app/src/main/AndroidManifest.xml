@@ -51,5 +51,9 @@
                 <data android:scheme="${kakao_scheme}" />
             </intent-filter>
         </activity>
+
+        <meta-data
+            android:name="com.kakao.vectormap.KAKAO_MAP_KEY"
+            android:value="${kakao_map_key}"/>
     </application>
 </manifest>
