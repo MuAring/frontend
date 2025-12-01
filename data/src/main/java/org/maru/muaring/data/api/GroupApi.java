@@ -6,6 +6,7 @@ import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.MyGroupListResponse;
 
 import java.util.List;
 
@@ -43,5 +44,8 @@ public interface GroupApi {
     // 그룹 카테고리 조회
     @GET("/group-categories/seeds")
     Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
+
+    @GET("/me/groups")
+    Call<ApiResponse<MyGroupListResponse>> getMyGroups();
 
 }

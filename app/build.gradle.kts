@@ -73,4 +73,8 @@ dependencies {
 
     implementation ("com.google.dagger:hilt-android:2.52")
     annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
+
+    // Glide 추가
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }
