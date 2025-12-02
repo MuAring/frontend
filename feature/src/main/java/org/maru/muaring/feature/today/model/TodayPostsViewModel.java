@@ -28,23 +28,28 @@ public class TodayPostsViewModel extends ViewModel {
         this.postRepository = postRepository;
     }
 
-    public void loadForMe() {
-        _posts.setValue(Resource.loading(null));
-        LiveData<Resource<List<MusicPostFeedResponse>>> source =
-                postRepository.getTodayPostsForMe();
-        _posts.addSource(source, res -> {
-            _posts.setValue(res);
-            _posts.removeSource(source);
-        });
-    }
-
     public void loadForGroup(Long groupId) {
         _posts.setValue(Resource.loading(null));
         LiveData<Resource<List<MusicPostFeedResponse>>> source =
                 postRepository.getTodayPostsForGroup(groupId);
         _posts.addSource(source, res -> {
             _posts.setValue(res);
-            _posts.removeSource(source);
+            if (res != null && res.status != Resource.Status.LOADING) {
+                _posts.removeSource(source);
+            }
         });
     }
+
+    public void loadForMe() {
+        _posts.setValue(Resource.loading(null));
+        LiveData<Resource<List<MusicPostFeedResponse>>> source =
+                postRepository.getTodayPostsForMe();
+        _posts.addSource(source, res -> {
+            _posts.setValue(res);
+            if (res != null && res.status != Resource.Status.LOADING) {
+                _posts.removeSource(source);
+            }
+        });
+    }
+
 }

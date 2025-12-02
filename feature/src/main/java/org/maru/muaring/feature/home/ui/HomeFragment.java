@@ -100,6 +100,12 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     }
 
     private void showTodayPostsFragment(@Nullable Long groupId) {
+        Toast.makeText(
+                getContext(),
+                "오늘의 음악을 보여 드릴게요!",
+                Toast.LENGTH_SHORT
+        ).show();
+
         TodayPostsFragment fragment = TodayPostsFragment.newInstance(groupId);
         getChildFragmentManager()
                 .beginTransaction()

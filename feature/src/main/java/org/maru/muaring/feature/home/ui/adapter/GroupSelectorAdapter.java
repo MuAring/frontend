@@ -149,7 +149,7 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
         holder.ivAvatar.setImageResource(R.drawable.ic_add);
 
         holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
-        int padding = dpToPx(holder.itemView.getContext(), 16);  // 원하는 값으로 조절
+        int padding = dpToPx(holder.itemView.getContext());  // 원하는 값으로 조절
         holder.ivAvatar.setPadding(padding, padding, padding, padding);
 
         holder.itemView.setOnClickListener(v -> {
@@ -157,8 +157,8 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
         });
     }
 
-    private int dpToPx(Context context, int dp) {
-        return Math.round(dp * context.getResources().getDisplayMetrics().density);
+    private int dpToPx(Context context) {
+        return Math.round(16 * context.getResources().getDisplayMetrics().density);
     }
 
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
