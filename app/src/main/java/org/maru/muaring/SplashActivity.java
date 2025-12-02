@@ -30,7 +30,7 @@ public class SplashActivity extends AppCompatActivity {
             String token = tokenManager.getAccessToken();
 
             if (token == null) {
-                startActivity(new Intent(this, MainActivity.class));
+                startActivity(new Intent(this, LoginActivity.class));
             } else {
                 Log.d("ACESS_TOKEN", "token 있어요 ㅜㅜ: " + token);
                 startActivity(new Intent(this, MainActivity.class));
