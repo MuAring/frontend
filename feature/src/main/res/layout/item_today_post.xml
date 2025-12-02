@@ -69,7 +69,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_play_circle"
+            android:src="@drawable/ic_music_play_circle"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent" />
 
