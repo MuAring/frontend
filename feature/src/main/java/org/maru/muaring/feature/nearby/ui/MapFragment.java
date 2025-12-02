@@ -1,6 +1,10 @@
 package org.maru.muaring.feature.nearby.ui;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +13,16 @@ import android.widget.ImageButton;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
 import com.kakao.vectormap.KakaoMap;
 import com.kakao.vectormap.KakaoMapReadyCallback;
 import com.kakao.vectormap.LatLng;
@@ -34,6 +44,9 @@ public class MapFragment extends Fragment {
     private RecyclerView rvMusic;
     private ImageButton btnShowMusic;
     private CardView musicCard;
+    private static final int LOCATION_PERMISSION_REQUEST = 1001;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
 
     @Nullable
     @Override
@@ -49,6 +62,8 @@ public class MapFragment extends Fragment {
 
         mapView = view.findViewById(R.id.map_view);
 
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
+
         btnShowMusic.setOnClickListener(v -> {
             if (musicCard.getVisibility() == View.INVISIBLE) {
                 musicCard.setVisibility(View.VISIBLE);
@@ -57,36 +72,102 @@ public class MapFragment extends Fragment {
             }
         });
 
-        mapView.start(
-                new MapLifeCycleCallback() {
-                    @Override
-                    public void onMapDestroy() {
-                        // 지도 종료 시
-                    }
+        mapView.start(new MapLifeCycleCallback() {
+            @Override
+            public void onMapDestroy() {}
 
-                    @Override
-                    public void onMapError(@Nullable Exception e) {
-                        // 인증 실패 등 에러 시
-                        if (e != null) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new KakaoMapReadyCallback() {
-                    @Override
-                    public void onMapReady(@NonNull KakaoMap map) {
-                        kakaoMap = map;
-
-                        // 서울(37.5665, 126.9780)로 중심, 줌레벨 3 설정
-                        LatLng seoul = LatLng.from(37.5665, 126.9780);
-                        CameraUpdate cameraUpdate =
-                                CameraUpdateFactory.newCenterPosition(seoul, 3);
-                        kakaoMap.moveCamera(cameraUpdate);
-                    }
-                }
-        );
+            @Override
+            public void onMapError(@Nullable Exception e) {
+                if (e != null) e.printStackTrace();
+            }
+        }, new KakaoMapReadyCallback() {
+            @Override
+            public void onMapReady(@NonNull KakaoMap map) {
+                kakaoMap = map;
+                initMap();       // ← 직접 만든 함수
+                checkPermission();
+            }
+        });
 
         return view;
+    }
+
+    private void initMap() {
+        if (kakaoMap == null) return;
+
+        LatLng seoul = LatLng.from(37.5665, 126.9780);
+        CameraUpdate cameraUpdate = CameraUpdateFactory.newCenterPosition(seoul, 3);
+        kakaoMap.moveCamera(cameraUpdate);
+    }
+
+    private void checkPermission() {
+        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            requestPermissions(
+                    new String[]{
+                            Manifest.permission.ACCESS_FINE_LOCATION,
+                            Manifest.permission.ACCESS_COARSE_LOCATION
+                    },
+                    LOCATION_PERMISSION_REQUEST
+            );
+            return;
+        }
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == LOCATION_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                startLocationUpdates();
+            }
+        }
+    }
+
+    private void startLocationUpdates() {
+
+        LocationRequest locationRequest = LocationRequest.create()
+                .setInterval(2000)
+                .setFastestInterval(1000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult result) {
+                Location location = result.getLastLocation();
+                if (location == null || kakaoMap == null) return;
+
+                LatLng current = LatLng.from(location.getLatitude(), location.getLongitude());
+
+                int zoomLevel = 15;
+
+                kakaoMap.moveCamera(
+                        CameraUpdateFactory.newCenterPosition(current, zoomLevel)
+                );
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED) {
+
+            fusedLocationClient.requestLocationUpdates(
+                    locationRequest,
+                    locationCallback,
+                    Looper.getMainLooper()
+            );
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (fusedLocationClient != null && locationCallback != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+        }
     }
 
     @Override
