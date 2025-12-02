@@ -124,6 +124,12 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
     @Override
     public void onGroupItemClicked(MyGroupSummary group) {
+        Toast.makeText(
+                getContext(),
+                "그룹 클릭: " + group.getName() + " (id=" + group.getGroupId() + ")",
+                Toast.LENGTH_SHORT
+        ).show();
+
         // 해당 그룹 기준 오늘의 음악
         showTodayPostsFragment(group.getGroupId());
     }
