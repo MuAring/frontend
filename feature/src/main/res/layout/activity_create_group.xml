@@ -30,7 +30,6 @@
                 android:text="그룹명"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
             <EditText
@@ -51,7 +50,6 @@
                 android:text="그룹 설명"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:textStyle="bold"
                 android:layout_marginBottom="8dp"/>
 
             <EditText
@@ -80,7 +78,6 @@
                 android:text="그룹 정원"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:textStyle="bold"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="8dp"/>
 
@@ -124,7 +121,6 @@
                 android:text="그룹 유형"
                 android:textSize="16sp"
                 android:textColor="#000000"
-                android:textStyle="bold"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -158,13 +154,12 @@
                         android:text="공개 그룹"
                         android:textSize="16sp"
                         android:textColor="#000000"
-                        android:textStyle="bold"
                         android:layout_marginBottom="4dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="누구나 참여하고 기입 가능"
+                        android:text="누구나 참여하고 가입 가능"
                         android:textSize="12sp"
                         android:textColor="#666666"/>
                 </LinearLayout>
@@ -194,13 +189,12 @@
                         android:text="비공개 그룹"
                         android:textSize="16sp"
                         android:textColor="#000000"
-                        android:textStyle="bold"
                         android:layout_marginBottom="4dp"/>
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="초대 링크로만 기입 가능"
+                        android:text="초대 링크로만 가입 가능"
                         android:textSize="12sp"
                         android:textColor="#666666"/>
                 </LinearLayout>
