@@ -13,6 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.flexbox.FlexWrap;
+import com.google.android.flexbox.FlexboxLayout;
+import com.google.android.flexbox.JustifyContent;
+
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.GroupCategoryResponse;
 import org.maru.muaring.data.repository.GroupRepository;
@@ -35,7 +39,7 @@ public class CategoryFragment extends Fragment {
     private static final String TAG = "CategoryFragment";
     private Set<TextView> selectedCategories = new HashSet<>();
     private final int MAX_SELECTION = 3;
-    private LinearLayout categoryContainer;
+    private FlexboxLayout categoryContainer;
 
     @Inject
     GroupRepository repository;
@@ -46,6 +50,10 @@ public class CategoryFragment extends Fragment {
         View view = inflater.inflate(R.layout.item_category_selection, container, false);
 
         categoryContainer = view.findViewById(R.id.category_container);
+
+        // FlexboxLayout 설정
+        categoryContainer.setFlexWrap(FlexWrap.WRAP);
+        categoryContainer.setJustifyContent(JustifyContent.FLEX_START);
 
         loadCategories();
 
@@ -85,37 +93,25 @@ public class CategoryFragment extends Fragment {
             return;
         }
 
-        int buttonsPerRow = 4;
-        LinearLayout currentRow = null;
-
-        for (int i = 0; i < categories.size(); i++) {
-            // 4개마다 새로운 행 생성
-            if (i % buttonsPerRow == 0) {
-                currentRow = new LinearLayout(getContext());
-                currentRow.setLayoutParams(new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.MATCH_PARENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT
-                ));
-                currentRow.setOrientation(LinearLayout.HORIZONTAL);
-                categoryContainer.addView(currentRow);
-            }
-
-            TextView button = createCategoryButton(categories.get(i));
-            currentRow.addView(button);
+        for (GroupCategoryResponse category : categories) {
+            TextView button = createCategoryButton(category);
+            categoryContainer.addView(button);
         }
     }
 
     private TextView createCategoryButton(GroupCategoryResponse category) {
         TextView button = new TextView(getContext());
 
-        // 레이아웃 파라미터 설정 (weight=1로 균등 분배)
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                0,
-                dpToPx(38),
-                1.0f
+        // FlexboxLayout용 파라미터 (WRAP_CONTENT로 변경)
+        FlexboxLayout.LayoutParams params = new FlexboxLayout.LayoutParams(
+                FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                dpToPx(38)
         );
-        params.setMargins(dpToPx(2), dpToPx(2), dpToPx(2), dpToPx(2));
+        params.setMargins(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
         button.setLayoutParams(params);
+
+        // 좌우 패딩 추가
+        button.setPadding(dpToPx(16), 0, dpToPx(16), 0);
 
         // 텍스트 설정 (displayName 사용)
         button.setText(category.getDisplayName());
@@ -151,6 +147,7 @@ public class CategoryFragment extends Fragment {
             button.setBackgroundResource(R.drawable.category_button_outline);
             button.setTextColor(Color.parseColor("#666666"));
             selectedCategories.remove(button);
+            Log.d(TAG, "카테고리 해제: " + button.getText() + ", 현재 선택된 개수: " + selectedCategories.size());
         } else {
             // 선택
             if (selectedCategories.size() < MAX_SELECTION) {
@@ -158,6 +155,7 @@ public class CategoryFragment extends Fragment {
                 button.setBackgroundResource(R.drawable.category_button_outline_selected);
                 button.setTextColor(Color.parseColor("#2E7D32"));
                 selectedCategories.add(button);
+                Log.d(TAG, "카테고리 선택: " + button.getText() + ", ID: " + button.getTag() + ", 현재 선택된 개수: " + selectedCategories.size());
             } else {
                 Toast.makeText(getContext(), "최대 3개까지만 선택할 수 있습니다.", Toast.LENGTH_SHORT).show();
             }
