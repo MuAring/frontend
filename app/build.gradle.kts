@@ -21,11 +21,15 @@ android {
         val localProperties = Properties()
         localProperties.load(FileInputStream(rootProject.file("local.properties")))
         val kakaoKey = localProperties.getProperty("KAKAO_NATIVE_APP_KEY") ?: ""
+        val kakaoMapKey = localProperties.getProperty("KAKAO_MAP_KEY") ?: ""
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"$kakaoKey\"")
         buildConfigField ("String", "SPOTIFY_REDIRECT_URI", "\"muaring://spotify-redirect\"")
+        buildConfigField("String", "KAKAO_MAP_KEY", "\"$kakaoMapKey\"")
 
         manifestPlaceholders["kakao_scheme"] =
             "kakao${localProperties.getProperty("KAKAO_NATIVE_APP_KEY")}"
+        manifestPlaceholders["kakao_map_key"] = kakaoMapKey
+
     }
 
     buildFeatures {
@@ -47,6 +51,20 @@ android {
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
     }
+
+    android {
+
+        packagingOptions {
+            jniLibs.useLegacyPackaging = true
+        }
+
+        defaultConfig {
+            ndk {
+                abiFilters += listOf("arm64-v8a", "armeabi-v7a")
+            }
+        }
+    }
+
 }
 
 dependencies {
@@ -73,6 +91,8 @@ dependencies {
 
     implementation ("com.google.dagger:hilt-android:2.52")
     annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
+
+    implementation("com.kakao.maps.open:android:2.9.5")
 
     // Glide 추가
     implementation("com.github.bumptech.glide:glide:4.16.0")
