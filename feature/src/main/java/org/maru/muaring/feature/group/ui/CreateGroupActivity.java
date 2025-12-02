@@ -52,7 +52,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     private CategoryFragment categoryFragment;
 
     // 그룹 정원 초기 세팅 수
-    private int currentCapacity = 5;
+    private int currentCapacity = 2;
     private boolean isPublicGroup = true;
 
     @Override
@@ -155,6 +155,19 @@ public class CreateGroupActivity extends AppCompatActivity {
             etGroupDescription.requestFocus();
             return;
         }
+
+        // ===== 디버깅 로그 추가 =====
+        Log.d(TAG, "categoryFragment null? " + (categoryFragment == null));
+
+        if (categoryFragment != null) {
+            Set<Long> selectedCategoryIds = categoryFragment.getSelectedCategoryIds();
+            Log.d(TAG, "selectedCategoryIds size: " + selectedCategoryIds.size());
+            Log.d(TAG, "selectedCategoryIds: " + selectedCategoryIds);
+
+            Set<String> selectedNames = categoryFragment.getSelectedCategoryNames();
+            Log.d(TAG, "selectedCategoryNames: " + selectedNames);
+        }
+        // ===========================
 
         // 선택된 카테고리 가져오기
         Set<Long> selectedCategoryIds = categoryFragment.getSelectedCategoryIds();
