@@ -1,1 +1,10 @@
-<manifest package="org.maru.muaring.feature" />
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="org.maru.muaring.feature">
+
+    <application>
+        <activity
+            android:name="org.maru.muaring.feature.group.ui.CreateGroupActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>

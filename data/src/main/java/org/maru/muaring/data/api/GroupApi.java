@@ -42,7 +42,7 @@ public interface GroupApi {
     );
 
     // 그룹 카테고리 조회
-    @GET("/group-categories/seeds")
+    @GET("/group-categories")
     Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
 
     @GET("/me/groups")

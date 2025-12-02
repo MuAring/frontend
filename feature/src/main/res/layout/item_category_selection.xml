@@ -14,11 +14,10 @@
         android:layout_marginBottom="5dp"/>
 
     <!-- 동적으로 생성된 버튼들이 들어갈 컨테이너 -->
-    <LinearLayout
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/category_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:layout_height="wrap_content"/>
 
     <TextView
         android:layout_width="wrap_content"

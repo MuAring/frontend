@@ -1,5 +1,6 @@
 package org.maru.muaring.feature.home.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.group.ui.CreateGroupActivity;
 import org.maru.muaring.feature.home.ui.adapter.GroupSelectorAdapter;
 import org.maru.muaring.feature.today.ui.TodayPostsFragment;
 
@@ -131,5 +133,7 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     @Override
     public void onAddGroupClicked() {
         // TODO: 그룹 생성 화면으로 이동
+        Intent intent = new Intent(requireContext(), CreateGroupActivity.class);
+        startActivity(intent);
     }
 }
