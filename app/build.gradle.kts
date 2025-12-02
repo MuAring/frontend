@@ -93,4 +93,8 @@ dependencies {
     annotationProcessor ("com.google.dagger:hilt-compiler:2.52")
 
     implementation("com.kakao.maps.open:android:2.9.5")
+
+    // Glide 추가
+    implementation("com.github.bumptech.glide:glide:4.16.0")
+    annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")
 }

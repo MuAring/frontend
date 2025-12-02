@@ -12,31 +12,9 @@
         android:orientation="vertical">
 
         <!-- 상단 툴바 -->
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:background="#FFFFFF"
-            android:elevation="2dp">
-
-            <ImageButton
-                android:id="@+id/btn_back"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_centerVertical="true"
-                android:layout_marginStart="4dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/ic_back"
-                android:contentDescription="뒤로가기"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:text="그룹 생성"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
+        <include
+            android:id="@+id/toolbar"
+            layout="@layout/toolbar_common"/>
 
         <!-- 메인 컨텐츠 -->
         <LinearLayout
@@ -89,10 +67,11 @@
                 android:inputType="textMultiLine"
                 android:layout_marginBottom="24dp"/>
 
-            <!-- 카테고리 섹션 (include로 삽입) -->
-            <include
+            <!-- 카테고리 섹션 -->
+            <FrameLayout
                 android:id="@+id/category_section"
-                layout="@layout/item_category_selection"/>
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
             <!-- 그룹 정원 -->
             <TextView
@@ -124,7 +103,7 @@
                     android:id="@+id/tv_group_capacity"
                     android:layout_width="40dp"
                     android:layout_height="36dp"
-                    android:text="10"
+                    android:text="2"
                     android:textSize="18sp"
                     android:textColor="#000000"
                     android:gravity="center"/>

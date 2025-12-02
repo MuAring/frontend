@@ -5,6 +5,7 @@ import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.ImageApi;
 import org.maru.muaring.data.api.MemberApi;
+import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
@@ -13,6 +14,8 @@ import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.ImageRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
+import org.maru.muaring.data.repository.PostRepository;
+import org.maru.muaring.data.repository.PostRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -93,4 +96,17 @@ public class NetworkModule {
     public MemberRepository provideMemberRepository(MemberApi api) {
         return new MemberRepositoryImpl(api);
     }
+
+    @Provides
+    @Singleton
+    public PostApi providePostApi(Retrofit retrofit) {
+        return retrofit.create(PostApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public PostRepository providePostRepository(PostApi api) {
+        return new PostRepositoryImpl(api);
+    }
+
 }

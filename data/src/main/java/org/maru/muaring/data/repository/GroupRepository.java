@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.MyGroupSummary;
 
 import java.util.List;
 
@@ -27,6 +28,9 @@ public interface GroupRepository {
             int size,
             SearchGroupsCallback callback
     );
+
+    // 홈 화면용 내 그룹 조회
+    LiveData<Resource<List<MyGroupSummary>>> getMyGroups();
 
     interface SearchGroupsCallback {
         void onSuccess(List<GroupSummary> groups);
