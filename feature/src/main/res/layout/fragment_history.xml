@@ -76,8 +76,9 @@
         android:id="@+id/recycler_history"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="16dp"
-        android:paddingTop="8dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingHorizontal="8dp"
         android:nestedScrollingEnabled="false" />
 
     <!-- 캘린더 모드 (다른 사람이 구현할 틀) -->

@@ -4,48 +4,56 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingHorizontal="16dp"
-    android:paddingVertical="8dp">
+    android:paddingVertical="0dp">
 
-    <!-- 왼쪽 타임라인 영역 -->
-    <FrameLayout
+    <!-- 왼쪽 타임라인 영역 (카드 높이만큼 꽉 차게) -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/layout_timeline"
         android:layout_width="40dp"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toTopOf="@id/card_music"
+        app:layout_constraintBottom_toBottomOf="@id/card_music"
         app:layout_constraintStart_toStartOf="parent">
 
-        <!-- 위쪽 라인 (항상 없어야 되므로 기본 GONE) -->
-<!--        <View-->
-<!--            android:id="@+id/view_line_top"-->
-<!--            android:layout_width="2dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_gravity="center_horizontal|top"-->
-<!--            android:background="@color/muaring_primary"-->
-<!--            android:visibility="gone"/>-->
+        <!-- 위쪽 라인 -->
+        <View
+            android:id="@+id/view_line_top"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="@color/muaring_primary"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/text_badge_day"
+            app:layout_constraintStart_toStartOf="@id/text_badge_day"
+            app:layout_constraintEnd_toEndOf="@id/text_badge_day" />
 
-        <!-- 아래쪽 라인 (다음 아이템이 있을 때만 보임) -->
-<!--        <View-->
-<!--            android:id="@+id/view_line_bottom"-->
-<!--            android:layout_width="2dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_gravity="center_horizontal|bottom"-->
-<!--            android:background="@color/muaring_primary"-->
-<!--            android:visibility="gone"/>-->
-
-        <!-- 동그란 배지 -->
+        <!-- 날짜 배지 -->
         <TextView
             android:id="@+id/text_badge_day"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_gravity="center"
             android:background="@drawable/bg_history_badge"
             android:gravity="center"
             android:text="2"
             android:textColor="@android:color/white"
             android:textSize="18sp"
-            android:textStyle="bold" />
-    </FrameLayout>
+            android:textStyle="bold"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- 아래쪽 라인 -->
+        <View
+            android:id="@+id/view_line_bottom"
+            android:layout_width="2dp"
+            android:layout_height="0dp"
+            android:background="@color/muaring_primary"
+            app:layout_constraintTop_toBottomOf="@id/text_badge_day"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="@id/text_badge_day"
+            app:layout_constraintEnd_toEndOf="@id/text_badge_day" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- 오른쪽 음악 카드 -->
     <androidx.cardview.widget.CardView

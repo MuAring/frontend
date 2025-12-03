@@ -10,7 +10,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="30dp"
         android:orientation="vertical">
 
         <include
@@ -29,7 +29,8 @@
             android:background="@drawable/profile_circle_mask"
             android:clipToOutline="true" />
 
-        <!-- 닉네임 -->
+
+        <!-- ================= 그룹명 ================= -->
         <TextView
             android:id="@+id/text_profile_name"
             style="@style/Type.Title"
@@ -37,30 +38,43 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:layout_gravity="center_horizontal"
-            android:text="뮤어링" />
+            android:textSize="24sp"
+            android:text="그룹명"/>
 
-        <!-- 프로필 버튼들 -->
-        <LinearLayout
-            android:layout_width="wrap_content"
+
+        <!-- ================= 카테고리 칩 컨테이너 ================= -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="8dp">
+            android:overScrollMode="never"
+            android:scrollbars="none"
+            android:layout_marginTop="14dp"
+            android:fillViewport="true">
 
-            <Button
-                android:id="@+id/btn_edit_profile"
+            <LinearLayout
+                android:id="@+id/layout_category_container"
                 android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:layout_marginEnd="8dp"
-                android:text="프로필 편집" />
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp" />
+        </HorizontalScrollView>
 
-            <Button
-                android:id="@+id/btn_alarm"
-                android:layout_width="wrap_content"
-                android:layout_height="36dp"
-                android:text="알림 설정" />
-        </LinearLayout>
+
+        <!-- ================= 소개글 박스 ================= -->
+        <TextView
+            android:id="@+id/text_group_description"
+            style="@style/Type.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginEnd="24dp"
+            android:padding="16dp"
+            android:background="@drawable/bg_group_description"
+            android:text="그룹 소개글이 들어가는 섹션입니다.\n글의 길이에 맞춰 박스 길이가 변합니다." />
+
 
         <!-- 숫자 통계 -->
         <LinearLayout
@@ -81,13 +95,37 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/text_stat_shared"
+                    android:id="@+id/text_stat_group_level"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     style="@style/Type.Title"
                     android:text="142"
-                    android:textSize="20sp"/>
+                    android:textSize="24sp"/>
+
+                <TextView
+                    style="@style/Type.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="그룹 레벨" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_stat_shared_music"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Type.Title"
+                    android:gravity="center"
+                    android:text="8"
+                    android:textSize="24sp" />
 
                 <TextView
                     style="@style/Type.Body"
@@ -105,20 +143,20 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/text_stat_follower"
+                    android:id="@+id/text_stat_archive"
+                    style="@style/Type.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Type.Title"
                     android:gravity="center"
                     android:text="8"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     style="@style/Type.Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="팔로워" />
+                    android:text="보관함" />
             </LinearLayout>
 
             <LinearLayout
@@ -129,44 +167,20 @@
                 android:orientation="vertical">
 
                 <TextView
-                    android:id="@+id/text_stat_following"
-                    style="@style/Type.Title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="8"
-                    android:textSize="20sp" />
-
-                <TextView
-                    style="@style/Type.Body"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:text="팔로잉" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/text_stat_group"
+                    android:id="@+id/text_stat_member_count"
                     style="@style/Type.Title"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="2"
-                    android:textSize="20sp" />
+                    android:textSize="24sp" />
 
                 <TextView
                     style="@style/Type.Body"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="가입한 그룹" />
+                    android:text="멤버" />
             </LinearLayout>
         </LinearLayout>
 
