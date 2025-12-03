@@ -78,31 +78,12 @@
                 android:textStyle="bold"
                 android:lineSpacingExtra="1dp"/>
 
-            <FrameLayout
-                android:id="@+id/profileImageContainer"
-                android:layout_width="160dp"
-                android:layout_height="160dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="40dp">
-                <ImageView
-                    android:id="@+id/imgProfile"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/before_image_register"
-                    android:background="@drawable/circle_shape"
-                    android:clipToOutline="true" />
+            <org.maru.muaring.core.ui.ImagePickerView
+                android:id="@+id/imagePicker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                />
 
-                <ImageButton
-                    android:id="@+id/btnUploadImage"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:background="@drawable/photo_edit"
-                    android:layout_gravity="bottom|end"
-                    android:layout_margin="6dp"
-                    android:padding="8dp"
-                    android:contentDescription="사진 선택" />
-            </FrameLayout>
             <Button
                 android:id="@+id/btnCompleteProfile"
                 android:layout_width="match_parent"

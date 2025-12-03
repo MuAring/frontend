@@ -1,4 +1,4 @@
-package org.maru.muaring.feature.member.ui;
+package org.maru.muaring.data.helper;
 
 public abstract class ProfileSetupState {
     public static class Idle extends ProfileSetupState {}
