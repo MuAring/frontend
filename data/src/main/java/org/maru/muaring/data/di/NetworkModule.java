@@ -4,6 +4,7 @@ import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.ImageApi;
+import org.maru.muaring.data.api.LocationApi;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.repository.AuthRepository;
@@ -12,6 +13,8 @@ import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.GroupRepositoryImpl;
 import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.ImageRepositoryImpl;
+import org.maru.muaring.data.repository.LocationRepository;
+import org.maru.muaring.data.repository.LocationRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
@@ -109,4 +112,15 @@ public class NetworkModule {
         return new PostRepositoryImpl(api);
     }
 
+    @Provides
+    @Singleton
+    public LocationApi provideLocationApi(Retrofit retrofit) {
+        return retrofit.create(LocationApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public LocationRepository provideLocationRepository(LocationApi api) {
+        return new LocationRepositoryImpl(api);
+    }
 }
