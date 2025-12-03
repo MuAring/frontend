@@ -3,6 +3,7 @@ package org.maru.muaring.data.di;
 import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.GroupApi;
+import org.maru.muaring.data.api.HistoryApi;
 import org.maru.muaring.data.api.ImageApi;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.PostApi;
@@ -10,6 +11,8 @@ import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.GroupRepositoryImpl;
+import org.maru.muaring.data.repository.HistoryRepository;
+import org.maru.muaring.data.repository.HistoryRepositoryImpl;
 import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.ImageRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
@@ -107,6 +110,18 @@ public class NetworkModule {
     @Singleton
     public PostRepository providePostRepository(PostApi api) {
         return new PostRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public HistoryApi provideHistoryApi(Retrofit retrofit) {
+        return retrofit.create(HistoryApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public HistoryRepository provideHistoryRepository(HistoryApi api) {
+        return new HistoryRepositoryImpl(api);
     }
 
 }

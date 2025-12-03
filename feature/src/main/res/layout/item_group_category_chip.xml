@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/category_chip"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="카테고리"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:textSize="15sp"
+    android:textColor="@color/green"
+    android:background="@drawable/bg_category_chip"/>

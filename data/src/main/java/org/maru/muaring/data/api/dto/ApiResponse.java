@@ -11,4 +11,12 @@ public class ApiResponse<T> {
     public boolean isSuccess() {
         return code >= 200 && code < 300;
     }
+
+    // 로그용
+    public int getCode() {
+        return code;
+    }
+    public String getMessage() {
+        return message;
+    }
 }
