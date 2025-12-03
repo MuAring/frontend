@@ -17,7 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
-import org.maru.muaring.core.util.Resource;
+
 import org.maru.muaring.feature.R;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -34,6 +34,10 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
 
     private GroupProfileViewModel viewModel;
     private Long groupId;
+
+    // 업로드된 이미지 저장
+    private boolean hasUploadedImage = false;
+    private Bitmap uploadedBitmap = null;
 
     private ActivityResultLauncher<Intent> imagePickerLauncher;
 
@@ -97,8 +101,10 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
                     break;
 
                 case SUCCESS:
+                    // 업로드 성공 시 플래그 설정
+                    hasUploadedImage = true;
                     Toast.makeText(this, resource.data, Toast.LENGTH_SHORT).show();
-                    finishSetup();
+                    goToCompleteScreen();
                     break;
 
                 case ERROR:
@@ -119,6 +125,9 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
             // 이미지를 byte array로 변환
             InputStream inputStream = getContentResolver().openInputStream(imageUri);
             Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+
+            // Bitmap 저장 (완료 화면에서 표시용)
+            uploadedBitmap = bitmap;
 
             // 이미지 압축
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -143,12 +152,20 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
         }
     }
 
+
     private void skipProfileSetup() {
-        finishSetup();
+        goToCompleteScreen();
     }
 
-    private void finishSetup() {
-        // TODO: 다음 화면으로 이동 또는 그룹 상세 화면으로 이동
+    // 완료 화면으로 이동 (이미지 정보 전달)
+    private void goToCompleteScreen() {
+        Intent intent = GroupInviteActivity.newIntent(
+                this,
+                groupId,
+                hasUploadedImage,
+                uploadedBitmap
+        );
+        startActivity(intent);
         finish();
     }
 }

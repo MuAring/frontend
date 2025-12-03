@@ -13,6 +13,10 @@
         <activity
             android:name="org.maru.muaring.feature.group.ui.GroupProfileSetupActivity"
             android:exported="false" />
+
+        <activity
+            android:name="org.maru.muaring.feature.group.ui.GroupInviteActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

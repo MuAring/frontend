@@ -6,18 +6,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
-import org.maru.muaring.core.util.Resource;
+
 import org.maru.muaring.feature.R;
 
 @AndroidEntryPoint
-public class GroupCreationCompleteActivity extends AppCompatActivity {
+public class GroupInviteActivity extends AppCompatActivity {
 
     private static final String TAG = "GroupComplete";
     private static final String EXTRA_GROUP_ID = "group_id";
@@ -33,7 +32,7 @@ public class GroupCreationCompleteActivity extends AppCompatActivity {
     private Long groupId;
 
     public static Intent newIntent(Context context, Long groupId, boolean hasProfileImage, Bitmap profileBitmap) {
-        Intent intent = new Intent(context, GroupCreationCompleteActivity.class);
+        Intent intent = new Intent(context, GroupInviteActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         intent.putExtra(EXTRA_HAS_PROFILE_IMAGE, hasProfileImage);
         if (profileBitmap != null) {
@@ -45,7 +44,7 @@ public class GroupCreationCompleteActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_group_creation_complete);
+        setContentView(R.layout.activity_group_invite);
 
         groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, -1L);
         boolean hasProfileImage = getIntent().getBooleanExtra(EXTRA_HAS_PROFILE_IMAGE, false);
