@@ -24,4 +24,21 @@
         android:textColor="#000000"
         android:textSize="18sp"
         android:textStyle="bold" />
+
+    <!-- 오른쪽 액션 버튼 -->
+    <!-- 원하는 아이콘으로 교체 가능,
+    기본은 invisible으로 설정하되 필요할 때 visiable java에서 변경하세용 -->
+    <ImageButton
+        android:id="@+id/toolbar_action"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="4dp"
+        android:visibility="invisible"
+        android:scaleType="centerCrop"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_option"
+    android:contentDescription="액션 버튼" />
+
 </RelativeLayout>

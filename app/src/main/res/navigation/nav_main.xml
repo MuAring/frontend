@@ -16,9 +16,13 @@
         android:id="@+id/archiveFragment"
         android:name="org.maru.muaring.feature.archive.ui.ArchiveFragment" />
 
+<!--    <fragment-->
+<!--        android:id="@+id/profileFragment"-->
+<!--        android:name="org.maru.muaring.feature.profile.ui.ProfileFragment" />-->
+
     <fragment
         android:id="@+id/profileFragment"
-        android:name="org.maru.muaring.feature.profile.ui.ProfileFragment" />
+        android:name="org.maru.muaring.feature.group.ui.profile.GroupProfileFragment" />
 
     <!-- 가운데 업로드 FAB 목적지 -->
     <fragment

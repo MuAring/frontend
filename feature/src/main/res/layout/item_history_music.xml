@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="8dp">
+
+    <!-- 왼쪽 타임라인 영역 -->
+    <FrameLayout
+        android:id="@+id/layout_timeline"
+        android:layout_width="40dp"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- 위쪽 라인 (항상 없어야 되므로 기본 GONE) -->
+<!--        <View-->
+<!--            android:id="@+id/view_line_top"-->
+<!--            android:layout_width="2dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_gravity="center_horizontal|top"-->
+<!--            android:background="@color/muaring_primary"-->
+<!--            android:visibility="gone"/>-->
+
+        <!-- 아래쪽 라인 (다음 아이템이 있을 때만 보임) -->
+<!--        <View-->
+<!--            android:id="@+id/view_line_bottom"-->
+<!--            android:layout_width="2dp"-->
+<!--            android:layout_height="0dp"-->
+<!--            android:layout_gravity="center_horizontal|bottom"-->
+<!--            android:background="@color/muaring_primary"-->
+<!--            android:visibility="gone"/>-->
+
+        <!-- 동그란 배지 -->
+        <TextView
+            android:id="@+id/text_badge_day"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:background="@drawable/bg_history_badge"
+            android:gravity="center"
+            android:text="2"
+            android:textColor="@android:color/white"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </FrameLayout>
+
+    <!-- 오른쪽 음악 카드 -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/card_music"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        app:cardCornerRadius="16dp"
+        app:cardUseCompatPadding="true"
+        app:cardElevation="2dp"
+        app:layout_constraintStart_toEndOf="@id/layout_timeline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="8dp">
+
+            <ImageView
+                android:id="@+id/image_album"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginStart="14dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_launcher_background" />
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_title"
+                    style="@style/Type.semibold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="영원은 그렇듯"
+                    android:textSize="18sp" />
+
+                <TextView
+                    android:id="@+id/text_artist"
+                    style="@style/Type.medium"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="리도어 (Redoor)"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
