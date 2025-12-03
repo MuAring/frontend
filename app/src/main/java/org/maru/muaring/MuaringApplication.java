@@ -2,6 +2,7 @@ package org.maru.muaring;
 
 import android.app.Application;
 import com.kakao.sdk.common.KakaoSdk;
+import com.kakao.vectormap.KakaoMapSdk;
 import dagger.hilt.android.HiltAndroidApp;
 
 
@@ -15,5 +16,7 @@ public class MuaringApplication extends Application {
 
         // kakaoSDK를 사용하기 위한 초기화
         KakaoSdk.init(this, BuildConfig.KAKAO_NATIVE_APP_KEY);
+
+        KakaoMapSdk.init(this, BuildConfig.KAKAO_MAP_KEY);
     }
 }

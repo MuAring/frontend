@@ -9,6 +9,8 @@ pluginManagement {
             url = uri("https://devrepo.kakao.com/nexus/content/groups/public/")
             content {
                 includeGroup("com.kakao.sdk")
+                includeGroup("com.kakao.maps.open")
+
             }
         }
     }
@@ -25,6 +27,7 @@ dependencyResolutionManagement {
             url = uri("https://devrepo.kakao.com/nexus/content/groups/public/")
             content {
                 includeGroup("com.kakao.sdk")
+                includeGroup("com.kakao.maps.open")
             }
         }
     }

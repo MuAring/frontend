@@ -108,7 +108,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                                         LinearLayout.LayoutParams.WRAP_CONTENT,
                                         LinearLayout.LayoutParams.WRAP_CONTENT
                                 );
-                        params.setMarginEnd(8);
+                        params.setMarginEnd(5);
                         chip.setLayoutParams(params);
 
                         tagContainer.addView(chip);

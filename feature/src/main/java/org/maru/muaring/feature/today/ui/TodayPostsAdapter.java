@@ -37,7 +37,10 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
 
     public void submitList(List<MusicPostFeedResponse> newItems) {
         items.clear();
-        if (newItems != null) items.addAll(newItems);
+        if (newItems != null) {
+            items.addAll(newItems);
+        }
+        android.util.Log.d("TodayAdapter", "submitList size=" + items.size());
         notifyDataSetChanged();
     }
 
@@ -45,7 +48,7 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
     @Override
     public PostViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(org.maru.muaring.design.R.layout.item_today_post, parent, false);
+                .inflate(R.layout.item_today_post, parent, false);
         return new PostViewHolder(view);
     }
 
@@ -74,22 +77,20 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
         public PostViewHolder(@NonNull View itemView) {
             super(itemView);
 
-            ivAlbum = itemView.findViewById(org.maru.muaring.design.R.id.ivAlbum);
-            tvTitle = itemView.findViewById(org.maru.muaring.design.R.id.tvTitle);
-            tvArtist = itemView.findViewById(org.maru.muaring.design.R.id.tvArtist);
-            tvDescription = itemView.findViewById(org.maru.muaring.design.R.id.tvDescription);
+            ivAlbum = itemView.findViewById(R.id.ivAlbum);
+            tvTitle = itemView.findViewById(R.id.tvTitle);
+            tvArtist = itemView.findViewById(R.id.tvArtist);
+            tvDescription = itemView.findViewById(R.id.tvDescription);
+            btnPlay = itemView.findViewById(R.id.btnPlay);
+            ivWave = itemView.findViewById(R.id.ivWave);
+            ivLike = itemView.findViewById(R.id.ivLike);
+            ivComment = itemView.findViewById(R.id.ivComment);
+            ivAddMusic = itemView.findViewById(R.id.btnAddMusic);
+            ivWriterProfile = itemView.findViewById(R.id.ivWriterProfile);
+            tvLikeCount = itemView.findViewById(R.id.tvLikeCount);
+            tvCommentCount = itemView.findViewById(R.id.tvCommentCount);
+            tvWriter = itemView.findViewById(R.id.tvWriter);
 
-            btnPlay = itemView.findViewById(org.maru.muaring.design.R.id.btnPlay);
-            ivWave = itemView.findViewById(org.maru.muaring.design.R.id.ivWave);
-
-            ivLike = itemView.findViewById(org.maru.muaring.design.R.id.ivLike);
-            ivComment = itemView.findViewById(org.maru.muaring.design.R.id.ivComment);
-            ivAddMusic = itemView.findViewById(org.maru.muaring.design.R.id.btnAddMusic);
-            ivWriterProfile = itemView.findViewById(org.maru.muaring.design.R.id.ivWriterProfile);
-
-            tvLikeCount = itemView.findViewById(org.maru.muaring.design.R.id.tvLikeCount);
-            tvCommentCount = itemView.findViewById(org.maru.muaring.design.R.id.tvCommentCount);
-            tvWriter = itemView.findViewById(org.maru.muaring.design.R.id.tvWriter);
         }
 
         void bind(MusicPostFeedResponse post) {
