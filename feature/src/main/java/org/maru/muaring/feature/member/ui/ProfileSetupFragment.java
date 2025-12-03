@@ -21,6 +21,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import org.maru.muaring.core.ui.ImagePickerView;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.common.navigation.CommonNavigator;
 import dagger.hilt.android.AndroidEntryPoint;
@@ -34,8 +35,7 @@ public class ProfileSetupFragment extends Fragment {
 
     private LinearLayout imageSection;
     private TextView tvProfileImage;
-    private ImageView imgProfile;
-    private ImageButton btnUploadImage;
+    private ImagePickerView imagePickerView;
     private Uri selectedImageUri;
     private Button btnCompleteProfile;
 
@@ -57,15 +57,14 @@ public class ProfileSetupFragment extends Fragment {
         txtNicknameHint = view.findViewById(R.id.txtNicknameHint);
         imageSection = view.findViewById(R.id.layoutImageSection);
         tvProfileImage = view.findViewById(R.id.tvProfileImage);
-        imgProfile = view.findViewById(R.id.imgProfile);
-        btnUploadImage = view.findViewById(R.id.btnUploadImage);
+        imagePickerView = view.findViewById(R.id.imagePicker);
         btnCompleteProfile = view.findViewById(R.id.btnCompleteProfile);
 
         btnCheckNickname.setOnClickListener(v ->
                 viewModel.checkNickname(editNickname.getText().toString())
         );
 
-        imgProfile.setOnClickListener(v -> openGallery());
+        imagePickerView.setOnClickListener(v -> openGallery());
 
         btnCompleteProfile.setOnClickListener(v -> {
             viewModel.createProfile(editNickname.getText().toString());
@@ -101,8 +100,8 @@ public class ProfileSetupFragment extends Fragment {
             }
             else if (state instanceof ProfileSetupState.ImageUploaded uploaded) {
                 // ui에 선택한 프로필 사진 보이게
-                imgProfile.setImageURI(selectedImageUri);
-                btnUploadImage.setBackgroundResource(R.drawable.photo_uploaded);
+                imagePickerView.setImage(selectedImageUri);
+                imagePickerView.getUploadButton().setBackgroundResource(R.drawable.photo_uploaded);
 
                 viewModel.setUploadedImageInfo(uploaded.s3Key, uploaded.fileName, uploaded.fileType, uploaded.fileSize);
             }
