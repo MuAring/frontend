@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="16dp"
-    android:layout_marginVertical="8dp"
+    android:layout_marginVertical="4dp"
     app:cardUseCompatPadding="true"
     app:cardCornerRadius="12dp"
     app:cardElevation="2dp">
@@ -12,13 +12,13 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="12dp">
+        android:padding="15dp">
 
         <!-- 앨범 이미지 -->
         <ImageView
             android:id="@+id/ivAlbum"
-            android:layout_width="96dp"
-            android:layout_height="96dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
             android:scaleType="centerCrop"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -31,10 +31,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:layout_marginStart="12dp"
             app:layout_constraintStart_toEndOf="@id/ivAlbum"
             app:layout_constraintEnd_toStartOf="@id/btnPlay"
-            app:layout_constraintTop_toTopOf="@id/ivAlbum"
-            android:layout_marginStart="12dp" />
+            app:layout_constraintTop_toTopOf="@id/ivAlbum" />
 
         <!-- 아티스트 -->
         <TextView
@@ -66,18 +66,19 @@
         <!-- 재생 버튼 아이콘 -->
         <ImageButton
             android:id="@+id/btnPlay"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@android:color/transparent"
-            android:src="@drawable/ic_play_circle"
+            android:src="@drawable/ic_music_play_circle"
+            android:scaleType="centerCrop"
             app:layout_constraintTop_toTopOf="@id/tvTitle"
             app:layout_constraintEnd_toEndOf="parent" />
 
         <!-- 우측 세로 바 아이콘 (파형) -->
         <ImageView
             android:id="@+id/ivWave"
-            android:layout_width="22dp"
-            android:layout_height="26dp"
+            android:layout_width="30dp"
+            android:layout_height="34dp"
             android:src="@drawable/ic_wave"
             app:layout_constraintTop_toBottomOf="@id/btnPlay"
             app:layout_constraintEnd_toEndOf="parent"
@@ -104,6 +105,8 @@
 
             <TextView
                 android:id="@+id/tvLikeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 style="@style/Type.Body"
                 android:textSize="12sp"
                 android:layout_marginStart="4dp"
@@ -118,7 +121,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             app:layout_constraintStart_toEndOf="@id/likeSection"
             app:layout_constraintTop_toTopOf="@id/likeSection">
 
@@ -130,6 +133,8 @@
 
             <TextView
                 android:id="@+id/tvCommentCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 style="@style/Type.Body"
                 android:textSize="12sp"
                 android:layout_marginStart="4dp"
@@ -143,33 +148,31 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_add_music"
-            android:layout_marginStart="16dp"
+            android:layout_marginStart="24dp"
             app:layout_constraintStart_toEndOf="@id/commentSection"
             app:layout_constraintTop_toTopOf="@id/commentSection" />
 
-        <!-- 작성자 닉네임 (왼쪽) -->
+        <!-- 작성자 닉네임 (프로필 바로 왼쪽에 붙게) -->
         <TextView
             android:id="@+id/tvWriter"
             style="@style/Type.Body"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="닉네임입니다."
             android:textSize="12sp"
             android:ellipsize="end"
-            android:gravity="end"
-            android:textAlignment="center"
             android:maxLines="1"
             android:textColor="@color/dark_gray"
-            android:layout_marginStart="12dp"
-            app:layout_constraintStart_toEndOf="@id/btnAddMusic"
+            android:layout_marginEnd="4dp"
             app:layout_constraintEnd_toStartOf="@id/ivWriterProfile"
-            app:layout_constraintBottom_toBottomOf="@id/likeSection" />
+            app:layout_constraintTop_toTopOf="@id/ivWriterProfile"
+            app:layout_constraintBottom_toBottomOf="@id/ivWriterProfile" />
 
         <!-- 작성자 프로필 (오른쪽) -->
         <ImageView
             android:id="@+id/ivWriterProfile"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_marginStart="8dp"
             android:scaleType="centerCrop"
             android:background="@drawable/bg_circle_gray"

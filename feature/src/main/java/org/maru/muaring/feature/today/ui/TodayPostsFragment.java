@@ -1,6 +1,7 @@
 package org.maru.muaring.feature.today.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,6 +52,8 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Log.d("TodayFragment", "onViewCreated called!");
+
         if (getArguments() != null && getArguments().containsKey(ARG_GROUP_ID)) {
             groupId = getArguments().getLong(ARG_GROUP_ID);
         } else {
@@ -67,21 +70,30 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
         viewModel.posts.observe(getViewLifecycleOwner(), resource -> {
             if (resource == null) return;
 
-            switch (resource.status) {
+            android.util.Log.d("TodayFragment", "observe posts, status=" + resource.status);
 
+            switch (resource.status) {
                 case SUCCESS:
+                    if (resource.data != null) {
+                        android.util.Log.d("TodayFragment",
+                                "SUCCESS: list size = " + resource.data.size());
+                    } else {
+                        android.util.Log.d("TodayFragment", "SUCCESS: data is null");
+                    }
                     adapter.submitList(resource.data);
                     break;
 
                 case ERROR:
+                    android.util.Log.e("TodayFragment", "ERROR: " + resource.message);
                     Toast.makeText(getContext(), resource.message, Toast.LENGTH_SHORT).show();
                     break;
 
                 case LOADING:
-                    // TODO: 로딩 UI 넣고 싶으면 여기
+                    android.util.Log.d("TodayFragment", "LOADING...");
                     break;
             }
         });
+
 
         if (groupId == null) {
             viewModel.loadForMe();

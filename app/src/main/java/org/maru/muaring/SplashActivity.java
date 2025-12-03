@@ -20,8 +20,8 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        String keyHash = Utility.INSTANCE.getKeyHash(this);
-        Log.d("KAKAO_KEY_HASH", "keyHash = " + keyHash);
+//        String keyHash = Utility.INSTANCE.getKeyHash(this);
+//        Log.d("KAKAO_KEY_HASH", "keyHash = " + keyHash);
 
         // 앱 시작 시 토큰 삭제 후 시작 (임시)
         TokenManager.clear(this);

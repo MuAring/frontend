@@ -5,6 +5,7 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,12 +32,20 @@ import com.kakao.vectormap.MapView;
 import com.kakao.vectormap.camera.CameraUpdate;
 import com.kakao.vectormap.camera.CameraUpdateFactory;
 
+import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.data.api.dto.LocationRequestDTO;
+import org.maru.muaring.data.repository.LocationRepository;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.nearby.ui.model.Music;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MapFragment extends Fragment {
 
     private MapView mapView;
@@ -47,6 +56,10 @@ public class MapFragment extends Fragment {
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
+    private Location lastSentLocation = null;
+    private static final float MIN_DISTANCE = 20f;
+    @Inject
+    LocationRepository locationRepository;
 
     @Nullable
     @Override
@@ -84,7 +97,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(@NonNull KakaoMap map) {
                 kakaoMap = map;
-                initMap();       // ← 직접 만든 함수
+                initMap();
                 checkPermission();
             }
         });
@@ -140,13 +153,27 @@ public class MapFragment extends Fragment {
                 Location location = result.getLastLocation();
                 if (location == null || kakaoMap == null) return;
 
-                LatLng current = LatLng.from(location.getLatitude(), location.getLongitude());
+                double lat = location.getLatitude();
+                double lng = location.getLongitude();
 
-                int zoomLevel = 15;
+                LatLng current = LatLng.from(lat, lng);
+                kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 15));
 
-                kakaoMap.moveCamera(
-                        CameraUpdateFactory.newCenterPosition(current, zoomLevel)
-                );
+                if (lastSentLocation == null) {
+                    lastSentLocation = location;
+                    sendLocation(lat, lng);
+                    return;
+                }
+
+                float distance = location.distanceTo(lastSentLocation);
+
+                if (distance >= MIN_DISTANCE) {
+                    lastSentLocation = location;
+                    sendLocation(lat, lng);
+                    Log.d("LOCATION", "20m 이상 이동: 서버 전송됨 (" + distance + "m)");
+                } else {
+                    Log.d("LOCATION", "20m 미만 이동: 전송 안함 (" + distance + "m)");
+                }
             }
         };
 
@@ -168,6 +195,22 @@ public class MapFragment extends Fragment {
         if (fusedLocationClient != null && locationCallback != null) {
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
+    }
+
+    private void sendLocation(double lat, double lng) {
+        LocationRequestDTO request = new LocationRequestDTO(lat, lng);
+
+        locationRepository.updateLocation(request, new Callback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d("Location", "위치 전송 성공");
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Location", "위치 전송 실패: " + e.getMessage());
+            }
+        });
     }
 
     @Override
