@@ -5,6 +5,7 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -30,16 +31,19 @@ public class GroupInviteActivity extends AppCompatActivity {
 
     private GroupInviteViewModel viewModel;
     private Long groupId;
-
-    public static Intent newIntent(Context context, Long groupId, boolean hasProfileImage, Bitmap profileBitmap) {
+    private static final String EXTRA_PROFILE_URI = "profile_uri";
+    public static Intent newIntent(Context context, Long groupId, boolean hasProfileImage, Uri imageUri) {
         Intent intent = new Intent(context, GroupInviteActivity.class);
         intent.putExtra(EXTRA_GROUP_ID, groupId);
         intent.putExtra(EXTRA_HAS_PROFILE_IMAGE, hasProfileImage);
-        if (profileBitmap != null) {
-            intent.putExtra(EXTRA_PROFILE_BITMAP, profileBitmap);
+
+        if (imageUri != null) {
+            intent.putExtra(EXTRA_PROFILE_URI, imageUri.toString());
         }
+
         return intent;
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +52,9 @@ public class GroupInviteActivity extends AppCompatActivity {
 
         groupId = getIntent().getLongExtra(EXTRA_GROUP_ID, -1L);
         boolean hasProfileImage = getIntent().getBooleanExtra(EXTRA_HAS_PROFILE_IMAGE, false);
-        Bitmap profileBitmap = getIntent().getParcelableExtra(EXTRA_PROFILE_BITMAP);
+
+        String uriString = getIntent().getStringExtra(EXTRA_PROFILE_URI);
+        Uri imageUri = uriString != null ? Uri.parse(uriString) : null;
 
         if (groupId == -1L) {
             Toast.makeText(this, "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
@@ -62,14 +68,13 @@ public class GroupInviteActivity extends AppCompatActivity {
         setupClickListeners();
         observeViewModel();
 
-        // 업로드된 이미지가 있으면 표시, 없으면 기본 아이콘 유지
-        if (hasProfileImage && profileBitmap != null) {
-            ivProfileImage.setImageBitmap(profileBitmap);
+        if (hasProfileImage && imageUri != null) {
+            ivProfileImage.setImageURI(imageUri);
             ivProfileImage.setScaleType(ImageView.ScaleType.CENTER_CROP);
             ivProfileImage.setPadding(0, 0, 0, 0);
         }
-        // else: 레이아웃에 이미 ic_group_default가 설정되어 있으므로 아무것도 안 함
     }
+
 
     private void initViews() {
         ivProfileImage = findViewById(R.id.iv_profile_image);

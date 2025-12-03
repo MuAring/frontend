@@ -15,11 +15,14 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 
 import org.maru.muaring.feature.R;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 
 @AndroidEntryPoint
@@ -152,6 +155,24 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
         }
     }
 
+    private Uri saveBitmapToCache(Bitmap bitmap) {
+        try {
+            File file = new File(getCacheDir(), "group_profile_" + System.currentTimeMillis() + ".jpg");
+            FileOutputStream fos = new FileOutputStream(file);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.close();
+
+            return FileProvider.getUriForFile(
+                    this,
+                    getPackageName() + ".provider",
+                    file
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
 
     private void skipProfileSetup() {
         goToCompleteScreen();
@@ -159,12 +180,21 @@ public class GroupProfileSetupActivity extends AppCompatActivity {
 
     // 완료 화면으로 이동 (이미지 정보 전달)
     private void goToCompleteScreen() {
+        Uri imageUri = null;
+
+        // Bitmap을 URI로 변환
+        if (uploadedBitmap != null) {
+            imageUri = saveBitmapToCache(uploadedBitmap);
+        }
+
+        // Bitmap 대신 URI만 전달
         Intent intent = GroupInviteActivity.newIntent(
                 this,
                 groupId,
                 hasUploadedImage,
-                uploadedBitmap
+                imageUri
         );
+
         startActivity(intent);
         finish();
     }
