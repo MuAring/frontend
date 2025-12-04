@@ -162,7 +162,7 @@ public class GroupProfileFragment extends Fragment {
         btnHistoryList = historyRoot.findViewById(R.id.image_history_list);
         btnHistoryCalendar = historyRoot.findViewById(R.id.image_history_calendar);
         recyclerHistory = historyRoot.findViewById(R.id.recycler_history);
-        calendarView = historyRoot.findViewById(R.id.view_history_calendar);
+        calendarView = historyRoot.findViewById(R.id.view_music_history_calendar);
 
         // Adapter
         historyAdapter = new MusicHistoryAdapter(item -> {
