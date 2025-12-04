@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+
+import org.maru.muaring.core.ui.CommonToolbarView;
 import org.maru.muaring.core.ui.ImagePickerView;
 import org.maru.muaring.core.ui.ToggleView;
 import org.maru.muaring.data.helper.ProfileSetupState;
@@ -58,6 +60,9 @@ public class ProfileEditFragment extends Fragment {
         toggleIsAccountPublic = view.findViewById(R.id.toggleIsAccountPublic);
         toggleIsDiscoveryEnable = view.findViewById(R.id.toggleIsDiscoveryEnable);
         btnEdit = view.findViewById(R.id.btnEdit);
+
+        CommonToolbarView toolbar = view.findViewById(R.id.toolbarInEditProfile);
+        toolbar.setTitle("프로필 수정");
 
         // 회원 기존 설정 정보 불러와서 UI 업데이트
         bindLiveData();
