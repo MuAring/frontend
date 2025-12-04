@@ -14,6 +14,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import dagger.hilt.android.AndroidEntryPoint;
 
+import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.feature.R;
 
 @AndroidEntryPoint
@@ -86,12 +87,14 @@ public class GroupInviteActivity extends AppCompatActivity {
     private void setupClickListeners() {
         btnGoHome.setOnClickListener(v -> goToHome());
 
-        btnInviteFriend.setOnClickListener(v -> {
-            // TODO: 친구 초대 화면으로 이동
-            Toast.makeText(this, "친구 초대 기능 준비 중", Toast.LENGTH_SHORT).show();
-        });
+        btnInviteFriend.setOnClickListener(v -> shareInviteLink());
 
         btnCopyLink.setOnClickListener(v -> generateAndCopyInviteLink());
+    }
+
+    private void shareInviteLink() {
+        // 초대 링크 생성 후 공유
+        viewModel.createInviteLinkForSharing(groupId);
     }
 
     private void observeViewModel() {
@@ -118,7 +121,29 @@ public class GroupInviteActivity extends AppCompatActivity {
                     break;
             }
         });
+
+        // 공유용 초대 링크 관찰
+        viewModel.getInviteLinkForSharing().observe(this, resource -> {
+            if (resource.status == Resource.Status.SUCCESS && resource.data != null) {
+                openShareDialog(resource.data);
+            } else if (resource.status == Resource.Status.ERROR) {
+                Toast.makeText(this, "초대 링크 생성 실패: " + resource.message, Toast.LENGTH_SHORT).show();
+            }
+        });
     }
+
+
+    private void openShareDialog(String inviteUrl) {
+        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+        shareIntent.setType("text/plain");
+        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "뮤어링 그룹 초대");
+        shareIntent.putExtra(Intent.EXTRA_TEXT,
+                "뮤어링 그룹에 초대합니다! 아래 링크를 클릭해서 참여하세요.\n\n" + inviteUrl);
+
+        Intent chooser = Intent.createChooser(shareIntent, "친구 초대하기");
+        startActivity(chooser);
+    }
+
 
     private void generateAndCopyInviteLink() {
         viewModel.createInviteLink(groupId);
@@ -131,7 +156,7 @@ public class GroupInviteActivity extends AppCompatActivity {
     }
 
     private void goToHome() {
-        // TODO: 홈 화면으로 이동 (실제 홈 Activity로 교체)
+        // TODO: 홈 화면으로 이동
         Toast.makeText(this, "홈으로 이동", Toast.LENGTH_SHORT).show();
         finish();
     }
