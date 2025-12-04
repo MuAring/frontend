@@ -1,24 +1,19 @@
 package org.maru.muaring.feature.member.ui;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.net.Uri;
-import android.provider.OpenableColumns;
-import android.webkit.MimeTypeMap;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.data.api.dto.ImageCreateRequest;
-import org.maru.muaring.data.api.dto.ImageUploadRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
-import org.maru.muaring.data.api.dto.PresignedUrlResponse;
+import org.maru.muaring.data.helper.ImageUploadHelper;
+import org.maru.muaring.data.helper.ProfileSetupState;
 import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.MemberRepository;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
 import dagger.hilt.android.lifecycle.HiltViewModel;
 import javax.inject.Inject;
 
@@ -58,99 +53,33 @@ public class ProfileSetupViewModel extends ViewModel {
     }
 
     public void uploadProfileImage(Uri imageUri, Context context) {
-        // 파일 읽기
-        byte[] bytes = readBytes(imageUri, context);
-        String fileName = getFileName(context, imageUri);
-        String fileType = getMimeType(context, imageUri);
-        ImageUploadRequest request = ImageUploadRequest.create(
-                fileName,
-                fileType,
-                "MEMBER",
-                (long) bytes.length,
-                null
-        );
-
-        imageRepository.getUploadPresignedUrl(request, new Callback<>() {
-            @Override
-            public void onSuccess(PresignedUrlResponse response) {
-                imageRepository.uploadToS3(response.presignedUrl, fileName, bytes, fileType, new Callback<>() {
+        ImageUploadHelper.uploadImage(
+                imageUri,
+                context,
+                imageRepository,
+                new Callback<ProfileSetupState.ImageUploaded>() {
                     @Override
-                    public void onSuccess(Void unused) {
-                        state.postValue(new ProfileSetupState.ImageUploaded(response.s3Key, fileName, fileType, (long) bytes.length));
+                    public void onSuccess(ProfileSetupState.ImageUploaded uploaded) {
+                        state.postValue(uploaded);
+
+                        // 이미지 정보 저장 (기존 유지)
+                        setUploadedImageInfo(
+                                uploaded.s3Key,
+                                uploaded.fileName,
+                                uploaded.fileType,
+                                uploaded.fileSize
+                        );
                     }
 
                     @Override
                     public void onError(Exception e) {
-                        state.postValue(new ProfileSetupState.Error("S3 업로드 실패"));
-                    }
-                });
-            }
-
-            @Override
-            public void onError(Exception e) {
-                state.postValue(new ProfileSetupState.Error("오류 발생"));
-            }
-        });
-    }
-
-    public static byte[] readBytes(Uri uri, Context context) {
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(uri);
-            if (inputStream == null) return null;
-
-            ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-            byte[] buffer = new byte[1024];
-            int len;
-
-            while ((len = inputStream.read(buffer)) != -1) {
-                byteBuffer.write(buffer, 0, len);
-            }
-
-            return byteBuffer.toByteArray();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public static String getFileName(Context context, Uri uri) {
-        String result = null;
-
-        // content:// 형태일 경우
-        if (uri.getScheme().equals("content")) {
-            try (Cursor cursor = context.getContentResolver().query(uri, null, null, null, null)) {
-                if (cursor != null && cursor.moveToFirst()) {
-                    int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    if (nameIndex >= 0) {
-                        result = cursor.getString(nameIndex);
+                        state.postValue(new ProfileSetupState.Error("이미지 업로드 실패"));
                     }
                 }
-            }
-        }
-
-        // null일 경우 URI 경로에서 추출 (file:// 형태)
-        if (result == null) {
-            result = uri.getLastPathSegment();
-        }
-
-        return result;
-    }
-
-    public static String getMimeType(Context context, Uri uri) {
-        String type = context.getContentResolver().getType(uri);
-        if (type != null) return type;
-
-        // fallback (확장자로 추론)
-        String path = uri.getPath();
-        if (path == null) return "image/*";
-
-        String extension = MimeTypeMap.getFileExtensionFromUrl(path);
-        return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension.toLowerCase());
+        );
     }
 
     public void createProfile(String nickname) {
-
         ImageCreateRequest imageRequest = null;
 
         if (s3Key != null && fileName != null && fileType != null) {

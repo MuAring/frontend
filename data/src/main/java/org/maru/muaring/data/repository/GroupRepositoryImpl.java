@@ -14,6 +14,7 @@ import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
@@ -30,17 +31,17 @@ import retrofit2.Response;
 
 public class GroupRepositoryImpl implements GroupRepository {
 
+    @Override
+    public Call<ApiResponse<GroupCreateResponse>> createGroup(GroupCreateRequest request) {
+        return groupApi.createGroup(request);
+    }
+
     private static final String TAG = "GroupRepository";
     private final GroupApi groupApi;
 
     @Inject
     public GroupRepositoryImpl(GroupApi groupApi) {
         this.groupApi = groupApi;
-    }
-
-    @Override
-    public Call<ApiResponse<GroupCreateResponse>> createGroup(GroupCreateRequest request) {
-        return groupApi.createGroup(request);
     }
 
     @Override
@@ -212,6 +213,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+    // 그룹 검색
     @Override
     public void searchGroups(String name, int page, int size, SearchGroupsCallback callback) {
         Call<ApiResponse<GroupListResponse>> call =
@@ -250,11 +252,14 @@ public class GroupRepositoryImpl implements GroupRepository {
         });
     }
 
+
+    // 그룹 카테고리 조회
     @Override
     public Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories() {
         return groupApi.getGroupCategories();
     }
 
+    // 홈 화면용 내 그룹 조회
     @Override
     public LiveData<Resource<List<MyGroupSummary>>> getMyGroups() {
         MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
@@ -276,6 +281,47 @@ public class GroupRepositoryImpl implements GroupRepository {
             @Override
             public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
                 result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
+            }
+        });
+
+        return result;
+    }
+
+    @Override
+    public LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId) {
+        MutableLiveData<Resource<GroupProfileResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "getGroupProfile() 호출 - groupId: " + groupId);
+
+        groupApi.getGroupProfile(groupId).enqueue(new Callback<ApiResponse<GroupProfileResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<GroupProfileResponse>> call,
+                                   Response<ApiResponse<GroupProfileResponse>> response) {
+                Log.d(TAG, "getGroupProfile onResponse - code: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<GroupProfileResponse> body = response.body();
+                    Log.d(TAG, "body.code=" + body.getCode()
+                            + ", message=" + body.getMessage()
+                            + ", data=" + body.getData());
+
+                    if (body.getData() != null) {
+                        result.setValue(Resource.success(body.getData()));
+                    } else {
+                        result.setValue(Resource.error("data가 null입니다.", null));
+                    }
+                } else {
+                    String msg = "response 실패 - code: " + response.code();
+                    Log.e(TAG, msg);
+                    result.setValue(Resource.error(msg, null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<GroupProfileResponse>> call, Throwable t) {
+                Log.e(TAG, "getGroupProfile onFailure", t);
+                result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
             }
         });
 

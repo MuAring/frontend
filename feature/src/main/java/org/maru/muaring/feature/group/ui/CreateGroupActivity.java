@@ -11,9 +11,8 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
+import org.maru.muaring.core.ui.CommonToolbarView;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
@@ -39,7 +38,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     @Inject
     GroupRepository repository;
 
-    private ImageButton btnBack;
     private EditText etGroupName;
     private EditText etGroupDescription;
     private TextView tvGroupCapacity;
@@ -48,6 +46,7 @@ public class CreateGroupActivity extends AppCompatActivity {
     private LinearLayout layoutPublicGroup;
     private LinearLayout layoutPrivateGroup;
     private Button btnCreateGroup;
+    private View toolbar;
 
     // CategoryFragment 가져옴
     private CategoryFragment categoryFragment;
@@ -67,7 +66,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        btnBack = findViewById(R.id.btn_back);
         etGroupName = findViewById(R.id.et_group_name);
         etGroupDescription = findViewById(R.id.et_group_description);
         tvGroupCapacity = findViewById(R.id.tv_group_capacity);
@@ -76,10 +74,11 @@ public class CreateGroupActivity extends AppCompatActivity {
         layoutPublicGroup = findViewById(R.id.layout_public_group);
         layoutPrivateGroup = findViewById(R.id.layout_private_group);
         btnCreateGroup = findViewById(R.id.btn_create_group);
+        toolbar = findViewById(R.id.toolbar);
 
         // 툴바 제목 설정
-        TextView toolbarTitle = findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("그룹 생성");
+        CommonToolbarView toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("그룹 생성");
 
         // 초기 선택 상태 설정
         layoutPublicGroup.setSelected(true);
@@ -99,9 +98,6 @@ public class CreateGroupActivity extends AppCompatActivity {
     }
 
     private void setupListeners() {
-        // 뒤로가기
-        btnBack.setOnClickListener(v -> finish());
-
         // 정원 감소
         btnDecreaseCapacity.setOnClickListener(v -> {
             if (currentCapacity > 2) {

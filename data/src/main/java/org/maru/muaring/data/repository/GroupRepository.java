@@ -9,6 +9,7 @@ import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import androidx.lifecycle.LiveData;
 
 import org.maru.muaring.core.util.Resource;
+import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
@@ -45,4 +46,6 @@ public interface GroupRepository {
     }
 
     Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
+
+    LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId);
 }

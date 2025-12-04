@@ -13,7 +13,7 @@ public interface PostApi {
 
     // "나" 기준 오늘의 음악
     @GET("/post/followee/today")
-    Call<ApiResponse<List<MusicPostFeedResponse>>> getTodayPostsForMe();
+    Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getTodayPostsForMe();
 
     // 그룹 기준 오늘의 음악
     @GET("/groups/{groupId}/posts/today")
