@@ -3,6 +3,7 @@ package org.maru.muaring.data.repository;
 import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.data.api.ImageApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.GroupImageUploadRequest;
 import org.maru.muaring.data.api.dto.ImageUploadRequest;
 import org.maru.muaring.data.api.dto.PresignedUrlResponse;
 import java.io.IOException;
@@ -63,6 +64,30 @@ public class ImageRepositoryImpl implements ImageRepository{
             @Override
             public void onFailure(okhttp3.Call call, IOException e) {
                 callback.onError(e);
+            }
+        });
+    }
+
+
+    // 그룹 프로필 이미지 설정
+    @Override
+    public void confirmGroupImageUpload(GroupImageUploadRequest request, Callback<Void> callback) {
+        imageApi.confirmGroupImageUpload(request).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<Void>> call,
+                    Response<ApiResponse<Void>> response
+            ) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(null);
+                } else {
+                    callback.onError(new Exception("그룹 이미지 설정에 실패했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                callback.onError(new Exception("네트워크 오류: " + t.getMessage()));
             }
         });
     }

@@ -27,7 +27,7 @@ public interface GroupApi {
     );
 
     // 초대 링크 생성
-    @POST("groups/{groupId}/invites")
+    @POST("/groups/{groupId}/invites")
     Call<ApiResponse<GroupInviteResponse>> createInviteLink(
             @Path("groupId") Long groupId
     );

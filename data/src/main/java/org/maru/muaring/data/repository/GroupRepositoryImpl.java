@@ -52,9 +52,10 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         groupApi.createInviteLink(groupId).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ApiResponse<GroupInviteResponse>> call,
-                                   Response<ApiResponse<GroupInviteResponse>> response) {
-
+            public void onResponse(
+                    Call<ApiResponse<GroupInviteResponse>> call,
+                    Response<ApiResponse<GroupInviteResponse>> response
+            ) {
                 Log.d(TAG, "응답 코드: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -87,7 +88,10 @@ public class GroupRepositoryImpl implements GroupRepository {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<GroupInviteResponse>> call, Throwable t) {
+            public void onFailure(
+                    Call<ApiResponse<GroupInviteResponse>> call,
+                    Throwable t
+            ) {
                 Log.e(TAG, "네트워크 오류", t);
                 result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
             }
