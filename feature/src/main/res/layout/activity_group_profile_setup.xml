@@ -27,18 +27,19 @@
                 android:layout_height="150dp"
                 android:background="@drawable/circle_background_grey"
                 android:src="@drawable/ic_group_default"
-                android:scaleType="centerInside"
-                android:padding="10dp"/>
+                android:scaleType="centerCrop"
+                android:padding="40dp"
+                android:clipToOutline="true"/>
 
             <!-- 연필 아이콘 (우측 하단) -->
             <ImageButton
                 android:id="@+id/btn_edit_profile"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentBottom="true"
                 android:src="@drawable/ic_edit"
-                android:elevation="4dp"
+                android:background="@android:color/transparent"
                 android:contentDescription="프로필 사진 편집"/>
         </RelativeLayout>
 

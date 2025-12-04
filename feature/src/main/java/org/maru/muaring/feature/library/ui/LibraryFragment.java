@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,19 +21,34 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.data.api.LibraryApi;
+import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.ExportRequest;
+import org.maru.muaring.data.api.dto.LibraryMusicListRequestDto;
+import org.maru.muaring.data.api.dto.LibraryMusicListResponseDto;
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.nearby.ui.model.Music;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@AndroidEntryPoint
 public class LibraryFragment extends Fragment {
 
     private RecyclerView rvLibrary;
     private TextView tvTotalCount, btnSelectAll, btnClearSelect;
     private LibraryAdapter adapter;
     private LinearLayout bottomActionBar;
-    private ImageView btnDelete;
+    private ImageView btnDelete, btnSpotify;
+    @Inject
+    LibraryApi libraryApi;
 
     @Nullable
     @Override
@@ -48,6 +64,7 @@ public class LibraryFragment extends Fragment {
         btnClearSelect = view.findViewById(R.id.btnClearSelect);
         bottomActionBar = view.findViewById(R.id.bottomActionBar);
         btnDelete = view.findViewById(R.id.btnDelete);
+        btnSpotify = view.findViewById(R.id.btnSpotify);
         return view;
     }
 
@@ -55,26 +72,47 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Music> musicList = Arrays.asList(
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Attention", "Charlie Puth", R.drawable.album_image),
-                new Music("Perfect", "Ed Sheeran", R.drawable.album_image)
-        );
+        libraryApi.getLibrary().enqueue(new Callback<ApiResponse<LibraryMusicListResponseDto>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<LibraryMusicListResponseDto>> call,
+                                   Response<ApiResponse<LibraryMusicListResponseDto>> response) {
 
-        int totalCount = musicList.size();
-        tvTotalCount.setText("총 " + totalCount + "곡");
+                if (!response.isSuccessful() || response.body() == null) {
+                    Toast.makeText(requireContext(), "보관함 불러오기 실패", Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
-        adapter = new LibraryAdapter(musicList, selectedCount -> {
-            if (selectedCount == 0) {
-                tvTotalCount.setText("총 " + totalCount + "곡");
-            } else {
-                tvTotalCount.setText("총 " + selectedCount + "곡");
+                List<LibraryMusicListRequestDto> dtoList = response.body().getData().musicList;
+
+                List<Music> musicList = new ArrayList<>();
+                for (LibraryMusicListRequestDto dto : dtoList) {
+                    musicList.add(new Music(
+                            dto.musicId,
+                            dto.title,
+                            dto.artist,
+                            dto.albumImage
+                    ));
+                }
+
+                tvTotalCount.setText("총 " + musicList.size() + "곡");
+
+                adapter = new LibraryAdapter(musicList, selectedCount -> {
+                    if (selectedCount == 0) {
+                        tvTotalCount.setText("총 " + musicList.size() + "곡");
+                    } else {
+                        tvTotalCount.setText("총 " + selectedCount + "곡");
+                    }
+
+                    bottomActionBar.setVisibility(selectedCount > 0 ? View.VISIBLE : View.GONE);
+                });
+
+                rvLibrary.setLayoutManager(new LinearLayoutManager(getContext()));
+                rvLibrary.setAdapter(adapter);
             }
 
-            if (selectedCount > 0) {
-                bottomActionBar.setVisibility(View.VISIBLE);
-            } else {
-                bottomActionBar.setVisibility(View.GONE);
+            @Override
+            public void onFailure(Call<ApiResponse<LibraryMusicListResponseDto>> call, Throwable t) {
+                Toast.makeText(requireContext(), "서버 오류: " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -87,6 +125,29 @@ public class LibraryFragment extends Fragment {
 
         btnClearSelect.setOnClickListener(v -> {
             adapter.clearSelection();
+        });
+
+        btnSpotify.setOnClickListener(v -> {
+            List<Long> selectedIds = adapter.getSelectedMusicIds();
+
+            ExportRequest request = new ExportRequest(selectedIds);
+
+            libraryApi.exportToSpotify(request).enqueue(new Callback<Void>() {
+
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(requireContext(), "스포티파이에 추가 완료", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "응답 오류: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(requireContext(), "서버 오류 발생: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnDelete.setOnClickListener(v -> showDeleteDialog());

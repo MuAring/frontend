@@ -13,4 +13,16 @@
         <item name="fontFamily">@font/pretendard_medium</item>
     </style>
 
+    <style name="Type.medium" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/pretendard_medium</item>
+    </style>
+
+    <style name="Type.semibold" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/pretendard_semibold</item>
+    </style>
+
+    <style name="Type.regular" parent="TextAppearance.Material3.BodyLarge">
+        <item name="fontFamily">@font/pretendard_regular</item>
+    </style>
+
 </resources>

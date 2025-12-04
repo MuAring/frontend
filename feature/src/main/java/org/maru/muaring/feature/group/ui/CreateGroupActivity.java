@@ -1,5 +1,6 @@
 package org.maru.muaring.feature.group.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -198,12 +199,20 @@ public class CreateGroupActivity extends AppCompatActivity {
 
                     if (apiResponse.isSuccess() && apiResponse.getData() != null) {
                         GroupCreateResponse data = apiResponse.getData();
+
+                        // activity_group_profile_setup 에 groupId 넘겨주기 위해 저장
+                        Long groupId = data.getGroupId();
                         Log.d(TAG, "그룹 생성 성공 - ID: " + data.getGroupId());
 
                         Toast.makeText(CreateGroupActivity.this,
                                 "그룹이 생성되었습니다!", Toast.LENGTH_SHORT).show();
 
-                        // TODO: 생성된 그룹 상세 화면으로 이동
+                        // 그룹 프로필 이미지 설정 화면으로 이동
+                        Intent intent = GroupProfileSetupActivity.newIntent(
+                                CreateGroupActivity.this,
+                                groupId
+                        );
+                        startActivity(intent);
                         finish();
                     } else {
                         showError("그룹 생성에 실패했습니다");

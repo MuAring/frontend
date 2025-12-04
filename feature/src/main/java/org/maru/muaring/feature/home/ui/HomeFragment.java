@@ -2,6 +2,7 @@ package org.maru.muaring.feature.home.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -100,11 +101,11 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     }
 
     private void showTodayPostsFragment(@Nullable Long groupId) {
-        Toast.makeText(
-                getContext(),
-                "오늘의 음악을 보여 드릴게요!",
-                Toast.LENGTH_SHORT
-        ).show();
+//        Toast.makeText(
+//                getContext(),
+//                "오늘의 음악을 보여 드릴게요!",
+//                Toast.LENGTH_SHORT
+//        ).show();
 
         TodayPostsFragment fragment = TodayPostsFragment.newInstance(groupId);
         getChildFragmentManager()
@@ -123,6 +124,7 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
     @Override
     public void onGroupToggleClicked() {
+        Log.d("HomeFragment", "onGroupToggleClicked called");
         if (!groupsLoaded) {
             loadGroupsIfNeeded();
         } else {
@@ -132,11 +134,11 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
     @Override
     public void onGroupItemClicked(MyGroupSummary group) {
-        Toast.makeText(
-                getContext(),
-                "그룹 클릭: " + group.getName() + " (id=" + group.getGroupId() + ")",
-                Toast.LENGTH_SHORT
-        ).show();
+//        Toast.makeText(
+//                getContext(),
+//                "그룹 클릭: " + group.getName() + " (id=" + group.getGroupId() + ")",
+//                Toast.LENGTH_SHORT
+//        ).show();
 
         // 해당 그룹 기준 오늘의 음악
         showTodayPostsFragment(group.getGroupId());

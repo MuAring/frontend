@@ -9,8 +9,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.nearby.ui.model.Music;
+import org.maru.muaring.feature.library.ui.Music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +21,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
     private List<Music> musicList;
 
-    private List<Integer> selectedList = new ArrayList<>();
+    private List<Long> selectedIds = new ArrayList<>();
 
     public interface OnSelectionChanged {
         void onSelectionChanged(int count);
@@ -42,13 +44,17 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
+
         Music music = musicList.get(position);
+        Long musicId = music.getId();
 
         holder.tvTitle.setText(music.getTitle());
         holder.tvArtist.setText(music.getArtist());
-        holder.ivAlbum.setImageResource(music.getAlbumImageRes());
+        Glide.with(holder.itemView.getContext())
+                .load(music.getAlbumImage())
+                .into(holder.ivAlbum);
 
-        if (selectedList.contains(position)) {
+        if (selectedIds.contains(musicId)) {
             holder.itemView.setBackgroundResource(R.drawable.bg_library_selected);
         } else {
             holder.itemView.setBackgroundResource(R.drawable.frame_library_item);
@@ -56,14 +62,14 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
 
         holder.itemView.setOnClickListener(v -> {
-            if (selectedList.contains(position)) {
-                selectedList.remove(Integer.valueOf(position));
+
+            if (selectedIds.contains(musicId)) {
+                selectedIds.remove(musicId);
             } else {
-                selectedList.add(position);
+                selectedIds.add(musicId);
             }
 
-            callback.onSelectionChanged(selectedList.size());
-
+            callback.onSelectionChanged(selectedIds.size());
             notifyItemChanged(position);
         });
     }
@@ -73,19 +79,22 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
         return musicList.size();
     }
 
-    public int getSelectedCount() { return selectedList.size(); }
+    public int getSelectedCount() { return selectedIds.size(); }
 
+    public List<Long> getSelectedMusicIds() {
+        return new ArrayList<>(selectedIds);
+    }
     public void selectAll() {
-        selectedList.clear();
-        for (int i = 0; i < musicList.size(); i++) {
-            selectedList.add(i);
+        selectedIds.clear();
+        for (Music music : musicList) {
+            selectedIds.add(music.getId());
         }
-        callback.onSelectionChanged(selectedList.size());
+        callback.onSelectionChanged(selectedIds.size());
         notifyDataSetChanged();
     }
 
     public void clearSelection() {
-        selectedList.clear();
+        selectedIds.clear();
         callback.onSelectionChanged(0);
         notifyDataSetChanged();
     }
