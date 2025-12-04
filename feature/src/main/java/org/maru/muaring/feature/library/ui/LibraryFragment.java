@@ -13,6 +13,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,19 +21,30 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.data.api.LibraryApi;
+import org.maru.muaring.data.api.dto.ExportRequest;
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.nearby.ui.model.Music;
 
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
+@AndroidEntryPoint
 public class LibraryFragment extends Fragment {
 
     private RecyclerView rvLibrary;
     private TextView tvTotalCount, btnSelectAll, btnClearSelect;
     private LibraryAdapter adapter;
     private LinearLayout bottomActionBar;
-    private ImageView btnDelete;
+    private ImageView btnDelete, btnSpotify;
+    @Inject
+    LibraryApi libraryApi;
 
     @Nullable
     @Override
@@ -48,6 +60,7 @@ public class LibraryFragment extends Fragment {
         btnClearSelect = view.findViewById(R.id.btnClearSelect);
         bottomActionBar = view.findViewById(R.id.bottomActionBar);
         btnDelete = view.findViewById(R.id.btnDelete);
+        btnSpotify = view.findViewById(R.id.btnSpotify);
         return view;
     }
 
@@ -56,9 +69,9 @@ public class LibraryFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         List<Music> musicList = Arrays.asList(
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Attention", "Charlie Puth", R.drawable.album_image),
-                new Music("Perfect", "Ed Sheeran", R.drawable.album_image)
+                new Music(101L,"Runaway Baby", "Bruno Mars", R.drawable.album_image),
+                new Music(102L,"Attention", "Charlie Puth", R.drawable.album_image),
+                new Music(103L,"Perfect", "Ed Sheeran", R.drawable.album_image)
         );
 
         int totalCount = musicList.size();
@@ -87,6 +100,29 @@ public class LibraryFragment extends Fragment {
 
         btnClearSelect.setOnClickListener(v -> {
             adapter.clearSelection();
+        });
+
+        btnSpotify.setOnClickListener(v -> {
+            List<Long> selectedIds = adapter.getSelectedMusicIds();
+
+            ExportRequest request = new ExportRequest(selectedIds);
+
+            libraryApi.exportToSpotify(request).enqueue(new Callback<Void>() {
+
+                @Override
+                public void onResponse(Call<Void> call, Response<Void> response) {
+                    if (response.isSuccessful()) {
+                        Toast.makeText(requireContext(), "스포티파이에 추가 완료", Toast.LENGTH_SHORT).show();
+                    } else {
+                        Toast.makeText(requireContext(), "응답 오류: " + response.code(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Void> call, Throwable t) {
+                    Toast.makeText(requireContext(), "서버 오류 발생: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
         });
 
         btnDelete.setOnClickListener(v -> showDeleteDialog());

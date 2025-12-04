@@ -1,0 +1,12 @@
+package org.maru.muaring.data.api;
+
+import org.maru.muaring.data.api.dto.ExportRequest;
+
+import retrofit2.Call;
+import retrofit2.http.Body;
+import retrofit2.http.POST;
+
+public interface LibraryApi {
+    @POST("/library/export")
+    Call<Void> exportToSpotify(@Body ExportRequest request);
+}

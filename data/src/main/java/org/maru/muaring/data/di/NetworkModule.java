@@ -5,6 +5,7 @@ import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.HistoryApi;
 import org.maru.muaring.data.api.ImageApi;
+import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.repository.AuthRepository;
@@ -122,6 +123,12 @@ public class NetworkModule {
     @Singleton
     public HistoryRepository provideHistoryRepository(HistoryApi api) {
         return new HistoryRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public LibraryApi provideLibraryApi(Retrofit retrofit) {
+        return retrofit.create(LibraryApi.class);
     }
 
 }
