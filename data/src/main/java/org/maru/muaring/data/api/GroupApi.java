@@ -6,6 +6,7 @@ import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 
 import java.util.List;
@@ -26,10 +27,23 @@ public interface GroupApi {
     );
 
     // 초대 링크 생성
-    @POST("/groups/{groupId}/invites")
+    @POST("/invites/groups/{groupId}")
     Call<ApiResponse<GroupInviteResponse>> createInviteLink(
             @Path("groupId") Long groupId
     );
+
+    // 초대 링크 미리보기
+    @GET("/invites/preview/{inviteToken}")
+    Call<ApiResponse<InvitePreviewResponse>> getInvitePreview(
+            @Path("inviteToken") String inviteToken
+    );
+
+    // 초대 링크로 그룹 가입
+    @POST("/invites/{inviteToken}/join")
+    Call<ApiResponse<Void>> joinByInviteToken(
+            @Path("inviteToken") String inviteToken
+    );
+
 
     // 그룹 검색 결과 조회
     @GET("/groups")

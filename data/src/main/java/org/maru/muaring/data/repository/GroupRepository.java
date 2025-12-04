@@ -10,6 +10,7 @@ import androidx.lifecycle.LiveData;
 
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 
 import java.util.List;
@@ -21,6 +22,12 @@ public interface GroupRepository {
     Call<ApiResponse<GroupCreateResponse>> createGroup(GroupCreateRequest request);
 
     LiveData<Resource<GroupInviteResponse>> createInviteLink(Long groupId);
+
+    // 초대 링크 미리보기
+    LiveData<Resource<InvitePreviewResponse>> getInvitePreview(String inviteToken);
+
+    // 초대 링크로 그룹 가입
+    LiveData<Resource<Void>> joinByInviteToken(String inviteToken);
 
     void searchGroups(
             String name,
