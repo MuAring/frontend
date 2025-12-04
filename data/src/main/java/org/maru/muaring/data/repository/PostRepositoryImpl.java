@@ -31,26 +31,43 @@ public class PostRepositoryImpl implements PostRepository {
 
     @Override
     public LiveData<Resource<List<MusicPostFeedResponse>>> getTodayPostsForMe() {
+        Log.d("PostRepositoryImpl", "getTodayPostsForMe called");
         MutableLiveData<Resource<List<MusicPostFeedResponse>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        postApi.getTodayPostsForMe().enqueue(new Callback<ApiResponse<List<MusicPostFeedResponse>>>() {
-            @Override
-            public void onResponse(Call<ApiResponse<List<MusicPostFeedResponse>>> call,
-                                   Response<ApiResponse<List<MusicPostFeedResponse>>> response) {
-                if (response.isSuccessful() && response.body() != null) {
-                    result.setValue(Resource.success(response.body().getData()));
-                } else {
-                    result.setValue(Resource.error("오늘의 음악 조회 실패", null));
-                }
-            }
+        postApi.getTodayPostsForMe()
+                .enqueue(new Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Response<ApiResponse<PageResponse<MusicPostFeedResponse>>> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
 
-            @Override
-            public void onFailure(Call<ApiResponse<List<MusicPostFeedResponse>>> call, Throwable t) {
-                t.printStackTrace();
-                result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
-            }
-        });
+                            PageResponse<MusicPostFeedResponse> page = response.body().getData();
+
+                            List<MusicPostFeedResponse> list;
+                            if (page != null && page.getContent() != null) {
+                                list = page.getContent();
+                            } else {
+                                list = Collections.emptyList();
+                            }
+
+                            result.setValue(Resource.success(list));
+                        } else {
+                            result.setValue(Resource.error("오늘의 음악 조회 실패", null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Throwable t
+                    ) {
+                        t.printStackTrace();
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
 
         return result;
     }
@@ -68,8 +85,8 @@ public class PostRepositoryImpl implements PostRepository {
                             Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
                             Response<ApiResponse<PageResponse<MusicPostFeedResponse>>> response
                     ) {
-                        Log.d("PostRepositoryImpl",
-                                "onResponse called, httpCode=" + response.code());
+//                        Log.d("PostRepositoryImpl",
+//                                "onResponse called, httpCode=" + response.code());
 
                         if (response.isSuccessful() && response.body() != null) {
                             PageResponse<MusicPostFeedResponse> page = response.body().getData();
@@ -81,12 +98,12 @@ public class PostRepositoryImpl implements PostRepository {
                                 list = Collections.emptyList();
                             }
 
-                            Log.d("PostRepositoryImpl",
-                                    "SUCCESS, list size = " + list.size());
+//                            Log.d("PostRepositoryImpl",
+//                                    "SUCCESS, list size = " + list.size());
                             result.setValue(Resource.success(list));
                         } else {
-                            Log.e("PostRepositoryImpl",
-                                    "getTodayPostsForGroup 실패, code=" + response.code());
+//                            Log.e("PostRepositoryImpl",
+//                                    "getTodayPostsForGroup 실패, code=" + response.code());
                             result.setValue(Resource.error("그룹 오늘의 피드 조회 실패", null));
                         }
                     }
