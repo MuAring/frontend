@@ -4,13 +4,13 @@ public class Music {
     private Long id;
     private String title;
     private String artist;
-    private int albumImageRes;
+    private String albumImage;
 
-    public Music(Long id, String title, String artist, int albumImageRes) {
+    public Music(Long id, String title, String artist, String albumImage) {
         this.id = id;
         this.title = title;
         this.artist = artist;
-        this.albumImageRes = albumImageRes;
+        this.albumImage = albumImage;
     }
 
     public Long getId() { return id; }
@@ -23,7 +23,7 @@ public class Music {
         return artist;
     }
 
-    public int getAlbumImageRes() {
-        return albumImageRes;
+    public String getAlbumImage() {
+        return albumImage;
     }
 }

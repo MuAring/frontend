@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.library.ui.Music;
 
@@ -48,7 +50,9 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
         holder.tvTitle.setText(music.getTitle());
         holder.tvArtist.setText(music.getArtist());
-        holder.ivAlbum.setImageResource(music.getAlbumImageRes());
+        Glide.with(holder.itemView.getContext())
+                .load(music.getAlbumImage())
+                .into(holder.ivAlbum);
 
         if (selectedIds.contains(musicId)) {
             holder.itemView.setBackgroundResource(R.drawable.bg_library_selected);
