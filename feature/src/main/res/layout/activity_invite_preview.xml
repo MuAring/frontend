@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:background="@color/white"
+    android:padding="24dp">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="76dp"/>
+
+    <!-- 그룹 이미지 -->
+    <ImageView
+        android:id="@+id/iv_group_image"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:background="@drawable/circle_background_grey"
+        android:src="@drawable/ic_group_default"
+        android:scaleType="centerCrop"
+        android:padding="30dp"
+        android:clipToOutline="true"/>
+
+    <!-- 그룹명 -->
+    <TextView
+        android:id="@+id/tv_group_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="그룹명"
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textColor="#000000"/>
+
+    <!-- 멤버 수 -->
+    <TextView
+        android:id="@+id/tv_member_count"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="0/10명"
+        android:textSize="16sp"
+        android:textColor="#666666"/>
+
+    <!-- 안내 텍스트 -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="이 그룹에 참여하시겠습니까?"
+        android:textSize="16sp"
+        android:textColor="#333333"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- 그룹 참여하기 버튼 -->
+    <Button
+        android:id="@+id/btn_join"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:text="그룹 참여하기"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/button_primary_background"/>
+
+    <!-- 취소 버튼 -->
+    <Button
+        android:id="@+id/btn_cancel"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="12dp"
+        android:text="취소"
+        android:textSize="16sp"
+        android:textColor="#666666"
+        android:background="@drawable/bg_button_outline_gray"/>
+
+</LinearLayout>
