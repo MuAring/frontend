@@ -259,18 +259,19 @@ public class GroupRepositoryImpl implements GroupRepository {
         return groupApi.getGroupCategories();
     }
 
+
     // 홈 화면용 내 그룹 조회
     @Override
     public LiveData<Resource<List<MyGroupSummary>>> getMyGroups() {
         MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        groupApi.getMyGroups().enqueue(new Callback<ApiResponse<MyGroupListResponse>>() {
+        groupApi.getMyGroups().enqueue(new retrofit2.Callback<ApiResponse<MyGroupListResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
                                    Response<ApiResponse<MyGroupListResponse>> response) {
 
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     List<MyGroupSummary> groups = response.body().getData().getGroups();
                     result.setValue(Resource.success(groups));
                 } else {
@@ -280,12 +281,14 @@ public class GroupRepositoryImpl implements GroupRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                t.printStackTrace(); // 또는 Log.e(TAG, "getMyGroups 실패", t);
                 result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
             }
         });
 
         return result;
     }
+
 
     @Override
     public LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId) {

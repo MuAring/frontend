@@ -5,6 +5,7 @@ import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileUpdateRequest;
+import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
 
 import retrofit2.Call;
@@ -21,6 +22,10 @@ public interface MemberApi {
 
     @POST("/members")
     Call<ApiResponse<MemberProfileCreateResponse>> createProfile(@Body MemberProfileCreateRequest request);
+
+    @GET("/me/settings")
+    Call<ApiResponse<MemberSettingsResponse>> getMySettings();
+
 
     @GET("/me/settings")
     Call<ApiResponse<MemberProfileSettingReadResponse>> loadProfile();

@@ -52,10 +52,11 @@ public class MusicHistoryCalendarAdapter extends RecyclerView.Adapter<MusicHisto
 
         holder.txtDay.setText(String.valueOf(item.day));
 
-        if (item.imageUrl != null) {
+        if (item.imageUrl != null && !item.imageUrl.isEmpty()) {
             holder.img.setVisibility(View.VISIBLE);
             Glide.with(context)
                     .load(item.imageUrl)
+                    .centerCrop()
                     .into(holder.img);
         } else {
             holder.img.setVisibility(View.GONE);
