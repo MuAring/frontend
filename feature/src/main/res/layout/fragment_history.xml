@@ -83,11 +83,11 @@
 
     <!-- 캘린더 모드 (다른 사람이 구현할 틀) -->
     <org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView
-        android:id="@+id/view_history_calendar"
+        android:id="@+id/view_music_history_calendar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingHorizontal="16dp"
         android:paddingTop="8dp"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
 </LinearLayout>
