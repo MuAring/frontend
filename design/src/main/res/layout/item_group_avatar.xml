@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/ivAvatar"
-        android:layout_width="56dp"
-        android:layout_height="56dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="@drawable/bg_circle_gray"
         android:scaleType="centerCrop"
         android:padding="12dp" />
@@ -22,5 +22,5 @@
         android:layout_marginTop="4dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textSize="12sp" />
+        android:textSize="13sp" />
 </LinearLayout>

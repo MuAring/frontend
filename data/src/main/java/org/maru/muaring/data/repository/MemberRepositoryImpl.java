@@ -1,10 +1,15 @@
 package org.maru.muaring.data.repository;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
 import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -60,4 +65,36 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
     }
+
+    @Override
+    public LiveData<Resource<MemberSettingsResponse>> getMySettings() {
+        MutableLiveData<Resource<MemberSettingsResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        api.getMySettings().enqueue(new retrofit2.Callback<ApiResponse<MemberSettingsResponse>>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<MemberSettingsResponse>> call,
+                    Response<ApiResponse<MemberSettingsResponse>> response
+            ) {
+                if (response.isSuccessful() && response.body() != null) {
+                    result.setValue(Resource.success(response.body().getData()));
+                } else {
+                    result.setValue(Resource.error("내 프로필 정보를 불러오지 못했어요.", null));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<MemberSettingsResponse>> call,
+                    Throwable t
+            ) {
+                result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
+            }
+        });
+
+        return result;
+    }
+
+
 }
