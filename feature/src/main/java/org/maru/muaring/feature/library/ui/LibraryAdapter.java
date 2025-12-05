@@ -46,7 +46,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
 
         Music music = musicList.get(position);
-        Long musicId = music.getId();
+        Long libraryId = music.getLibraryId();
 
         holder.tvTitle.setText(music.getTitle());
         holder.tvArtist.setText(music.getArtist());
@@ -54,7 +54,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
                 .load(music.getAlbumImage())
                 .into(holder.ivAlbum);
 
-        if (selectedIds.contains(musicId)) {
+        if (selectedIds.contains(libraryId)) {
             holder.itemView.setBackgroundResource(R.drawable.bg_library_selected);
         } else {
             holder.itemView.setBackgroundResource(R.drawable.frame_library_item);
@@ -63,14 +63,14 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
         holder.itemView.setOnClickListener(v -> {
 
-            if (selectedIds.contains(musicId)) {
-                selectedIds.remove(musicId);
+            if (selectedIds.contains(libraryId)) {
+                selectedIds.remove(libraryId);
             } else {
-                selectedIds.add(musicId);
+                selectedIds.add(libraryId);
             }
 
             callback.onSelectionChanged(selectedIds.size());
-            notifyItemChanged(position);
+            notifyItemChanged(holder.getAdapterPosition());
         });
     }
 
@@ -81,18 +81,17 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
     public int getSelectedCount() { return selectedIds.size(); }
 
-    public List<Long> getSelectedMusicIds() {
+    public List<Long> getSelectedLibraryIds() {
         return new ArrayList<>(selectedIds);
     }
     public void selectAll() {
         selectedIds.clear();
         for (Music music : musicList) {
-            selectedIds.add(music.getId());
+            selectedIds.add(music.getLibraryId());
         }
         callback.onSelectionChanged(selectedIds.size());
         notifyDataSetChanged();
     }
-
     public void clearSelection() {
         selectedIds.clear();
         callback.onSelectionChanged(0);
