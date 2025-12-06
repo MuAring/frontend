@@ -51,8 +51,21 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     public void setExpanded(boolean expanded) {
-        isExpanded = expanded;
-        notifyDataSetChanged();
+        if (this.isExpanded == expanded) return;
+
+        // 그룹 아이템들이 시작하는 position = 2 ("나", "그룹 토글" 다음)
+        int startPosition = 2;
+        int groupCount = groups.size();
+
+        if (expanded) {
+            // 펼치는 경우: 아이템이 생기는 것처럼
+            this.isExpanded = true;
+            notifyItemRangeInserted(startPosition, groupCount);
+        } else {
+            // 접는 경우: 아이템이 사라지는 것처럼
+            notifyItemRangeRemoved(startPosition, groupCount);
+            this.isExpanded = false;
+        }
     }
 
     public boolean isExpanded() {
@@ -118,6 +131,8 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     private void bindMe(AvatarViewHolder holder) {
+        resetAvatarStyle(holder);
+
         holder.tvLabel.setText("나");
 
         boolean isSelected = (selectedGroupId == null);
@@ -210,4 +225,13 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
             tvLabel = itemView.findViewById(org.maru.muaring.design.R.id.tvLabel);
         }
     }
+
+    private void resetAvatarStyle(AvatarViewHolder holder) {
+        holder.ivAvatar.setPadding(0, 0, 0, 0);
+    }
+
+    public int getGroupCount() {
+        return groups.size();
+    }
+
 }
