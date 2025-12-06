@@ -13,7 +13,13 @@ public class GroupProfileResponse {
     private Integer memberCount;
     private String imageUrl;
     private String createdAt;
-//    private Integer level; // 나중에 백에서 추가할 필드라고 가정
+
+    // 레벨 관련 필드 추가
+    private Integer level;               // 현재 레벨 (1~5)
+    private Long exp;                    // 현재 누적 EXP
+    private Long nextLevelExp;           // 다음 레벨이 요구하는 총 EXP (없으면 null)
+    private Long remainingExpToNext;     // 다음 레벨까지 남은 EXP (최대 레벨이면 0)
+
 
     public Long getGroupId() {
         return groupId;
@@ -51,7 +57,19 @@ public class GroupProfileResponse {
         return createdAt;
     }
 
-//    public Integer getLevel() {
-//        return level;
-//    }
+    public Integer getLevel() {
+        return level;
+    }
+
+    public Long getExp() {
+        return exp;
+    }
+
+    public Long getNextLevelExp() {
+        return nextLevelExp;
+    }
+
+    public Long getRemainingExpToNext() {
+        return remainingExpToNext;
+    }
 }

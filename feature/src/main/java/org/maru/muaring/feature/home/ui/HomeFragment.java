@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -58,6 +59,9 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
         rvGroupSelector = view.findViewById(R.id.rvGroupSelector);
         setupGroupSelector();
 
+        // 애니메이터 활성화!
+        rvGroupSelector.setItemAnimator(new DefaultItemAnimator());
+
         // 내 프로필 설정 관찰해서 프사 반영
         observeMyProfileSettings();
 
@@ -98,11 +102,12 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     }
 
     private void loadGroupsIfNeeded() {
-        if (groupsLoaded) {
+        if (groupSelectorAdapter.getGroupCount() > 0) {
             groupSelectorAdapter.setExpanded(!groupSelectorAdapter.isExpanded());
             return;
         }
 
+        // 아직 한 번도 안 받아온 경우에만 API 호출
         groupRepository.getMyGroups().observe(getViewLifecycleOwner(), resource -> {
             if (resource == null) return;
 
@@ -132,11 +137,6 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     }
 
     private void showTodayPostsFragment(@Nullable Long groupId) {
-//        Toast.makeText(
-//                getContext(),
-//                "오늘의 음악을 보여 드릴게요!",
-//                Toast.LENGTH_SHORT
-//        ).show();
 
         TodayPostsFragment fragment = TodayPostsFragment.newInstance(groupId);
         getChildFragmentManager()
@@ -158,11 +158,8 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     @Override
     public void onGroupToggleClicked() {
         Log.d("HomeFragment", "onGroupToggleClicked called");
-        if (!groupsLoaded) {
-            loadGroupsIfNeeded();
-        } else {
-            groupSelectorAdapter.setExpanded(!groupSelectorAdapter.isExpanded());
-        }
+        // 플래그 대신 항상 이 메서드만 호출하도록 변경
+        loadGroupsIfNeeded();
     }
 
     @Override
