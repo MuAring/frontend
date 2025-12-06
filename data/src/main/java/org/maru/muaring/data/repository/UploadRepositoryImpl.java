@@ -1,0 +1,50 @@
+package org.maru.muaring.data.repository;
+
+import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.data.api.UploadApi;
+import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.SpotifyTrackResponse;
+
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Response;
+
+public class UploadRepositoryImpl implements UploadRepository {
+
+    private final UploadApi uploadApi;
+
+    public UploadRepositoryImpl(UploadApi uploadApi){
+        this.uploadApi = uploadApi;
+    }
+
+    @Override
+    public void searchMusic(String query, Callback<List<SpotifyTrackResponse>> callback) {
+
+        uploadApi.searchMusic(query).enqueue(new retrofit2.Callback<>() {
+
+            @Override
+            public void onResponse(Call<ApiResponse<List<SpotifyTrackResponse>>> call,
+                                   Response<ApiResponse<List<SpotifyTrackResponse>>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+
+                    ApiResponse<List<SpotifyTrackResponse>> api = response.body();
+
+                    if (api.isSuccess()) {
+                        callback.onSuccess(api.getData());
+                    } else {
+                        callback.onError(new Exception(api.getMessage()));
+                    }
+                } else {
+                    callback.onError(new Exception("서버 응답 오류: " + response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<List<SpotifyTrackResponse>>> call, Throwable t) {
+                callback.onError(new Exception("네트워크 오류: " + t.getMessage()));
+            }
+        });
+    }
+}

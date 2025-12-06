@@ -8,6 +8,7 @@ import org.maru.muaring.data.api.ImageApi;
 import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.PostApi;
+import org.maru.muaring.data.api.UploadApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
@@ -20,6 +21,8 @@ import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
 import org.maru.muaring.data.repository.PostRepositoryImpl;
+import org.maru.muaring.data.repository.UploadRepository;
+import org.maru.muaring.data.repository.UploadRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -131,4 +134,15 @@ public class NetworkModule {
         return retrofit.create(LibraryApi.class);
     }
 
+    @Provides
+    @Singleton
+    public UploadApi provideUploadApi(Retrofit retrofit) {
+        return retrofit.create(UploadApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public UploadRepository provideMusicRepository(UploadApi api) {
+        return new UploadRepositoryImpl(api);
+    }
 }
