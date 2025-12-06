@@ -16,20 +16,20 @@
         android:id="@+id/archiveFragment"
         android:name="org.maru.muaring.feature.archive.ui.ArchiveFragment" />
 
-    <fragment
-        android:id="@+id/profileFragment"
-        android:name="org.maru.muaring.feature.member.ui.profile.MemberProfileFragment" />
-
-    <!-- 그룹 프로필 테스트 -->
 <!--    <fragment-->
 <!--        android:id="@+id/profileFragment"-->
-<!--        android:name="org.maru.muaring.feature.group.ui.profile.GroupProfileFragment"-->
-<!--        android:label="Group Profile">-->
+<!--        android:name="org.maru.muaring.feature.member.ui.profile.MemberProfileFragment" />-->
 
-<!--        <argument-->
-<!--            android:name="groupId"-->
-<!--            app:argType="long" />-->
-<!--    </fragment>-->
+<!--     그룹 프로필 테스트-->
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="org.maru.muaring.feature.group.ui.profile.GroupProfileFragment"
+        android:label="Group Profile">
+
+        <argument
+            android:name="groupId"
+            app:argType="long" />
+    </fragment>
 
     <!-- 가운데 업로드 FAB 목적지 -->
     <fragment

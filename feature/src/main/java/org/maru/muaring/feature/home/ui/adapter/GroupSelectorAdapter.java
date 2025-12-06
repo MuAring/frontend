@@ -35,6 +35,8 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     private final Listener listener;
     private final List<MyGroupSummary> groups = new ArrayList<>();
     private boolean isExpanded = false;
+    private String myProfileImageUrl;
+    private Long selectedGroupId = null; // null이면 "나" 선택
 
     public GroupSelectorAdapter(Listener listener) {
         this.listener = listener;
@@ -49,12 +51,35 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     public void setExpanded(boolean expanded) {
-        isExpanded = expanded;
-        notifyDataSetChanged();
+        if (this.isExpanded == expanded) return;
+
+        // 그룹 아이템들이 시작하는 position = 2 ("나", "그룹 토글" 다음)
+        int startPosition = 2;
+        int groupCount = groups.size();
+
+        if (expanded) {
+            // 펼치는 경우: 아이템이 생기는 것처럼
+            this.isExpanded = true;
+            notifyItemRangeInserted(startPosition, groupCount);
+        } else {
+            // 접는 경우: 아이템이 사라지는 것처럼
+            notifyItemRangeRemoved(startPosition, groupCount);
+            this.isExpanded = false;
+        }
     }
 
     public boolean isExpanded() {
         return isExpanded;
+    }
+
+    public void setMyProfileImage(String url) {
+        this.myProfileImageUrl = url;
+        notifyItemChanged(0); // 0번 포지션이 '나'
+    }
+
+    public void setSelectedGroup(Long groupId) {
+        this.selectedGroupId = groupId;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -106,8 +131,30 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     private void bindMe(AvatarViewHolder holder) {
+        resetAvatarStyle(holder);
+
         holder.tvLabel.setText("나");
-        holder.ivAvatar.setImageResource(R.drawable.ic_profile_me);
+
+        boolean isSelected = (selectedGroupId == null);
+
+        // 내 프사 가져오기
+        if (myProfileImageUrl != null && !myProfileImageUrl.isEmpty()) {
+            Glide.with(holder.ivAvatar.getContext())
+                    .load(myProfileImageUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_profile_me)
+                    .error(R.drawable.ic_profile_me)
+                    .into(holder.ivAvatar);
+        } else {
+            holder.ivAvatar.setImageResource(R.drawable.ic_profile_me);
+        }
+
+        // 선택 여부에 따라 stroke 적용
+        if (isSelected) {
+            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
+        } else {
+            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onMeClicked();
@@ -129,14 +176,21 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
         MyGroupSummary group = groups.get(groupIndex);
 
         holder.tvLabel.setText(group.getName());
+        String imageUrl = group.getImageUrl();
 
-        if (group.getImageUrl() != null) {
-            Glide.with(holder.ivAvatar.getContext())
-                    .load(group.getImageUrl())
-                    .circleCrop()
-                    .into(holder.ivAvatar);
+        Glide.with(holder.ivAvatar.getContext())
+                .load(imageUrl)
+                .circleCrop()
+                .placeholder(R.drawable.ic_profile_group)
+                .error(R.drawable.ic_profile_group)
+                .into(holder.ivAvatar);
+
+        boolean isSelected = (selectedGroupId != null && selectedGroupId.equals(group.getGroupId()));
+
+        if (isSelected) {
+            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
         } else {
-            holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
+            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -171,4 +225,13 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
             tvLabel = itemView.findViewById(org.maru.muaring.design.R.id.tvLabel);
         }
     }
+
+    private void resetAvatarStyle(AvatarViewHolder holder) {
+        holder.ivAvatar.setPadding(0, 0, 0, 0);
+    }
+
+    public int getGroupCount() {
+        return groups.size();
+    }
+
 }
