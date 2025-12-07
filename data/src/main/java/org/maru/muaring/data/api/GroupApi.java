@@ -70,5 +70,10 @@ public interface GroupApi {
             @Path("groupId") Long groupId
     );
 
+    // 공개 그룹 가입
+    @POST("/groups/{groupId}/members")
+    Call<ApiResponse<Void>> joinPublicGroup(
+            @Path("groupId") Long groupId
+    );
 
 }

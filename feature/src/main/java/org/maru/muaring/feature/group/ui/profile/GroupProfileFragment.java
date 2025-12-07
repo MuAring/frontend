@@ -85,13 +85,12 @@ public class GroupProfileFragment extends Fragment {
 
         // === groupId 전달 받기 (네비게이션 또는 Bundle 등) ===
         if (getArguments() != null) {
-            groupId = getArguments().getLong("groupId", 1); // TODO: 하드코딩 해둔 거라서 이 부분 전달받게 바꿔야 됨!!!
-        }
-
-        if (groupId == null || groupId <= 0) {
-            Toast.makeText(requireContext(), "유효하지 않은 그룹입니다.", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
-            return;
+            if (!getArguments().containsKey("groupId")) {
+                throw new IllegalStateException("groupId가 전달되지 않았습니다.");
+            }
+            groupId = getArguments().getLong("groupId");
+        } else {
+            throw new IllegalStateException("GroupProfileFragment의 인자값이 없습니다.");
         }
 
         viewModel = new ViewModelProvider(this).get(GroupProfileViewModel.class);

@@ -21,7 +21,8 @@ import java.util.List;
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
 
     public interface OnItemActionClickListener {
-        void onActionClick(SearchResultItem item);
+        void onItemClick(SearchResultItem item);   // 카드 전체 클릭
+        void onActionClick(SearchResultItem item); // 버튼 클릭
     }
 
     private final List<SearchResultItem> items = new ArrayList<>();
@@ -166,12 +167,26 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                 containerExtra.addView(extra);
             }
 
+            // 카드 전체 클릭 → onItemClick
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(item);
+                }
+            });
+
+            // 버튼 클릭 → onActionClick
             btnAction.setOnClickListener(v -> {
                 // 이미 참여 중이면 클릭 막기
                 if (Boolean.TRUE.equals(item.getIsJoined())) return;
-
                 if (listener != null) listener.onActionClick(item);
             });
+        }
+    }
+
+    public void refreshItem(SearchResultItem item) {
+        int index = items.indexOf(item);
+        if (index != -1) {
+            notifyItemChanged(index);
         }
     }
 }
