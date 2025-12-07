@@ -48,4 +48,11 @@ public interface GroupRepository {
     Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
 
     LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId);
+
+    void joinPublicGroup(Long groupId, JoinGroupCallback callback);
+
+    interface JoinGroupCallback {
+        void onSuccess();
+        void onError(Throwable t);
+    }
 }

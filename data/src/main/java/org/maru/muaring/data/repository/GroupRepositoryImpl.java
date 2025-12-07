@@ -44,6 +44,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         this.groupApi = groupApi;
     }
 
+    
     @Override
     public LiveData<Resource<GroupInviteResponse>> createInviteLink(Long groupId) {
         MutableLiveData<Resource<GroupInviteResponse>> result = new MutableLiveData<>();
@@ -101,6 +102,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+    
     @Override
     public LiveData<Resource<InvitePreviewResponse>> getInvitePreview(String inviteToken) {
         MutableLiveData<Resource<InvitePreviewResponse>> result = new MutableLiveData<>();
@@ -158,6 +160,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+    
     @Override
     public LiveData<Resource<Void>> joinByInviteToken(String inviteToken) {
         MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
@@ -212,7 +215,8 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         return result;
     }
-
+    
+    
     // 그룹 검색
     @Override
     public void searchGroups(String name, int page, int size, SearchGroupsCallback callback) {
@@ -251,8 +255,8 @@ public class GroupRepositoryImpl implements GroupRepository {
             }
         });
     }
-
-
+    
+    
     // 그룹 카테고리 조회
     @Override
     public Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories() {
@@ -290,6 +294,7 @@ public class GroupRepositoryImpl implements GroupRepository {
     }
 
 
+    // 그룹 프로필 조회
     @Override
     public LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId) {
         MutableLiveData<Resource<GroupProfileResponse>> result = new MutableLiveData<>();
@@ -330,4 +335,29 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         return result;
     }
+
+    
+    // 공개 그룹 가입
+    @Override
+    public void joinPublicGroup(Long groupId, JoinGroupCallback callback) {
+        groupApi.joinPublicGroup(groupId)
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<Void>> call,
+                                           Response<ApiResponse<Void>> response) {
+
+                        if (response.isSuccessful()) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError(new Exception("가입 실패 code=" + response.code()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
 }
