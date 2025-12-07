@@ -6,6 +6,8 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,6 +43,18 @@ public class MusicSearchFragment extends Fragment {
         recycler.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new MusicSearchAdapter();
         recycler.setAdapter(adapter);
+
+        adapter.setOnItemClickListener(item -> {
+
+            Bundle bundle = new Bundle();
+            bundle.putParcelable("selectedMusic", item);
+
+            NavController navController = Navigation.findNavController(requireView());
+            navController.navigate(
+                    R.id.uploadFragment,
+                    bundle
+            );
+        });
 
         // 검색창 fragment 찾아오기
         SearchBarFragment searchBar =
