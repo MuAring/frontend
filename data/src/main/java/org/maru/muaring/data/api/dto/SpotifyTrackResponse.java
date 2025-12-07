@@ -44,6 +44,8 @@ public class SpotifyTrackResponse implements Parcelable {
         dest.writeInt(popularity);
     }
 
+    public String getSpotifyId(){ return spotifyId; }
+
     public String getName() { return name; }
     public String getArtistName() { return artistName; }
     public String getAlbumImgUrl() { return albumImgUrl; }

@@ -1,13 +1,16 @@
 package org.maru.muaring.data.api;
 
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.MusicPostRequest;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.SpotifyTrackResponse;
 
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Query;
 
 public interface UploadApi {
@@ -20,4 +23,7 @@ public interface UploadApi {
     Call<ApiResponse<MyGroupListResponse>> getMyGroups(
             @Query("name") String name
     );
+
+    @POST("/post")
+    Call<Void> createMusicPost(@Body MusicPostRequest request);
 }

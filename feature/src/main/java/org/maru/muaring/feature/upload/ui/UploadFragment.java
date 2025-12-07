@@ -5,9 +5,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -16,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.bumptech.glide.Glide;
 
 import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.data.api.dto.MusicPostRequest;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.data.api.dto.SpotifyTrackResponse;
@@ -46,10 +51,19 @@ public class UploadFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        Spinner spinnerGroup = view.findViewById(R.id.spinnerGroup);
+        Button btnPost = view.findViewById(R.id.btnPost);
+        EditText edtText = view.findViewById(R.id.edtText);
+
         View toolbar = view.findViewById(R.id.toolbar);
         TextView title = toolbar.findViewById(R.id.toolbar_title);
         title.setText("오늘의 음악");
-        Spinner spinnerGroup = view.findViewById(R.id.spinnerGroup);
+
+        ImageButton btnBack = toolbar.findViewById(R.id.btn_back);
+
+        btnBack.setOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
 
         if (getArguments() != null) {
             selectedMusic = getArguments().getParcelable("selectedMusic");
@@ -57,6 +71,40 @@ public class UploadFragment extends Fragment {
         if (selectedMusic != null) {
             bindSelectedMusic(view);
         }
+
+        btnPost.setOnClickListener(v -> {
+
+            String content = edtText.getText().toString().trim();
+
+            if (content.isEmpty()) {
+                Toast.makeText(requireContext(), "내용을 입력해주세요.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Long groupIdToSend = selectedGroupId;
+
+            String spotifyId = selectedMusic.getSpotifyId();
+
+            MusicPostRequest request = new MusicPostRequest(
+                    groupIdToSend,
+                    spotifyId,
+                    content
+            );
+
+            uploadRepository.createMusicPost(request, new Callback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    Toast.makeText(requireContext(), "게시글 등록 완료!", Toast.LENGTH_SHORT).show();
+                    requireActivity().onBackPressed(); // 화면 뒤로가기
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(requireContext(), "등록 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Log.e("UploadFragment", "등록 실패: " + e.getMessage());
+                }
+            });
+        });
 
         uploadRepository.getMyGroups(new Callback<MyGroupListResponse>() {
             @Override
