@@ -1,5 +1,7 @@
 package org.maru.muaring.data.repository;
 
+import android.util.Log;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
@@ -9,10 +11,15 @@ import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileUpdateRequest;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
+import org.maru.muaring.data.api.dto.PageResponse;
+
+import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Response;
 
@@ -141,4 +148,53 @@ public class MemberRepositoryImpl implements MemberRepository {
             }
         });
     }
+
+    @Override
+    public void searchMembers(
+            String name,
+            int page,
+            int size,
+            SearchMembersCallback callback
+    ) {
+        api.searchMembers(name, page, size)
+                .enqueue(new retrofit2.Callback<ApiResponse<PageResponse<MemberSearchItemDto>>>() {
+                    @Override
+                    public void onResponse(
+                            Call<ApiResponse<PageResponse<MemberSearchItemDto>>> call,
+                            Response<ApiResponse<PageResponse<MemberSearchItemDto>>> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
+
+                            ApiResponse<PageResponse<MemberSearchItemDto>> body = response.body();
+                            PageResponse<MemberSearchItemDto> pageResponse = body.getData();
+
+                            // 로그 찍어서 실제로 몇 개 오는지 확인
+                            int count = 0;
+                            if (pageResponse != null && pageResponse.getContent() != null) {
+                                count = pageResponse.getContent().size();
+                            }
+                            Log.d("MemberRepository", "searchMembers success, count = " + count);
+
+                            List<MemberSearchItemDto> content =
+                                    (pageResponse != null && pageResponse.getContent() != null)
+                                            ? pageResponse.getContent()
+                                            : java.util.Collections.emptyList();
+
+                            callback.onSuccess(content);
+
+                        } else {
+                            callback.onError(new Exception("멤버 검색에 실패했어요."));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<ApiResponse<PageResponse<MemberSearchItemDto>>> call,
+                            Throwable t
+                    ) {
+                        callback.onError(t);
+                    }
+                });
+    }
+
 }

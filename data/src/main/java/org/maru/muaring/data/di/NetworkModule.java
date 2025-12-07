@@ -2,6 +2,7 @@ package org.maru.muaring.data.di;
 
 import org.maru.muaring.core.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
+import org.maru.muaring.data.api.FollowApi;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.HistoryApi;
 import org.maru.muaring.data.api.ImageApi;
@@ -11,6 +12,8 @@ import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.api.UploadApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
+import org.maru.muaring.data.repository.FollowRepository;
+import org.maru.muaring.data.repository.FollowRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.GroupRepositoryImpl;
 import org.maru.muaring.data.repository.HistoryRepository;
@@ -144,5 +147,17 @@ public class NetworkModule {
     @Singleton
     public UploadRepository provideMusicRepository(UploadApi api) {
         return new UploadRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public FollowApi provideFollowApi(Retrofit retrofit) {
+        return retrofit.create(FollowApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public FollowRepository provideFollowRepository(FollowApi api) {
+        return new FollowRepositoryImpl(api);
     }
 }

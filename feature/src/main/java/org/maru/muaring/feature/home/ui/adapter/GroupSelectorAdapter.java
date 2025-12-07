@@ -151,9 +151,11 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
         // 선택 여부에 따라 stroke 적용
         if (isSelected) {
-            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
+            holder.ivAvatar.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_selected);
         } else {
-            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
+            holder.ivAvatar.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_circle_gray);
         }
 
         holder.itemView.setOnClickListener(v -> {
@@ -216,11 +218,13 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
+        View avatarContainer;
         ImageView ivAvatar;
         TextView tvLabel;
 
         AvatarViewHolder(@NonNull View itemView) {
             super(itemView);
+            avatarContainer = itemView.findViewById(org.maru.muaring.design.R.id.avatarContainer);
             ivAvatar = itemView.findViewById(org.maru.muaring.design.R.id.ivAvatar);
             tvLabel = itemView.findViewById(org.maru.muaring.design.R.id.tvLabel);
         }
