@@ -3,6 +3,7 @@ package org.maru.muaring.data.repository;
 import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.data.api.UploadApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.SpotifyTrackResponse;
 
 import java.util.List;
@@ -47,4 +48,32 @@ public class UploadRepositoryImpl implements UploadRepository {
             }
         });
     }
+
+    @Override
+    public void getMyGroups(Callback<MyGroupListResponse> callback) {
+        uploadApi.getMyGroups(null).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
+                                   Response<ApiResponse<MyGroupListResponse>> response) {
+
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<MyGroupListResponse> api = response.body();
+
+                    if (api.isSuccess()) {
+                        callback.onSuccess(api.getData());
+                    } else {
+                        callback.onError(new Exception(api.getMessage()));
+                    }
+                } else {
+                    callback.onError(new Exception("서버 응답 오류: " + response.code()));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                callback.onError(new Exception("네트워크 오류: " + t.getMessage()));
+            }
+        });
+    }
+
 }

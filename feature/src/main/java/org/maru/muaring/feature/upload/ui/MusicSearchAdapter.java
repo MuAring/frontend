@@ -13,6 +13,7 @@ import com.bumptech.glide.Glide;
 
 import org.maru.muaring.data.api.dto.SpotifyTrackResponse;
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,16 @@ import java.util.List;
 public class MusicSearchAdapter extends RecyclerView.Adapter<MusicSearchAdapter.ViewHolder> {
 
     private List<SpotifyTrackResponse> list = new ArrayList<>();
+
+    public interface OnItemClickListener {
+        void onItemClick(SpotifyTrackResponse item);
+    }
+
+    private OnItemClickListener listener;
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public void updateList(List<SpotifyTrackResponse> newList) {
         this.list = newList;
@@ -44,6 +55,10 @@ public class MusicSearchAdapter extends RecyclerView.Adapter<MusicSearchAdapter.
         Glide.with(holder.itemView)
                 .load(item.getAlbumImgUrl())
                 .into(holder.album);
+
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) listener.onItemClick(item);
+        });
     }
 
     @Override

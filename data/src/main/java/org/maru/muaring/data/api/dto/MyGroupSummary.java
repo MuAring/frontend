@@ -71,4 +71,8 @@ public class MyGroupSummary {
     public String getImageUrl() {
         return imageUrl;
     }
+    public MyGroupSummary(Long groupId, String name) {
+        this.groupId = groupId;
+        this.name = name;
+    }
 }
