@@ -12,10 +12,10 @@ public class SearchResultItem {
     private final Type type;
     private final Long id;
     private final String title;
-    private final List<String> categoryNames; // 그룹용
-    private final String todayMusicText;      // 사용자용
-    private final String actionText;          // 버튼 텍스트
-    private final Boolean isJoined;
+    private final List<String> categoryNames;   // 그룹용
+    private final String todayMusicText;        // 사용자용
+    private String actionText;                  // 버튼 텍스트
+    private Boolean isJoined;                   // 가입 여부
 
     public SearchResultItem(Type type,
                             Long id,
@@ -40,4 +40,12 @@ public class SearchResultItem {
     public String getTodayMusicText() { return todayMusicText; }
     public String getActionText() { return actionText; }
     public Boolean getIsJoined() { return isJoined; }
+
+    // setter
+    public void setActionText(String actionText) {
+        this.actionText = actionText;
+    }
+    public void setIsJoined(Boolean joined) {
+        this.isJoined = joined;
+    }
 }
