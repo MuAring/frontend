@@ -85,7 +85,7 @@ public class LibraryFragment extends Fragment {
         });
 
         btnSpotify.setOnClickListener(v -> {
-            List<Long> selectedIds = adapter.getSelectedLibraryIds();
+            List<Long> selectedIds = adapter.getSelectedMusicIds();
 
             ExportRequest request = new ExportRequest(selectedIds);
 
@@ -108,7 +108,6 @@ public class LibraryFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v -> showDeleteDialog());
-
     }
 
     private void showDeleteDialog() {

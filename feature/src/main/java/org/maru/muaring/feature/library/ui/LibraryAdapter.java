@@ -84,6 +84,17 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
     public List<Long> getSelectedLibraryIds() {
         return new ArrayList<>(selectedIds);
     }
+
+    public List<Long> getSelectedMusicIds() {
+        List<Long> musicIds = new ArrayList<>();
+        for (Music m : musicList) {
+            if (selectedIds.contains(m.getLibraryId())) {
+                musicIds.add(m.getMusicId());
+            }
+        }
+        return musicIds;
+    }
+
     public void selectAll() {
         selectedIds.clear();
         for (Music music : musicList) {

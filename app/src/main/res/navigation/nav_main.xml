@@ -33,8 +33,8 @@
 
     <!-- 가운데 업로드 FAB 목적지 -->
     <fragment
-        android:id="@+id/uploadFragment"
-        android:name="org.maru.muaring.feature.upload.ui.UploadFragment" />
+        android:id="@+id/musicSearchFragment"
+        android:name="org.maru.muaring.feature.upload.ui.MusicSearchFragment" />
 
     <fragment
         android:id="@+id/mapFragment"
