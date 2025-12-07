@@ -17,18 +17,20 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.ui.SegmentedToggleView;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.MemberSearchItemDto;
+import org.maru.muaring.data.repository.FollowRepository;
 import org.maru.muaring.data.repository.GroupRepository;
+import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.common.SearchBarFragment;
 import org.maru.muaring.feature.search.ui.adapter.SearchResultAdapter;
 import org.maru.muaring.feature.search.ui.model.SearchResultItem;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.inject.Inject;
 
@@ -37,6 +39,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class SearchFragment extends Fragment {
 
+    // Toolbar
+    private TextView toolbarTitle;
+    private ImageButton toolbarBack;
+    private ImageButton toolbarAction;
+
     private SegmentedToggleView segmentedToggleView;    // 상단 토글
     private ImageButton btnBack;                        // 뒤로가기 버튼
     private TextView textTitle;
@@ -44,11 +51,18 @@ public class SearchFragment extends Fragment {
 
     private SearchBarFragment searchBarFragment;        // 검색창
     private SearchResultAdapter searchResultAdapter;
+    private TextView tvEmptyResult;                     // 빈 결과 조회
 
     private SearchNavigator navigator;
 
     @Inject
     GroupRepository groupRepository;
+
+    @Inject
+    MemberRepository memberRepository;
+
+    @Inject
+    FollowRepository followRepository;
 
     // Activity를 navigator로 받기
     @Override
@@ -72,10 +86,27 @@ public class SearchFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initToolbar(view);
         initViews(view);
         setupInitialState();
         setupListeners();
         setupRecyclerView();
+    }
+
+    private void initToolbar(@NonNull View root) {
+        View toolbar = root.findViewById(R.id.include_toolbar_group);
+        if (toolbar == null) return;
+
+        toolbarTitle = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_title);
+        toolbarBack = toolbar.findViewById(R.id.btn_back);
+//        toolbarAction = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_action);
+
+        toolbarTitle.setText("검색");
+        toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+//        toolbarAction.setVisibility(View.VISIBLE);
+//        toolbarAction.setOnClickListener(v -> {
+//            // TODO: 그룹 설정 이동
+//        });
     }
 
     private void initViews(View view) {
@@ -85,6 +116,7 @@ public class SearchFragment extends Fragment {
         searchBarFragment = (SearchBarFragment) getChildFragmentManager()
                 .findFragmentById(R.id.fragmentSearchBar);
         recyclerSearchResult = view.findViewById(R.id.recyclerSearchResult);
+        tvEmptyResult = view.findViewById(R.id.tvEmptyResult);
     }
 
     private void setupInitialState() {
@@ -127,7 +159,7 @@ public class SearchFragment extends Fragment {
                         public void onSuccess() {
                             if (!isAdded()) return;
 
-                            Toast.makeText(requireContext(), "가입을 완료했어요! 🎵", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), item.getTitle() + " 가입을 완료했어요! 🎵", Toast.LENGTH_SHORT).show();
 
                             // 가입 상태 변경
                             item.setIsJoined(true);
@@ -141,14 +173,67 @@ public class SearchFragment extends Fragment {
                         public void onError(Throwable t) {
                             if (!isAdded()) return;
 
-                            Toast.makeText(requireContext(), "가입에 실패했어요. 🥲", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(requireContext(), item.getTitle() + " 가입에 실패했어요 🥲", Toast.LENGTH_SHORT).show();
                         }
                     });
                 } else {
                     // TODO: 사용자 팔로우
+                    long memberId = item.getId();
+
+                    // -------------------------
+                    // UNFOLLOW
+                    // -------------------------
+                    if (Boolean.TRUE.equals(item.getIsFollowing())) {
+
+                        followRepository.unfollowMember(memberId, new Callback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                if (!isAdded()) return;
+
+                                item.setIsFollowing(false);
+                                item.setActionText("팔로우");
+                                searchResultAdapter.refreshItem(item);
+
+                                Toast.makeText(requireContext(), item.getTitle() + " 님을 언팔로우했어요.", Toast.LENGTH_SHORT).show();
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                if (!isAdded()) return;
+                                Toast.makeText(requireContext(), "언팔로우 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
+                    }
+
+                    // -------------------------
+                    // FOLLOW
+                    // -------------------------
+                    else {
+
+                        followRepository.followMember(memberId, new org.maru.muaring.core.common.Callback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                if (!isAdded()) return;
+
+                                Toast.makeText(requireContext(), item.getTitle() + " 님을 팔로우했어요! 🎵", Toast.LENGTH_SHORT).show();
+
+                                item.setIsFollowing(true);
+                                item.setActionText("팔로잉");
+                                searchResultAdapter.refreshItem(item);
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                if (!isAdded()) return;
+                                Toast.makeText(requireContext(), "팔로우에 실패했어요 🥲", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
                 }
             }
         });
+
         recyclerSearchResult.setAdapter(searchResultAdapter);
     }
 
@@ -213,7 +298,7 @@ public class SearchFragment extends Fragment {
         if (segmentedToggleView.isGroupSelected()) {
             searchGroups(query);
         } else {
-            searchUsers(query);
+            searchMembers(query);
         }
     }
 
@@ -223,6 +308,13 @@ public class SearchFragment extends Fragment {
                     @Override
                     public void onSuccess(List<GroupSummary> groups) {
                         if (!isAdded()) return;
+
+                        if (groups == null || groups.isEmpty()) {
+                            updateEmptyView(true);
+                            searchResultAdapter.clear();
+                            return;
+                        }
+                        updateEmptyView(false);
 
                         List<SearchResultItem> items = new ArrayList<>();
                         for (GroupSummary g : groups) {
@@ -238,7 +330,9 @@ public class SearchFragment extends Fragment {
                                     categoryNames,
                                     null,
                                     actionText,
-                                    joined
+                                    joined,
+                                    null,
+                                    g.getImageUrl()
                             ));
                         }
                         searchResultAdapter.setItems(items);
@@ -253,21 +347,68 @@ public class SearchFragment extends Fragment {
     }
 
 
-    private void searchUsers(String query) {
+    private void searchMembers(String query) {
         // TODO: 사용자 검색 API 연동 후 SearchResultItem.Type.USER 로 매핑
 
-//        items.add(new SearchResultItem(
-//                SearchResultItem.Type.USER,
-//                u.getUserId(),
-//                u.getNickname(),
-//                null,
-//                todayMusic,
-//                "팔로우",
-//                null   // isJoined 안 씀
-//        ));
+        memberRepository.searchMembers(query, 0, 10,
+                new MemberRepository.SearchMembersCallback() {
+                    @Override
+                    public void onSuccess(List<MemberSearchItemDto> members) {
+                        if (!isAdded()) return;
 
-        // 지금은 빈 처리
-        Toast.makeText(requireContext(), "사용자 검색 API 연결 예정", Toast.LENGTH_SHORT).show();
+                        if (members == null || members.isEmpty()) {
+                            updateEmptyView(true);
+                            searchResultAdapter.clear();
+                            return;
+                        }
+                        updateEmptyView(false);
+
+                        List<SearchResultItem> items = new ArrayList<>();
+
+                        for (MemberSearchItemDto m : members) {
+
+                            // 오늘의 음악 한 줄 만들기
+                            String today = null;
+                            if (m.getTodayMusicName() != null && m.getTodayMusicArtistName() != null) {
+                                today = m.getTodayMusicName() + " - " + m.getTodayMusicArtistName();
+                            }
+
+                            boolean following = Boolean.TRUE.equals(m.getIsFollowing());
+                            String actionText = following ? "팔로잉" : "팔로우";
+
+                            items.add(new SearchResultItem(
+                                    SearchResultItem.Type.USER,     // 멤버 타입
+                                    m.getMemberId(),                  // id
+                                    m.getNickname(),                  // 제목(닉네임)
+                                    null,                             // 카테고리 없음 (그룹 전용)
+                                    today,                            // 오늘의 음악 텍스트
+                                    actionText,                       // 버튼 텍스트
+                                    null,                             // isJoined (그룹 전용)
+                                    following,                        // isFollowing (멤버 전용)
+                                    m.getProfileImageUrl()
+                            ));
+                        }
+
+                        searchResultAdapter.setItems(items);
+                    }
+
+                    @Override
+                    public void onError(Throwable t) {
+                        if (!isAdded()) return;
+                        Toast.makeText(requireContext(),
+                                "멤버 검색 실패", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+    private void updateEmptyView(boolean isEmpty) {
+        if (isEmpty) {
+            tvEmptyResult.setVisibility(View.VISIBLE);
+            recyclerSearchResult.setVisibility(View.GONE);
+        } else {
+            tvEmptyResult.setVisibility(View.GONE);
+            recyclerSearchResult.setVisibility(View.VISIBLE);
+        }
     }
 
 }
