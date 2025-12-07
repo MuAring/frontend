@@ -5,8 +5,10 @@ import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileUpdateRequest;
+import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
+import org.maru.muaring.data.api.dto.PageResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -32,4 +34,12 @@ public interface MemberApi {
 
     @PATCH("/me/profile")
     Call<ApiResponse<Void>> updateProfile(@Body MemberProfileUpdateRequest request);
+
+    @GET("/members/search")
+    Call<ApiResponse<PageResponse<MemberSearchItemDto>>> searchMembers(
+            @Query("name") String name,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
 }

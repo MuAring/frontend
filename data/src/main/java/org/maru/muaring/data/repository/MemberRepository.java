@@ -6,10 +6,13 @@ import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileUpdateRequest;
 import org.maru.muaring.data.api.dto.NicknameCheckResponse;
+
+import java.util.List;
 
 public interface MemberRepository {
 
@@ -19,4 +22,11 @@ public interface MemberRepository {
     void updateProfile(MemberProfileUpdateRequest request, Callback<Void> callback);
 
     LiveData<Resource<MemberSettingsResponse>> getMySettings();
+
+    void searchMembers(String name, int page, int size, SearchMembersCallback callback);
+
+    interface SearchMembersCallback {
+        void onSuccess(List<MemberSearchItemDto> members);
+        void onError(Throwable t);
+    }
 }

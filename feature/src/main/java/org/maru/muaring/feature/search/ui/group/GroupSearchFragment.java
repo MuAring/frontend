@@ -38,7 +38,7 @@ public class GroupSearchFragment extends Fragment {
 
             @Override
             public void onUserSelected() {
-                // 네비게이션으로 UserSearchFragment로 이동
+                // 네비게이션으로 MemberSearchFragment로 이동
                 // NavController nav = Navigation.findNavController(view);
                 // nav.navigate(R.id.action_groupSearch_to_userSearch);
             }
