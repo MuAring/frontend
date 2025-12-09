@@ -6,6 +6,7 @@ import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
@@ -60,9 +61,12 @@ public interface GroupApi {
     @GET("/group-categories")
     Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories();
 
-    // 내 그룹 조회
+    // 내 그룹 조회 (검색 기능 포함)
+    // name이 null이면 전체 조회, 값이 있으면 검색
     @GET("/me/groups")
-    Call<ApiResponse<MyGroupListResponse>> getMyGroups();
+    Call<ApiResponse<MyGroupListResponse>> getMyGroups(
+            @Query("name") String name
+    );
 
     // 그룹 프로필 조회
     @GET("/groups/{groupId}")
@@ -76,4 +80,10 @@ public interface GroupApi {
             @Path("groupId") Long groupId
     );
 
+    // 그룹 멤버 목록 조회
+    @GET("/groups/{groupId}/members")
+    Call<ApiResponse<List<GroupMemberResponse>>> getGroupMembers(
+            @Path("groupId") Long groupId,
+            @Query("search") String search
+    );
 }

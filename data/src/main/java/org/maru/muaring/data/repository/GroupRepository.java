@@ -9,6 +9,7 @@ import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import androidx.lifecycle.LiveData;
 
 import org.maru.muaring.core.util.Resource;
+import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
@@ -55,4 +56,15 @@ public interface GroupRepository {
         void onSuccess();
         void onError(Throwable t);
     }
+
+    // 그룹 멤버 목록 조회
+    void getGroupMembers(Long groupId, String search, GetGroupMembersCallback callback);
+
+    interface GetGroupMembersCallback {
+        void onSuccess(List<GroupMemberResponse> members);
+        void onError(Throwable t);
+    }
+
+    // 가입한 그룹 검색 메서드 (파라미터 있음)
+    LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName);
 }

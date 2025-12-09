@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.group.ui.GroupMemberFragment;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
@@ -147,8 +148,29 @@ public class GroupProfileFragment extends Fragment {
         if (textStatGroupLevel == null) {
             System.out.println("DEBUG >>> textStatGroupLevel is NULL");
         }
+
+        LinearLayout memberSection = root.findViewById(R.id.layout_member_section);
+        if (memberSection != null) {
+            memberSection.setOnClickListener(v -> navigateToMemberList());
+        }
+
     }
 
+    // 그룹 멤버 조회로 이동 메서드
+    private void navigateToMemberList() {
+        if (groupId == null) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        GroupMemberFragment fragment = GroupMemberFragment.newInstance(groupId);
+
+        requireActivity().getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)  // 실제 컨테이너 ID로 변경
+                .addToBackStack(null)
+                .commit();
+    }
 
     // ====================== History Section ======================
     private void initHistorySection(@NonNull View root) {
