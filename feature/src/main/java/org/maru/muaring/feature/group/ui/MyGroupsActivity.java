@@ -19,7 +19,7 @@ import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.group.ui.MyGroupsAdapter;
-import org.maru.muaring.feature.group.viewmodel.MyGroupsViewModel;
+import org.maru.muaring.feature.group.ui.MyGroupsViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 

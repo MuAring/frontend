@@ -2,6 +2,7 @@ package org.maru.muaring.feature.group.ui.profile;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +26,6 @@ import com.bumptech.glide.Glide;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.group.ui.GroupMemberFragment;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
@@ -83,6 +85,7 @@ public class GroupProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        Log.d("DEBUG", "Host Activity = " + requireActivity().getClass().getSimpleName());
 
         // === groupId 전달 받기 (네비게이션 또는 Bundle 등) ===
         if (getArguments() != null) {
@@ -144,32 +147,41 @@ public class GroupProfileFragment extends Fragment {
         textStatArchive = root.findViewById(R.id.text_stat_archive);
         textStatMemberCount = root.findViewById(R.id.text_stat_member_count);
 
+        // 멤버 섹션 클릭 리스너 추가
+        LinearLayout layoutMemberSection = root.findViewById(R.id.layout_member_section);
+        if (layoutMemberSection != null) {
+            layoutMemberSection.setOnClickListener(v -> navigateToGroupMember());
+        }
+
         // 디버그용
         if (textStatGroupLevel == null) {
             System.out.println("DEBUG >>> textStatGroupLevel is NULL");
         }
 
-        LinearLayout memberSection = root.findViewById(R.id.layout_member_section);
-        if (memberSection != null) {
-            memberSection.setOnClickListener(v -> navigateToMemberList());
-        }
-
     }
 
-    // 그룹 멤버 조회로 이동 메서드
-    private void navigateToMemberList() {
-        if (groupId == null) {
-            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다", Toast.LENGTH_SHORT).show();
+    private void navigateToGroupMember() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        GroupMemberFragment fragment = GroupMemberFragment.newInstance(groupId);
+        Bundle args = new Bundle();
+        args.putLong("group_id", groupId);
 
-        requireActivity().getSupportFragmentManager()
-                .beginTransaction()
-                .replace(R.id.fragment_container, fragment)  // 실제 컨테이너 ID로 변경
-                .addToBackStack(null)
-                .commit();
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            // 리소스 이름으로 ID 찾기
+            int actionId = getResources().getIdentifier(
+                    "action_groupProfile_to_groupMember",
+                    "id",
+                    requireContext().getPackageName()
+            );
+            navController.navigate(actionId, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // ====================== History Section ======================

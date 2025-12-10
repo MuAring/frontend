@@ -52,6 +52,19 @@
         <argument
             android:name="groupId"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_groupProfile_to_groupMember"
+            app:destination="@id/groupMemberFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/groupMemberFragment"
+        android:name="org.maru.muaring.feature.group.ui.GroupMemberFragment"
+        tools:layout="@layout/fragment_group_member">
+        <argument
+            android:name="group_id"
+            app:argType="long" />
     </fragment>
 
 </navigation>

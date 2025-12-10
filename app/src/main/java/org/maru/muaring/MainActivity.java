@@ -11,6 +11,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.maru.muaring.feature.group.ui.GroupMemberFragment;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
 
 import dagger.hilt.android.AndroidEntryPoint;
