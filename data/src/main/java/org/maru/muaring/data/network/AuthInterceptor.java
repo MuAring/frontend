@@ -1,11 +1,7 @@
-package org.maru.muaring.core.network;
-
-import android.content.Context;
+package org.maru.muaring.data.network;
 
 import org.maru.muaring.core.TokenManager;
-
 import java.io.IOException;
-
 import jakarta.inject.Inject;
 import okhttp3.Interceptor;
 import okhttp3.Request;
