@@ -5,6 +5,7 @@ import org.maru.muaring.data.api.dto.KakaoLoginRequest;
 import org.maru.muaring.data.api.dto.LoginResponse;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.SpotifyLoginRequest;
+import org.maru.muaring.data.api.dto.SpotifyTokenRefreshResponse;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
@@ -21,4 +22,7 @@ public interface AuthApi {
 
     @GET("/auth/spotify/authorization")
     Call<ApiResponse<AuthorizeUrlResponse>> getAuthorizedUrl();
+
+    @POST("/auth/spotify/refresh")
+    Call<ApiResponse<SpotifyTokenRefreshResponse>> refreshSpotifyAccessToken();
 }

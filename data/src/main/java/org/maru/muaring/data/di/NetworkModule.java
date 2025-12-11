@@ -1,6 +1,6 @@
 package org.maru.muaring.data.di;
 
-import org.maru.muaring.core.network.AuthInterceptor;
+import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.FollowApi;
 import org.maru.muaring.data.api.GroupApi;
