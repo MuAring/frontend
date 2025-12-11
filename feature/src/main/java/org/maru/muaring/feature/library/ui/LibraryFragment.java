@@ -1,6 +1,8 @@
 package org.maru.muaring.feature.library.ui;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -24,14 +26,12 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
-import org.maru.muaring.data.api.dto.ExportRequest;
-import org.maru.muaring.data.api.dto.LibraryDeleteRequest;
+import org.maru.muaring.data.api.dto.SpotifyExportRequest;
 import org.maru.muaring.data.api.dto.LibraryMusicListRequestDto;
 import org.maru.muaring.data.api.dto.LibraryMusicListResponseDto;
 import org.maru.muaring.feature.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -87,7 +87,16 @@ public class LibraryFragment extends Fragment {
         btnSpotify.setOnClickListener(v -> {
             List<Long> selectedIds = adapter.getSelectedMusicIds();
 
-            ExportRequest request = new ExportRequest(selectedIds);
+            SharedPreferences prefs = requireContext().getSharedPreferences("muaring_pref", Context.MODE_PRIVATE);
+            String spotifyToken = prefs.getString("spotify_token", null);
+            Log.d("SpotifyExport", "prefs에서 읽은 spotify_token = " + spotifyToken);
+
+            if (spotifyToken == null) {
+                Toast.makeText(requireContext(), "스포티파이 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SpotifyExportRequest request = new SpotifyExportRequest(spotifyToken, selectedIds);
 
             libraryApi.exportToSpotify(request).enqueue(new Callback<Void>() {
 
