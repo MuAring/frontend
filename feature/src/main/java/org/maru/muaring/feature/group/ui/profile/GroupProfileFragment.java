@@ -29,6 +29,7 @@ import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.Calendar;
 import java.util.List;
@@ -56,6 +57,15 @@ public class GroupProfileFragment extends Fragment {
     private TextView textStatSharedMusic;
     private TextView textStatArchive;
     private TextView textStatMemberCount;
+
+    // 그룹 오늘 공유한 음악 UI
+    private View includeTodayShared;
+    private ImageView ivAlbumCover;
+    private TextView tvSongTitle;
+    private TextView tvArtistName;
+    private TextView tvLikeCount;
+    private TextView tvCommentCount;
+    private ImageView btnAdd;
 
     // History UI
     private TextView textHistoryMonth;
@@ -101,11 +111,13 @@ public class GroupProfileFragment extends Fragment {
 
         initToolbar(view);
         initProfileSection(view);
+        initTodayMusicSection(view);
         initHistorySection(view);
         initCurrentYearMonth();
         updateMonthText();
 
         observeProfile();
+        observeTodayMusic();
         observeHistory();
 
         // 기본은 리스트 모드
@@ -113,6 +125,7 @@ public class GroupProfileFragment extends Fragment {
 
         // 첫 로딩
         viewModel.loadGroupProfile(groupId);
+        viewModel.loadTodayMusic(groupId);
         loadHistory();
     }
 
@@ -182,6 +195,34 @@ public class GroupProfileFragment extends Fragment {
             e.printStackTrace();
             Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+
+    // ====================== 그룹 오늘 공유한 음악 Section ======================
+    private void initTodayMusicSection(@NonNull View root) {
+        includeTodayShared = root.findViewById(R.id.include_today_shared);
+        if (includeTodayShared == null) return;
+
+        ivAlbumCover = includeTodayShared.findViewById(R.id.ivAlbumCover);
+        tvSongTitle = includeTodayShared.findViewById(R.id.tvSongTitle);
+        tvArtistName = includeTodayShared.findViewById(R.id.tvArtistName);
+        tvLikeCount = includeTodayShared.findViewById(R.id.tvLikeCount);
+        tvCommentCount = includeTodayShared.findViewById(R.id.tvCommentCount);
+        btnAdd = includeTodayShared.findViewById(R.id.btnAdd);
+
+        // 추가 버튼 클릭 리스너
+        if (btnAdd != null) {
+            btnAdd.setOnClickListener(v -> {
+                // TODO: 음악을 내 보관함에 추가하는 기능
+                Toast.makeText(requireContext(), "보관함에 추가", Toast.LENGTH_SHORT).show();
+            });
+        }
+
+        // 카드 전체 클릭 리스너 (게시글 상세로 이동)
+        includeTodayShared.setOnClickListener(v -> {
+            // TODO: 게시글 상세 페이지로 이동
+            Toast.makeText(requireContext(), "게시글 상세 보기", Toast.LENGTH_SHORT).show();
+        });
     }
 
     // ====================== History Section ======================
@@ -383,6 +424,76 @@ public class GroupProfileFragment extends Fragment {
             return String.format(Locale.US, "%.1fK", k);
         }
         return String.valueOf(v);
+    }
+
+
+    // ====================== ViewModel 연결: 오늘의 음악 ======================
+    private void observeTodayMusic() {
+        viewModel.getTodayMusic().observe(getViewLifecycleOwner(), res -> {
+            if (res == null) return;
+
+            Log.d("DEBUG", "오늘의 음악 status = " + res.status);
+
+            switch (res.status) {
+                case LOADING:
+                    // TODO: 로딩 UI (선택사항)
+                    break;
+
+                case SUCCESS:
+                    if (res.data != null) {
+                        bindTodayMusic(res.data);
+                        includeTodayShared.setVisibility(View.VISIBLE);
+                    } else {
+                        // 오늘 공유된 음악이 없음
+                        includeTodayShared.setVisibility(View.GONE);
+                    }
+                    break;
+
+                case ERROR:
+                    Log.e("DEBUG", "오늘의 음악 조회 실패: " + res.message);
+                    includeTodayShared.setVisibility(View.GONE);
+                    break;
+            }
+        });
+    }
+
+    private void bindTodayMusic(TodayMusicPostResponse post) {
+        if (post == null) return;
+
+        // 곡 제목
+        if (!TextUtils.isEmpty(post.getMusicName())) {
+            tvSongTitle.setText(post.getMusicName());
+        }
+
+        // 아티스트 이름
+        if (!TextUtils.isEmpty(post.getArtistName())) {
+            tvArtistName.setText(post.getArtistName());
+        }
+
+        // 앨범 커버 이미지
+        if (!TextUtils.isEmpty(post.getAlbumImgUrl())) {
+            Glide.with(this)
+                    .load(post.getAlbumImgUrl())
+                    .placeholder(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .error(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .centerCrop()
+                    .into(ivAlbumCover);
+        }
+
+        // 좋아요 수
+        tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+
+        // 댓글 수
+        tvCommentCount.setText(String.valueOf(post.getCommentCount()));
+
+        // 카드 클릭 시 게시글 상세로 이동
+        includeTodayShared.setOnClickListener(v -> {
+            // TODO: postId를 이용해 게시글 상세 화면으로 이동
+            Long postId = post.getPostId();
+            Toast.makeText(requireContext(),
+                    "게시글 상세 (postId: " + postId + ")",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 
     // ====================== ViewModel 연결: History ======================

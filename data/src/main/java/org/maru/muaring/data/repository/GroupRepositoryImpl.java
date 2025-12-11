@@ -20,6 +20,8 @@ import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
+import org.maru.muaring.data.api.dto.PageResponse;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -404,7 +406,7 @@ public class GroupRepositoryImpl implements GroupRepository {
                 });
     }
 
-    // 새로운 검색 메서드
+    // 검색 메서드
     @Override
     public LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName) {
         MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
@@ -429,6 +431,57 @@ public class GroupRepositoryImpl implements GroupRepository {
                 result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
             }
         });
+
+        return result;
+    }
+
+    // 그룹 오늘 공유한 음악 조회 메서드
+    @Override
+    public LiveData<Resource<TodayMusicPostResponse>> getTodayGroupFeed(Long groupId) {
+        MutableLiveData<Resource<TodayMusicPostResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "오늘의 피드 조회 시작 - groupId: " + groupId);
+
+        // page=0, size=1 (최신 1개만)
+        groupApi.getTodayGroupFeed(groupId, 0, 1)
+                .enqueue(new Callback<ApiResponse<PageResponse<TodayMusicPostResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            @NonNull Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> call,
+                            @NonNull Response<ApiResponse<PageResponse<TodayMusicPostResponse>>> response
+                    ) {
+                        Log.d(TAG, "오늘의 피드 응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<PageResponse<TodayMusicPostResponse>> apiResponse = response.body();
+                            PageResponse<TodayMusicPostResponse> pageData = apiResponse.getData();
+
+                            if (pageData != null && pageData.isNotEmpty()) {
+                                // 첫 번째 항목만 추출
+                                TodayMusicPostResponse todayPost = pageData.getContent().get(0);
+                                Log.d(TAG, "오늘의 피드 조회 성공: " + todayPost.getMusicName());
+                                result.setValue(Resource.success(todayPost));
+                            } else {
+                                Log.d(TAG, "오늘 공유된 음악이 없습니다");
+                                result.setValue(Resource.success(null)); // 데이터 없음
+                            }
+                        } else {
+                            Log.e(TAG, "오늘의 피드 조회 실패: " + response.message());
+                            String errorMessage = "오늘의 피드 조회 실패 (코드: " + response.code() + ")";
+                            result.setValue(Resource.error(errorMessage, null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> call,
+                            @NonNull Throwable t
+                    ) {
+                        Log.e(TAG, "오늘의 피드 네트워크 오류", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
 
         return result;
     }

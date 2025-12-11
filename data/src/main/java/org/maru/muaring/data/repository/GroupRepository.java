@@ -14,6 +14,7 @@ import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.List;
 
@@ -67,4 +68,7 @@ public interface GroupRepository {
 
     // 가입한 그룹 검색 메서드 (파라미터 있음)
     LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName);
+
+    // 그룹 오늘의 공유한 음악 조회 메서드
+    LiveData<Resource<TodayMusicPostResponse>> getTodayGroupFeed(Long groupId);
 }

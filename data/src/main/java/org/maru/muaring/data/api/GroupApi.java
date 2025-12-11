@@ -10,6 +10,8 @@ import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
+import org.maru.muaring.data.api.dto.PageResponse;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.List;
 
@@ -85,5 +87,13 @@ public interface GroupApi {
     Call<ApiResponse<List<GroupMemberResponse>>> getGroupMembers(
             @Path("groupId") Long groupId,
             @Query("search") String search
+    );
+
+    // 그룹 오늘 공유한 음악 조회
+    @GET("/groups/{groupId}/posts/today")
+    Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> getTodayGroupFeed(
+            @Path("groupId") Long groupId,
+            @Query("page") int page,
+            @Query("size") int size
     );
 }

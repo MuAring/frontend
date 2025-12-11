@@ -16,15 +16,15 @@
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@color/black"
-        android:layout_marginBottom="16dp"/>
+        android:layout_margin="10dp"/>
 
     <!-- 음악 카드 -->
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
+        android:layout_margin="10dp"
         app:cardCornerRadius="12dp"
-        app:cardElevation="3dp"
+        app:cardElevation="4dp"
         app:cardBackgroundColor="@color/white">
 
         <LinearLayout
