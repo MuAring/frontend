@@ -24,6 +24,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.SpotifyExportRequest;
@@ -51,6 +52,9 @@ public class LibraryFragment extends Fragment {
     private ImageView btnDelete, btnSpotify;
     @Inject
     LibraryApi libraryApi;
+
+    @Inject
+    TokenManager tokenManager;
 
     @Nullable
     @Override
@@ -87,14 +91,15 @@ public class LibraryFragment extends Fragment {
         btnSpotify.setOnClickListener(v -> {
             List<Long> selectedIds = adapter.getSelectedMusicIds();
 
-            SharedPreferences prefs = requireContext().getSharedPreferences("muaring_pref", Context.MODE_PRIVATE);
-            String spotifyToken = prefs.getString("spotify_token", null);
-            Log.d("SpotifyExport", "prefs에서 읽은 spotify_token = " + spotifyToken);
+            String spotifyToken = tokenManager.getSpotifyAccessToken();
 
             if (spotifyToken == null) {
                 Toast.makeText(requireContext(), "스포티파이 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            Log.d("Spotify", "token=" + spotifyToken);
+
 
             SpotifyExportRequest request = new SpotifyExportRequest(spotifyToken, selectedIds);
 

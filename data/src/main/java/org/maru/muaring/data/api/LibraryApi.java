@@ -13,12 +13,14 @@ import retrofit2.http.HTTP;
 import retrofit2.http.POST;
 
 public interface LibraryApi {
-    @POST("/library/export")
-    Call<Void> exportToSpotify(@Body SpotifyExportRequest request);
 
     @GET("/library")
     Call<ApiResponse<LibraryMusicListResponseDto>> getLibrary();
 
     @HTTP(method = "DELETE", path = "/library/delete", hasBody = true)
     Call<ApiResponse<Void>> deleteMusic(@Body List<Long> ids);
+
+    @POST("/library/export")
+    Call<Void> exportToSpotify(@Body SpotifyExportRequest request);
+
 }
