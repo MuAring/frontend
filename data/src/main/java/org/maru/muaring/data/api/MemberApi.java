@@ -3,6 +3,7 @@ package org.maru.muaring.data.api;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
 import org.maru.muaring.data.api.dto.MemberProfileUpdateRequest;
 import org.maru.muaring.data.api.dto.MemberSearchItemDto;
@@ -15,6 +16,7 @@ import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface MemberApi {
@@ -27,7 +29,6 @@ public interface MemberApi {
 
     @GET("/me/settings")
     Call<ApiResponse<MemberSettingsResponse>> getMySettings();
-
 
     @GET("/me/settings")
     Call<ApiResponse<MemberProfileSettingReadResponse>> loadProfile();
@@ -42,4 +43,8 @@ public interface MemberApi {
             @Query("size") int size
     );
 
+    @GET("/members/{memberId}/profile")
+    Call<ApiResponse<MemberProfileReadResponse>> readMemberProfile(
+            @Path("memberId") Long memberId
+    );
 }
