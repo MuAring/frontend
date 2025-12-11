@@ -28,7 +28,7 @@
     <!-- 사용자 프로필 -->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="org.maru.muaring.feature.member.ui.profile.MemberProfileFragment" />
+        android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment" />
 
 
     <fragment
