@@ -77,7 +77,7 @@ public class MemberProfileReadViewModel extends ViewModel {
                                   int page) {
 
         LiveData<Resource<List<MusicHistoryResponse>>> source =
-                historyRepository.getMemberHistory(year, month, page);
+                historyRepository.getMemberHistory(memberId, year, month, page);
 
         memberHistory.addSource(source, res -> {
             if (res == null) return;
