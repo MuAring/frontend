@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -31,6 +32,9 @@ public class MemberProfileReadFragment extends Fragment {
 
     private MusicHistoryAdapter historyAdapter;
     private MemberProfileReadViewModel viewModel;
+    private View toolBar;
+    private ImageButton toolBarBtnBack;
+    private TextView toolbarTitle;
 
     // 프로필 정보
     private ImageView profileImage;
@@ -101,6 +105,9 @@ public class MemberProfileReadFragment extends Fragment {
     }
 
     private void bindViews(View v) {
+        toolBar =  v.findViewById(R.id.include_toolbar_group);
+        toolBarBtnBack = toolBar.findViewById(R.id.btn_back);
+        toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
         profileImage = v.findViewById(R.id.image_profile);
         profileName = v.findViewById(R.id.text_profile_name);
         btnEditProfile = v.findViewById(R.id.btn_edit_profile);
@@ -153,6 +160,8 @@ public class MemberProfileReadFragment extends Fragment {
     }
 
     private void updateProfileUI(MemberProfileReadResponse response) {
+        toolBarBtnBack.setVisibility(View.INVISIBLE);
+        toolbarTitle.setText("프로필");
         profileName.setText(response.getNickname());
         sharedMusicCount.setText(String.valueOf(response.getSharedMusicCount()));
         followerCount.setText(String.valueOf(response.getFollowerCount()));
