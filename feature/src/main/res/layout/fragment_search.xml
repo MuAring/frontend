@@ -37,7 +37,7 @@
         android:text="어떤 사용자를 찾아볼까요?"
         android:textColor="@color/muaring_primary_2"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/segmentedToggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

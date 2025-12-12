@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="20dp"
+    android:height="20dp"
+    android:viewportWidth="20"
+    android:viewportHeight="20">
+
+    <!-- 원본 박스 path (초록 아이콘이랑 완전 동일) -->
+    <group>
+
+        <!-- 여기로 잘라서(stroke 바깥쪽이 보이지 않게) inside처럼 만듦 -->
+        <clip-path
+            android:pathData="M17.7778 0H2.22222C0.994923 0 0 0.994923 0 2.22222V17.7778C0 19.0051 0.994923 20 2.22222 20H17.7778C19.0051 20 20 19.0051 20 17.7778V2.22222C20 0.994923 19.0051 0 17.7778 0Z" />
+
+        <!-- 테두리: 같은 path에 stroke만 -->
+        <path
+            android:pathData="M17.7778 0H2.22222C0.994923 0 0 0.994923 0 2.22222V17.7778C0 19.0051 0.994923 20 2.22222 20H17.7778C19.0051 20 20 19.0051 20 17.7778V2.22222C20 0.994923 19.0051 0 17.7778 0Z"
+            android:fillColor="#00000000"
+            android:strokeColor="#000000"
+            android:strokeWidth="2"
+            android:strokeLineJoin="round"
+            android:strokeLineCap="round" />
+
+        <!-- Plus (검은색) -->
+        <path
+            android:pathData="M6 10H14"
+            android:strokeColor="#000000"
+            android:strokeWidth="1.5"
+            android:strokeLineCap="round" />
+
+        <path
+            android:pathData="M10 6V14"
+            android:strokeColor="#000000"
+            android:strokeWidth="1.5"
+            android:strokeLineCap="round" />
+    </group>
+
+</vector>

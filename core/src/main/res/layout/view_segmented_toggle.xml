@@ -48,7 +48,8 @@
             android:minHeight="0dp"
             android:includeFontPadding="false"
             android:paddingVertical="8dp"
-            android:text="그룹" />
+            android:text="그룹"
+            android:textSize="16sp" />
 
         <Button
             android:id="@+id/btn_user"
@@ -61,7 +62,8 @@
             android:minHeight="0dp"
             android:includeFontPadding="false"
             android:paddingVertical="8dp"
-            android:text="사용자" />
+            android:text="사용자"
+            android:textSize="16sp" />
     </LinearLayout>
 
 </FrameLayout>

@@ -18,7 +18,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
-
 import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.feature.R;
@@ -121,8 +120,10 @@ public class MemberProfileReadFragment extends Fragment {
         observeProfile();
         observeHistory();
         showListMode();
-        loadHistory();
-        viewModel.loadMemberProfile(memberId);
+        loadHistory(memberId);
+        if (memberId != -1L) {
+            viewModel.loadMemberProfile(memberId);
+        }
     }
 
     private void bindViews(View v) {
@@ -291,7 +292,7 @@ public class MemberProfileReadFragment extends Fragment {
 
         updateMonthText();
         calendarView.loadMonth(currentYear, currentMonth);
-        loadHistory();
+        loadHistory(memberId);
     }
 
 
@@ -316,7 +317,7 @@ public class MemberProfileReadFragment extends Fragment {
         btnHistoryCalendar.setAlpha(1.0f);
     }
 
-    private void loadHistory() {
+    private void loadHistory(Long memberId) {
         if (memberId == null || memberId <= 0) return;
         viewModel.loadMemberHistory(memberId, currentYear, currentMonth, 0);
     }
