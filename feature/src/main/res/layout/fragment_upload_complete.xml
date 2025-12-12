@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:id="@+id/uploadCompleteFragment">
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardComplete"
+        android:layout_width="230dp"
+        android:layout_height="308dp"
+        android:layout_marginTop="150dp"
+        app:cardBackgroundColor="@android:color/transparent"
+        app:cardElevation="0dp"
+        app:cardUseCompatPadding="false">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:background="@drawable/bg_button_outline_gray">
+
+            <ImageView
+                android:layout_width="156dp"
+                android:layout_height="156dp"
+                android:id="@+id/ivAlbum"
+                android:layout_marginTop="35dp"
+                android:scaleType="fitCenter" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="35dp"
+                android:text="오늘의 음악이"
+                android:textColor="@color/dark_green"
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_semibold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="0dp"
+                android:text="등록되었습니다."
+                android:textColor="@color/dark_green"
+                android:textSize="16sp"
+                android:fontFamily="@font/pretendard_semibold"/>
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <Button
+        android:id="@+id/goToHome"
+        android:layout_width="110dp"
+        android:layout_height="40dp"
+        android:gravity="center"
+        android:text="홈으로"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:background="@drawable/bg_button_green"
+        android:fontFamily="@font/pretendard_medium"
+        android:layout_marginTop="160dp"/>
+
+</LinearLayout>
