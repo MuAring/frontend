@@ -14,6 +14,7 @@ public interface HistoryApi {
     // === Member History ===
     @GET("/post/history")
     Call<ApiResponse<PageResponse<MusicHistoryResponse>>> getMemberHistory(
+            @Path("memberId") Long memberId,
             @Query("year") Integer year,
             @Query("month") Integer month,
             @Query("page") Integer page
