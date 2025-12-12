@@ -23,9 +23,9 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
     public interface Listener {
         void onPostClicked(MusicPostFeedResponse post);
         void onPlayClicked(MusicPostFeedResponse post);
-        void onAddMusicClicked(MusicPostFeedResponse post);
         void onLikeClicked(MusicPostFeedResponse post);
         void onCommentClicked(MusicPostFeedResponse post);
+        void onLibraryClick(MusicPostFeedResponse post);
     }
 
     private final List<MusicPostFeedResponse> items = new ArrayList<>();
@@ -112,11 +112,30 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
                     .circleCrop()
                     .into(ivWriterProfile);
 
-            // 좋아요/댓글 카운트
-            tvLikeCount.setText(String.valueOf(post.getLikeCount()));
-            tvCommentCount.setText(String.valueOf(post.getCommentCount()));
+            // 좋아요/댓글 카운트 (null 안전 처리)
+            int likeCount = post.getLikeCount() != null ? post.getLikeCount() : 0;
+            int commentCount = post.getCommentCount() != null ? post.getCommentCount() : 0;
+            tvLikeCount.setText(String.valueOf(likeCount));
+            tvCommentCount.setText(String.valueOf(commentCount));
 
-            // 클릭 이벤트들
+            // 좋아요 상태에 따른 하트 아이콘
+            if (post.getIsLiked()) {
+                ivLike.setImageResource(org.maru.muaring.design.R.drawable.ic_heart_filled);          // 꽉 찬 하트
+            } else {
+                ivLike.setImageResource(org.maru.muaring.design.R.drawable.ic_heart_outline);  // 빈 하트
+            }
+
+            // 보관함 여부에 따른 아이콘 변경
+            if (post.isInLibrary()) {
+                ivAddMusic.setImageResource(org.maru.muaring.design.R.drawable.ic_is_in_library);
+            } else {
+                ivAddMusic.setImageResource(org.maru.muaring.design.R.drawable.ic_is_not_in_library);
+            }
+
+            // ===========================================
+            // =============== 클릭 이벤트들 ===============
+            // ===========================================
+
             itemView.setOnClickListener(v -> {
                 if (listener != null) listener.onPostClicked(post);
             });
@@ -125,17 +144,59 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
                 if (listener != null) listener.onPlayClicked(post);
             });
 
-            ivAddMusic.setOnClickListener(v -> {
-                if (listener != null) listener.onAddMusicClicked(post);
-            });
-
+            // 좋아요 토글
             ivLike.setOnClickListener(v -> {
+                boolean currentLiked = post.getIsLiked();
+                int currentCount = post.getLikeCount() != null ? post.getLikeCount() : 0;
+
+                boolean newLiked = !currentLiked;
+                int newCount = newLiked ? currentCount + 1 : Math.max(0, currentCount - 1);
+
+                post.setIsLiked(newLiked);
+                post.setLikeCount(newCount);
+                tvLikeCount.setText(String.valueOf(newCount));
+
+                int newIcon = newLiked
+                        ? org.maru.muaring.design.R.drawable.ic_heart_filled
+                        : org.maru.muaring.design.R.drawable.ic_heart_outline;
+                animateIconChange(ivLike, newIcon);
+
                 if (listener != null) listener.onLikeClicked(post);
             });
-
+            
+            // TODO: 댓글 클릭 -> 상세보기의 댓글창 활성화
             ivComment.setOnClickListener(v -> {
                 if (listener != null) listener.onCommentClicked(post);
             });
+
+            // 보관함 토글
+            ivAddMusic.setOnClickListener(v -> {
+                boolean newInLibrary = !post.isInLibrary();
+                post.setInLibrary(newInLibrary);
+
+                int newIcon = newInLibrary
+                        ? org.maru.muaring.design.R.drawable.ic_is_in_library
+                        : org.maru.muaring.design.R.drawable.ic_is_not_in_library;
+                animateIconChange(ivAddMusic, newIcon);
+
+                if (listener != null) listener.onLibraryClick(post);
+            });
+        }
+
+        // 아이콘이 바뀔 때 살짝 페이드 되는 느낌
+        private void animateIconChange(ImageView view, int newResId) {
+            view.animate()
+                    .alpha(0f)
+                    .setDuration(120)
+                    .withEndAction(() -> {
+                        view.setImageResource(newResId);
+                        view.setAlpha(0f);
+                        view.animate()
+                                .alpha(1f)
+                                .setDuration(120)
+                                .start();
+                    })
+                    .start();
         }
     }
 }

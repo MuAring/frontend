@@ -4,19 +4,20 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
-    android:paddingHorizontal="4dp">
+    android:paddingHorizontal="6dp"
+    android:layout_marginBottom="8dp" >
 
     <!-- 바깥 컨테이너: 여기 배경에 stroke 적용 -->
     <FrameLayout
         android:id="@+id/avatarContainer"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="65dp"
+        android:layout_height="65dp"
         android:background="@drawable/bg_circle_gray">
 
         <ImageView
             android:id="@+id/ivAvatar"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
             android:scaleType="centerCrop"
             android:padding="12dp" />
         <!-- 여기에는 background 지정 X -->
@@ -30,5 +31,5 @@
         android:layout_marginTop="4dp"
         android:maxLines="1"
         android:ellipsize="end"
-        android:textSize="13sp" />
+        android:textSize="16sp" />
 </LinearLayout>

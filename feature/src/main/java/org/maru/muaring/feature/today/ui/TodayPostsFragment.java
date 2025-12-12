@@ -94,13 +94,16 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
             }
         });
 
-
         if (groupId == null) {
             viewModel.loadForMe();
         } else {
             viewModel.loadForGroup(groupId);
         }
     }
+
+    // ============================================
+    // =========== Adapter Listener 구현 ===========
+    // ============================================
 
     @Override
     public void onPostClicked(MusicPostFeedResponse post) {
@@ -113,18 +116,31 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
     }
 
     @Override
-    public void onAddMusicClicked(MusicPostFeedResponse post) {
-        // TODO: 보관함에 음악 추가하기 버튼 클릭 처리
-    }
-
-    @Override
     public void onLikeClicked(MusicPostFeedResponse post) {
         // TODO: 좋아요 처리
+        // UI 쪽(아이콘/카운트)는 어댑터에서 반영
+        // 여기서는 백엔드 토글 API만 호출
+        if (post.getPostId() != null) {
+            viewModel.toggleLike(post.getPostId());
+        }
     }
 
     @Override
     public void onCommentClicked(MusicPostFeedResponse post) {
         // TODO: 댓글 눌렀을 때 처리
+    }
+
+    @Override
+    public void onLibraryClick(MusicPostFeedResponse post) {
+        // UI 쪽(아이콘)은 어댑터에서 반영
+        // 여기서는 보관함 API만 호출
+        if (post.getMusicId() == null) return;
+
+        if (post.isInLibrary()) {
+            viewModel.removeFromLibrary(post.getMusicId());
+        } else {
+            viewModel.addToLibrary(post.getMusicId(), null);
+        }
     }
 
 }

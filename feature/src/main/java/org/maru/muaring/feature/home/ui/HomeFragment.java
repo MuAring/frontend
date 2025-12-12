@@ -11,6 +11,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,6 +32,11 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class HomeFragment extends Fragment implements GroupSelectorAdapter.Listener {
+
+    private static final String TAG = "HomeFragment";
+
+    private static final String TAG_TODAY_ME = "today_me";
+    private static final String TAG_TODAY_GROUP_PREFIX = "today_group_";
 
     private HomeViewModel viewModel;
     private RecyclerView rvGroupSelector;
@@ -74,24 +80,20 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
             if (resource == null) return;
 
             switch (resource.status) {
-                case LOADING:
-                    // 로딩 중엔 기본 아이콘(ic_profile_me) 그대로 두면 됨
-                    break;
-
                 case SUCCESS:
                     if (resource.data != null) {
                         groupSelectorAdapter.setMyProfileImage(resource.data.getImageUrl());
                     }
                     break;
-
                 case ERROR:
-                    // 에러 시에는 그냥 기본 이미지 쓰도록 null로 초기화
                     groupSelectorAdapter.setMyProfileImage(null);
+                    break;
+                case LOADING:
+                default:
                     break;
             }
         });
     }
-
 
     private void setupGroupSelector() {
         groupSelectorAdapter = new GroupSelectorAdapter(this);
@@ -112,7 +114,6 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
             if (resource == null) return;
 
             switch (resource.status) {
-
                 case SUCCESS:
                     groupsLoaded = true;
                     List<MyGroupSummary> groups = resource.data;
@@ -130,19 +131,52 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
                 case LOADING:
                     // TODO: 로딩 처리
+                default:
                     break;
             }
         });
 
     }
 
+    /**
+     * replace()로 새로 만드는 게 아니라,
+     * - 이미 있으면 show()
+     * - 없으면 add()
+     * - 나머지는 hide()
+     */
     private void showTodayPostsFragment(@Nullable Long groupId) {
+        FragmentManager fm = getChildFragmentManager();
 
-        TodayPostsFragment fragment = TodayPostsFragment.newInstance(groupId);
-        getChildFragmentManager()
-                .beginTransaction()
-                .replace(R.id.container_today_posts, fragment)
-                .commit();
+        String targetTag = (groupId == null)
+                ? TAG_TODAY_ME
+                : (TAG_TODAY_GROUP_PREFIX + groupId);
+
+        FragmentTransactionHelper txHelper = new FragmentTransactionHelper(fm);
+
+        Fragment target = fm.findFragmentByTag(targetTag);
+        if (target == null) {
+            // 처음 보는 groupId면 새로 만들고 add
+            target = TodayPostsFragment.newInstance(groupId);
+            txHelper.add(R.id.container_today_posts, target, targetTag);
+        }
+
+        // 컨테이너 안의 TodayPostsFragment들 전부 hide 후 target만 show
+        List<Fragment> fragments = fm.getFragments();
+        for (Fragment f : fragments) {
+            if (f == null) continue;
+            if (f == target) continue;
+            txHelper.hide(f);
+        }
+        txHelper.show(target);
+
+        txHelper.commit();
+
+//        TodayPostsFragment fragment = TodayPostsFragment.newInstance(groupId);
+//        getChildFragmentManager()
+//                .beginTransaction()
+//                .replace(R.id.container_today_posts, fragment)
+//                .commit();
+
     }
 
     // ===== GroupSelectorAdapter.Listener =====
@@ -173,5 +207,30 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     public void onAddGroupClicked() {
         Intent intent = new Intent(requireContext(), CreateGroupActivity.class);
         startActivity(intent);
+    }
+
+    // FragmentTransaction 체이닝을 깔끔하게 하려고 만든 helper
+    private static class FragmentTransactionHelper {
+        private final androidx.fragment.app.FragmentTransaction tx;
+
+        FragmentTransactionHelper(FragmentManager fm) {
+            tx = fm.beginTransaction();
+        }
+
+        void add(int containerId, Fragment f, String tag) {
+            tx.add(containerId, f, tag);
+        }
+
+        void hide(Fragment f) {
+            tx.hide(f);
+        }
+
+        void show(Fragment f) {
+            tx.show(f);
+        }
+
+        void commit() {
+            tx.commit();
+        }
     }
 }
