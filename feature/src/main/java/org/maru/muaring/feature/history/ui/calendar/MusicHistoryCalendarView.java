@@ -111,6 +111,8 @@ public class MusicHistoryCalendarView extends FrameLayout {
                     List<MusicHistoryItem> dayItems = groupedByDay.get(dayItem.day);
                     if (!dayItems.isEmpty()) {
                         dayItem.imageUrl = dayItems.get(0).getAlbumImageUrl();
+                    } else {
+                        dayItem.imageUrl = null;
                     }
                 }
             }
@@ -127,6 +129,7 @@ public class MusicHistoryCalendarView extends FrameLayout {
         List<MusicHistoryCalendarDayItem> results = new ArrayList<>();
 
         Calendar cal = Calendar.getInstance();
+        cal.clear();
         cal.set(year, month - 1, 1);
 
         int firstDayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1=일
@@ -137,7 +140,6 @@ public class MusicHistoryCalendarView extends FrameLayout {
         }
 
         int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-
         for (int d = 1; d <= lastDay; d++) {
             results.add(new MusicHistoryCalendarDayItem(d, null));
         }
