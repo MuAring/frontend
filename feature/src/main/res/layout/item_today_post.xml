@@ -29,6 +29,7 @@
             style="@style/Type.Title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:textSize="20sp"
             android:ellipsize="end"
             android:maxLines="1"
             android:layout_marginStart="12dp"
@@ -42,7 +43,8 @@
             style="@style/Type.Body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
+            android:textSize="16sp"
+            android:ellipsize="end"
             android:textColor="@color/dark_gray"
             app:layout_constraintStart_toStartOf="@id/tvTitle"
             app:layout_constraintTop_toBottomOf="@id/tvTitle"
@@ -54,7 +56,7 @@
             style="@style/Type.Body"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:textSize="13sp"
+            android:textSize="14sp"
             android:textColor="@color/dark_gray"
             android:maxLines="3"
             android:ellipsize="end"
@@ -113,8 +115,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Type.Body"
-                android:textSize="12sp"
-                android:layout_marginStart="4dp"
+                android:textSize="13sp"
+                android:layout_marginStart="6dp"
                 android:text="0" />
 
         </LinearLayout>
@@ -126,7 +128,7 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical"
-            android:layout_marginStart="24dp"
+            android:layout_marginStart="26dp"
             app:layout_constraintStart_toEndOf="@id/likeSection"
             app:layout_constraintTop_toTopOf="@id/likeSection">
 
@@ -141,8 +143,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="@style/Type.Body"
-                android:textSize="12sp"
-                android:layout_marginStart="4dp"
+                android:textSize="13sp"
+                android:layout_marginStart="6dp"
                 android:text="0" />
 
         </LinearLayout>
@@ -152,8 +154,8 @@
             android:id="@+id/btnAddMusic"
             android:layout_width="20dp"
             android:layout_height="20dp"
-            android:src="@drawable/ic_add_music"
-            android:layout_marginStart="24dp"
+            android:src="@drawable/ic_is_not_in_library"
+            android:layout_marginStart="26dp"
             app:layout_constraintStart_toEndOf="@id/commentSection"
             app:layout_constraintTop_toTopOf="@id/commentSection" />
 

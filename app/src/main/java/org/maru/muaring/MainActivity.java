@@ -1,7 +1,6 @@
 package org.maru.muaring;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -46,12 +45,6 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
         // 이걸로 bottomNav <-> nav_main.xml 연결 전부 해줌
 
         bottom.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.profileFragment) {
-                openMyProfile();
-                return true;
-            }
-
-            // 나머지는 NavigationUI 기본 동작 유지
             return NavigationUI.onNavDestinationSelected(item, nav);
         });
 

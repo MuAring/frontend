@@ -4,19 +4,23 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center_horizontal"
+    android:layout_marginTop="55dp"
     >
 
     <!--    보관함 타이틀-->
-    <TextView
-        android:id="@+id/tvLibraryTitle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="보관함"
-        android:textColor="@color/black"
-        android:fontFamily="@font/pretendard_medium"
-        android:textSize="18sp"
-        android:gravity="center"
-        android:layout_marginTop="55dp"/>
+    <include
+        android:id="@+id/include_toolbar_group"
+        layout="@layout/toolbar_common" />
+<!--    <TextView-->
+<!--        android:id="@+id/tvLibraryTitle"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:text="보관함"-->
+<!--        android:textColor="@color/black"-->
+<!--        android:fontFamily="@font/pretendard_medium"-->
+<!--        android:textSize="18sp"-->
+<!--        android:gravity="center"-->
+<!--        android:layout_marginTop="55dp"/>-->
 
     <LinearLayout
         android:layout_width="match_parent"

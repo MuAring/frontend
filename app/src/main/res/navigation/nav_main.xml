@@ -60,6 +60,14 @@
             android:name="groupId"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/memberProfileFragment"
+        android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment"
+        tools:layout="@layout/fragment_member_profile_read">
+        <argument
+            android:name="memberId"
+            app:argType="long" />
+    </fragment>
 
     <fragment
         android:id="@+id/profileEditFragment"

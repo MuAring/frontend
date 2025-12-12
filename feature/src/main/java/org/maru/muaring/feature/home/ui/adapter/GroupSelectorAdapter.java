@@ -151,12 +151,22 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
         // 선택 여부에 따라 stroke 적용
         if (isSelected) {
-            holder.ivAvatar.setBackgroundResource(
-                    org.maru.muaring.design.R.drawable.bg_avatar_selected);
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_selected
+            );
         } else {
-            holder.ivAvatar.setBackgroundResource(
-                    org.maru.muaring.design.R.drawable.bg_circle_gray);
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_unselected
+            );
         }
+
+//        if (isSelected) {
+//            holder.ivAvatar.setBackgroundResource(
+//                    org.maru.muaring.design.R.drawable.bg_avatar_selected);
+//        } else {
+//            holder.ivAvatar.setBackgroundResource(
+//                    org.maru.muaring.design.R.drawable.bg_circle_gray);
+//        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onMeClicked();
@@ -165,8 +175,15 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
     private void bindGroupToggle(AvatarViewHolder holder) {
         holder.tvLabel.setText("그룹");
+//        holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
+//        holder.itemView.setSelected(isExpanded);
+
+        // 토글은 '아이콘'이니까 crop 말고 inside + padding
+        int padding = dpToPx(holder.itemView.getContext(), 12); // 12~16dp
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        holder.ivAvatar.setPadding(padding, padding, padding, padding);
+
         holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
-        holder.itemView.setSelected(isExpanded);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onGroupToggleClicked();
@@ -177,23 +194,46 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
         int groupIndex = position - 2;
         MyGroupSummary group = groups.get(groupIndex);
 
+        // 항상 초기화 (재사용 버그 방지)
+        holder.ivAvatar.setPadding(0, 0, 0, 0);
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
         holder.tvLabel.setText(group.getName());
         String imageUrl = group.getImageUrl();
 
-        Glide.with(holder.ivAvatar.getContext())
-                .load(imageUrl)
-                .circleCrop()
-                .placeholder(R.drawable.ic_profile_group)
-                .error(R.drawable.ic_profile_group)
-                .into(holder.ivAvatar);
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            // 프사 없으면: 아이콘 모드 (원 안에만)
+            int padding = dpToPx(holder.itemView.getContext(), 12); // 12~16dp
+            holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            holder.ivAvatar.setPadding(padding, padding, padding, padding);
+            holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
+        } else {
+            // 프사 있으면: 프사 모드 (꽉 차게)
+            Glide.with(holder.ivAvatar.getContext())
+                    .load(imageUrl)
+                    .circleCrop()
+                    .placeholder(org.maru.muaring.design.R.drawable.bg_avatar_unselected)
+                    .error(org.maru.muaring.design.R.drawable.bg_avatar_unselected)
+                    .into(holder.ivAvatar);
+        }
 
         boolean isSelected = (selectedGroupId != null && selectedGroupId.equals(group.getGroupId()));
 
         if (isSelected) {
-            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_selected
+            );
         } else {
-            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_unselected
+            );
         }
+
+//        if (isSelected) {
+//            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
+//        } else {
+//            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
+//        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onGroupItemClicked(group);
@@ -202,19 +242,23 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
     private void bindAdd(AvatarViewHolder holder) {
         holder.tvLabel.setText("");
-        holder.ivAvatar.setImageResource(R.drawable.ic_add);
+//        holder.ivAvatar.setImageResource(R.drawable.ic_add);
 
-        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
-        int padding = dpToPx(holder.itemView.getContext());  // 원하는 값으로 조절
+        int padding = dpToPx(holder.itemView.getContext(), 16);
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         holder.ivAvatar.setPadding(padding, padding, padding, padding);
+        holder.ivAvatar.setImageResource(R.drawable.ic_add);
+        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
+//        int padding = dpToPx(holder.itemView.getContext(), 16);  // 원하는 값으로 조절
+//        holder.ivAvatar.setPadding(padding, padding, padding, padding);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onAddGroupClicked();
         });
     }
 
-    private int dpToPx(Context context) {
-        return Math.round(16 * context.getResources().getDisplayMetrics().density);
+    private int dpToPx(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
