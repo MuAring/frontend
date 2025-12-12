@@ -1,5 +1,6 @@
 package org.maru.muaring.feature.member.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
+import org.maru.muaring.feature.search.ui.SearchNavigator;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -66,13 +68,29 @@ public class MemberProfileReadFragment extends Fragment {
     private int currentMonth;
 
     private Long memberId; // 네비게이션으로 전달받음
+    private SearchNavigator navigator;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof SearchNavigator) {
+            navigator = (SearchNavigator) context;
+        }
+    }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_member_profile_read, container, false);
+        View view = inflater.inflate(R.layout.fragment_member_profile_read, container, false);
+        btnEditProfile = view.findViewById(R.id.btn_edit_profile);
+        btnEditProfile.setOnClickListener(v -> {
+            if (navigator != null) {
+                navigator.navigateToProfileEdit();
+            }
+        });
+        return view;
     }
 
     @Override
@@ -110,7 +128,6 @@ public class MemberProfileReadFragment extends Fragment {
         toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
         profileImage = v.findViewById(R.id.image_profile);
         profileName = v.findViewById(R.id.text_profile_name);
-        btnEditProfile = v.findViewById(R.id.btn_edit_profile);
         btnAlarm = v.findViewById(R.id.btn_alarm);
         btnFollow = v.findViewById(R.id.btn_follow);
         btnFollowed = v.findViewById(R.id.btn_followed);

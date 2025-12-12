@@ -2,6 +2,7 @@ package org.maru.muaring.feature.member.ui;
 
 import android.content.Context;
 import android.net.Uri;
+import android.util.Log;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -94,8 +95,13 @@ public class ProfileEditViewModel extends ViewModel {
         memberRepository.checkNickname(nickname, new Callback<>() {
             @Override
             public void onSuccess(NicknameCheckResponse response) {
-                if (!response.isDuplicated) state.postValue(new ProfileSetupState.NicknameAvailable(nickname));
-                else state.postValue(new ProfileSetupState.NicknameUnAvailable(nickname));
+                if (!response.isDuplicated) {
+                    setNickname(nickname);
+                    state.postValue(new ProfileSetupState.NicknameAvailable(nickname));
+                } else {
+                    state.postValue(new ProfileSetupState.NicknameUnAvailable(nickname));
+                }
+
             }
 
             @Override
@@ -131,10 +137,10 @@ public class ProfileEditViewModel extends ViewModel {
     }
 
     public void setUploadedImageInfo(String s3Key, String fileName, String fileType, Long fileSize) {
-        this.s3Key = s3Key;
-        this.fileName = fileName;
-        this.fileType = fileType;
-        this.fileSize = fileSize;
+        this.uploadedS3Key = s3Key;
+        this.uploadedFileName = fileName;
+        this.uploadedFileType = fileType;
+        this.uploadedFileSize = fileSize;
     }
 
     public void editProfile() {
