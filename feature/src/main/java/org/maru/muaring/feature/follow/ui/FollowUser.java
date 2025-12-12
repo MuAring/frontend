@@ -2,6 +2,8 @@ package org.maru.muaring.feature.follow.ui;
 
 public class FollowUser {
     private String name;
+    private String profileImage;
+    private String followStatus;
     private String title;
     private String artist;
 

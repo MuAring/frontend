@@ -1,6 +1,7 @@
 package org.maru.muaring.feature.follow.ui;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,15 +12,25 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.TokenManager;
+import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.data.api.dto.FollowListResponse;
+import org.maru.muaring.data.repository.FollowRepository;
 import org.maru.muaring.feature.R;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
+
+@AndroidEntryPoint
 public class FollowFragment extends Fragment {
     private RecyclerView rvFollowList;
     private FollowAdapter adapter;
+    @Inject
+    FollowRepository followRepository;
 
     @Nullable
     @Override
@@ -59,18 +70,60 @@ public class FollowFragment extends Fragment {
     }
 
     private void showFollowerList() {
-        List<FollowUser> followerList = Arrays.asList(
-                new FollowUser("김예은", "Drowning", "WOODZ"),
-                new FollowUser("팔로워2", "Hype boy", "NewJeans")
-        );
-        adapter.updateList(followerList);
+
+        TokenManager tokenManager = new TokenManager(requireContext());
+        long Id = tokenManager.getMemberId();
+
+        followRepository.getFollowers(Id, new Callback<List<FollowListResponse>>() {
+            @Override
+            public void onSuccess(List<FollowListResponse> result) {
+
+                List<FollowUser> mapped = new ArrayList<>();
+
+                for (FollowListResponse r : result) {
+                    mapped.add(new FollowUser(
+                            r.getName(),
+                            r.getFollowStatus(),
+                            r.getProfileImage()
+                    ));
+                }
+
+                adapter.updateList(mapped);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("FollowFragment", "팔로워 불러오기 실패: " + e.getMessage());
+            }
+        });
     }
 
     private void showFollowingList() {
-        List<FollowUser> followingList = Arrays.asList(
-                new FollowUser("내가팔로우", "Super Shy", "NewJeans"),
-                new FollowUser("또다른 팔로잉", "Seven", "JK")
-        );
-        adapter.updateList(followingList);
+
+        TokenManager tokenManager = new TokenManager(requireContext());
+        long Id = tokenManager.getMemberId();
+
+        followRepository.getFollowings(Id, new Callback<List<FollowListResponse>>() {
+            @Override
+            public void onSuccess(List<FollowListResponse> result) {
+
+                List<FollowUser> mapped = new ArrayList<>();
+
+                for (FollowListResponse r : result) {
+                    mapped.add(new FollowUser(
+                            r.getName(),
+                            "FOLLOWING",
+                            r.getProfileImage()
+                    ));
+                }
+
+                adapter.updateList(mapped);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("FollowFragment", "팔로잉 불러오기 실패: " + e.getMessage());
+            }
+        });
     }
 }

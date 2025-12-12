@@ -10,6 +10,7 @@ import retrofit2.Call;
 import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface FollowApi {
@@ -26,12 +27,12 @@ public interface FollowApi {
 
     @GET("/follow/{memberId}/followers")
     Call<ApiResponse<List<FollowListResponse>>> getFollowers(
-            @Query("memberId") long memberId
+            @Path("memberId") long memberId
     );
 
     @GET("/follow/{memberId}/followings")
     Call<ApiResponse<List<FollowListResponse>>> getFollowings(
-            @Query("memberId") long memberId
+            @Path("memberId") long memberId
     );
 
 
