@@ -171,6 +171,10 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
 
             // 보관함 토글
             ivAddMusic.setOnClickListener(v -> {
+                boolean wasInLibrary = post.isInLibrary();
+
+                if (listener != null) listener.onLibraryClick(post);
+
                 boolean newInLibrary = !post.isInLibrary();
                 post.setInLibrary(newInLibrary);
 
@@ -179,7 +183,7 @@ public class TodayPostsAdapter extends RecyclerView.Adapter<TodayPostsAdapter.Po
                         : org.maru.muaring.design.R.drawable.ic_is_not_in_library;
                 animateIconChange(ivAddMusic, newIcon);
 
-                if (listener != null) listener.onLibraryClick(post);
+//                if (listener != null) listener.onLibraryClick(post);
             });
         }
 

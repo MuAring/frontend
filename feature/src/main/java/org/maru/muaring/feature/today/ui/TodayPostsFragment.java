@@ -136,6 +136,9 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
         // 여기서는 보관함 API만 호출
         if (post.getMusicId() == null) return;
 
+        Log.d("TodayFragment", "onLibraryClick musicId=" + post.getMusicId()
+                + " inLibrary=" + post.isInLibrary());
+
         if (post.isInLibrary()) {
             viewModel.removeFromLibrary(post.getMusicId());
         } else {

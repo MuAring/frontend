@@ -242,14 +242,13 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
     private void bindAdd(AvatarViewHolder holder) {
         holder.tvLabel.setText("");
-        holder.ivAvatar.setImageResource(R.drawable.ic_add);
+//        holder.ivAvatar.setImageResource(R.drawable.ic_add);
 
         int padding = dpToPx(holder.itemView.getContext(), 16);
         holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         holder.ivAvatar.setPadding(padding, padding, padding, padding);
         holder.ivAvatar.setImageResource(R.drawable.ic_add);
-
-//        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
+        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
 //        int padding = dpToPx(holder.itemView.getContext(), 16);  // 원하는 값으로 조절
 //        holder.ivAvatar.setPadding(padding, padding, padding, padding);
 
