@@ -116,7 +116,7 @@ public class MemberProfileReadFragment extends Fragment {
         observeProfile();
         observeHistory();
         showListMode();
-        loadHistory();
+        loadHistory(memberId);
         if (memberId != -1L) {
             viewModel.loadMemberProfile(memberId);
         }
@@ -288,7 +288,7 @@ public class MemberProfileReadFragment extends Fragment {
 
         updateMonthText();
         calendarView.loadMonth(currentYear, currentMonth);
-        loadHistory();
+        loadHistory(memberId);
     }
 
 
@@ -313,7 +313,7 @@ public class MemberProfileReadFragment extends Fragment {
         btnHistoryCalendar.setAlpha(1.0f);
     }
 
-    private void loadHistory() {
+    private void loadHistory(Long memberId) {
         if (memberId == null || memberId <= 0) return;
         viewModel.loadMemberHistory(memberId, currentYear, currentMonth, 0);
     }
