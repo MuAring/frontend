@@ -1,5 +1,6 @@
 package org.maru.muaring.feature.follow.ui;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +34,18 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
         FollowUser user = userList.get(position);
         holder.tvName.setText(user.getName());
         holder.tvMusic.setText(user.getMusicInfo());
+
+        String status = user.getFollowStatus();
+        Log.d("FollowAdapter", "status = " + user.getFollowStatus());
+
+        if ("FOLLOWING".equals(status)) {
+            holder.btnFollowing.setVisibility(View.VISIBLE);
+            holder.btnFollow.setVisibility(View.INVISIBLE);
+
+        } else {
+            holder.btnFollow.setVisibility(View.VISIBLE);
+            holder.btnFollowing.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -48,11 +61,13 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
     static class FollowViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName, tvMusic;
-
+        TextView btnFollow, btnFollowing;
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvUserName);
             tvMusic = itemView.findViewById(R.id.tvMusicInfo);
+            btnFollow = itemView.findViewById(R.id.btnFollow);
+            btnFollowing = itemView.findViewById(R.id.btnFollowing);
         }
     }
 }

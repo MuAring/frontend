@@ -83,8 +83,8 @@ public class FollowFragment extends Fragment {
                 for (FollowListResponse r : result) {
                     mapped.add(new FollowUser(
                             r.getName(),
-                            r.getFollowStatus(),
-                            r.getProfileImage()
+                            r.getProfileImage(),
+                            r.getFollowStatus()
                     ));
                 }
 
@@ -112,8 +112,8 @@ public class FollowFragment extends Fragment {
                 for (FollowListResponse r : result) {
                     mapped.add(new FollowUser(
                             r.getName(),
-                            "FOLLOWING",
-                            r.getProfileImage()
+                            r.getProfileImage(),
+                            "FOLLOWING"
                     ));
                 }
 

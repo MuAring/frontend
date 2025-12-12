@@ -7,13 +7,19 @@ public class FollowUser {
     private String title;
     private String artist;
 
-    public FollowUser(String name, String title, String artist) {
+    public FollowUser(String name, String profileImage, String followStatus) {
         this.name = name;
-        this.title = title;
-        this.artist = artist;
+        this.profileImage = profileImage;
+        this.followStatus = followStatus;
     }
 
     public String getName() { return name; }
+    public String getProfileImage() {
+        return profileImage;
+    }
+    public String getFollowStatus() {
+        return followStatus;
+    }
     public String getMusicInfo() {
         return title + " - " + artist;
     }
