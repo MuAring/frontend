@@ -1,5 +1,7 @@
 package org.maru.muaring.data.api.dto;
 
+import com.google.gson.annotations.SerializedName;
+
 public class MusicPostFeedResponse {
 
     private Long postId;
@@ -18,11 +20,20 @@ public class MusicPostFeedResponse {
     private String albumImgUrl;
     private Integer durationMs;
 
+    // 서버: profile
+    @SerializedName(value = "isProfile", alternate = {"profile"})
     private boolean isProfile;
     private String content;
     private Integer likeCount;
+
+    // 서버: liked
+    @SerializedName(value = "isLiked", alternate = {"liked"})
     private boolean isLiked;
+
     private Integer commentCount;
+
+    // 서버: inLibrary
+    @SerializedName(value = "isInLibrary", alternate = {"inLibrary"})
     private boolean isInLibrary;
     private String createdAt; // LocalDateTime → 문자열
 
