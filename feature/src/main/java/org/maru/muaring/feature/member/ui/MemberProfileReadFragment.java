@@ -18,6 +18,8 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
@@ -27,11 +29,14 @@ import org.maru.muaring.feature.search.ui.SearchNavigator;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import javax.inject.Inject;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MemberProfileReadFragment extends Fragment {
 
+    @Inject
+    TokenManager tokenManager;
     private MusicHistoryAdapter historyAdapter;
     private MemberProfileReadViewModel viewModel;
     private View toolBar;
@@ -105,7 +110,7 @@ public class MemberProfileReadFragment extends Fragment {
         if (args != null && args.containsKey("memberId")) {
             memberId = args.getLong("memberId");
         } else {
-            memberId = -1L;
+            memberId = tokenManager.getMemberId();
         }
 
         bindViews(view);
@@ -117,9 +122,7 @@ public class MemberProfileReadFragment extends Fragment {
         observeHistory();
         showListMode();
         loadHistory();
-        if (memberId != -1L) {
-            viewModel.loadMemberProfile(memberId);
-        }
+        viewModel.loadMemberProfile(memberId);
     }
 
     private void bindViews(View v) {
