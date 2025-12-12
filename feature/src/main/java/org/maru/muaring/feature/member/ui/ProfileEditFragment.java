@@ -18,6 +18,8 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
+import com.bumptech.glide.Glide;
 
 import org.maru.muaring.core.ui.CommonToolbarView;
 import org.maru.muaring.core.ui.ImagePickerView;
@@ -108,7 +110,12 @@ public class ProfileEditFragment extends Fragment {
 
     private void bindLiveData() {
         viewModel.getImageUrl().observe(getViewLifecycleOwner(), url -> {
-            if (url != null) imagePicker.setImage(Uri.parse(url));
+            if (url != null && !url.isEmpty()) {
+                Glide.with(imagePicker.getContext())
+                        .load(url)
+                        .centerCrop()
+                        .into(imagePicker.getImageView());
+            }
         });
 
         viewModel.getNickname().observe(getViewLifecycleOwner(), editNickname::setText);
@@ -159,7 +166,8 @@ public class ProfileEditFragment extends Fragment {
             }
             else if (state instanceof ProfileSetupState.ProfileCreated edited) {
                 Toast.makeText(requireContext(), "프로필이 수정되었습니다.", Toast.LENGTH_SHORT).show();
-                commonNavigator.navigateToMain(edited.nickname);
+                NavHostFragment.findNavController(this)
+                        .popBackStack();   // 이전 프로필 조회 화면으로 복귀
             }
             else if (state instanceof ProfileSetupState.Error) {
                 Toast.makeText(requireContext(),

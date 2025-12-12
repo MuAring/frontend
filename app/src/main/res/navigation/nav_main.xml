@@ -54,4 +54,9 @@
             app:argType="long" />
     </fragment>
 
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="org.maru.muaring.feature.member.ui.ProfileEditFragment"
+        android:label="ProfileEditFragment"
+        tools:layout="@layout/fragment_profile_edit" />
 </navigation>
