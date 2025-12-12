@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/white"
+    android:paddingBottom="80dp"
+    android:layout_marginBottom="40dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
+        android:orientation="vertical">
+
+        <include
+            android:id="@+id/include_toolbar_group"
+            layout="@layout/toolbar_common" />
+
+        <!-- 프로필 이미지 -->
+        <ImageView
+            android:id="@+id/image_profile"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_marginTop="32dp"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:background="@drawable/profile_circle_mask"
+            android:clipToOutline="true" />
+
+        <!-- 닉네임 -->
+        <TextView
+            android:id="@+id/text_profile_name"
+            style="@style/Type.Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:textSize="24sp"
+            android:layout_gravity="center_horizontal" />
+
+        <!-- 프로필 버튼들 -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp">
+
+            <Button
+                android:id="@+id/btn_edit_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:layout_marginEnd="8dp"
+                android:text="프로필 편집"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join"/>
+
+            <Button
+                android:id="@+id/btn_alarm"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="알림 설정"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join"/>
+
+            <Button
+                android:id="@+id/btn_follow"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="팔로우"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join" />
+
+            <Button
+                android:id="@+id/btn_followed"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="팔로잉"
+                android:textColor="@color/black"
+                android:background="@drawable/bg_button_outline_green"/>
+        </LinearLayout>
+
+        <!-- 숫자 통계 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="32dp"
+            android:paddingLeft="24dp"
+            android:paddingRight="24dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_vertical|center_horizontal"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_stat_shared"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    style="@style/Type.Title"
+                    android:textSize="20sp"/>
+
+                <TextView
+                    style="@style/Type.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="공유한 음악" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_stat_follower"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Type.Title"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+
+                <TextView
+                    style="@style/Type.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="팔로워" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_stat_following"
+                    style="@style/Type.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+
+                <TextView
+                    style="@style/Type.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="팔로잉" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/text_stat_group"
+                    style="@style/Type.Title"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:textSize="20sp" />
+
+                <TextView
+                    style="@style/Type.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="가입한 그룹" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- 오늘 공유한 음악 카드 -->
+            <include
+                android:id="@+id/include_today_shared"
+                layout="@layout/item_today_music" />
+
+            <!-- 히스토리 섹션 -->
+            <include
+                android:id="@+id/include_history"
+                layout="@layout/fragment_history" />
+        </LinearLayout>
+
+        <!-- 팔로우 안하는데 비공개 계정인 경우-->
+        <LinearLayout
+            android:id="@+id/layout_private_account"
+            android:layout_width="match_parent"
+            android:layout_height="540dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/icon_private"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_private" />
+
+            <TextView
+                android:id="@+id/text_private_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:text="비공개 계정입니다."
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/text_private_account_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="팔로우하여 사용자의 음악 취향을 확인해보세요."
+                android:textColor="@color/dark_gray"
+                android:textSize="18sp" />
+
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

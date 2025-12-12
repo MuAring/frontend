@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/layout_history_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="24dp"
+    android:paddingBottom="16dp">
+
+    <!-- 히스토리 제목 -->
+    <TextView
+        android:id="@+id/text_history_title"
+        style="@style/Type.Title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:textSize="20sp"
+        android:text="히스토리" />
+
+    <!-- 월 + 토글 -->
+    <LinearLayout
+        android:id="@+id/layout_history_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/text_history_month"
+            style="@style/Type.Body"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2025년 10월" />
+
+        <ImageView
+            android:id="@+id/image_month_prev"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_chevron_left" />
+
+        <ImageView
+            android:id="@+id/image_month_next"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="4dp"
+            android:src="@drawable/ic_chevron_right" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <!-- 리스트 / 캘린더 토글 아이콘 -->
+        <ImageView
+            android:id="@+id/image_history_list"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_history_list" />
+
+        <ImageView
+            android:id="@+id/image_history_calendar"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="4dp"
+            android:padding="6dp"
+            android:src="@drawable/ic_history_calendar" />
+    </LinearLayout>
+
+    <!-- 리스트 모드 -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_history"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:paddingHorizontal="8dp"
+        android:nestedScrollingEnabled="false" />
+
+    <!-- 캘린더 모드 (다른 사람이 구현할 틀) -->
+    <org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView
+        android:id="@+id/view_music_history_calendar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="8dp"
+        android:visibility="visible" />
+
+</LinearLayout>

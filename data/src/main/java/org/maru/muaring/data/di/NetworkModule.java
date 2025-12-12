@@ -1,12 +1,31 @@
 package org.maru.muaring.data.di;
 
-import org.maru.muaring.core.network.AuthInterceptor;
+import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
+import org.maru.muaring.data.api.FollowApi;
 import org.maru.muaring.data.api.GroupApi;
+import org.maru.muaring.data.api.HistoryApi;
+import org.maru.muaring.data.api.ImageApi;
+import org.maru.muaring.data.api.LibraryApi;
+import org.maru.muaring.data.api.MemberApi;
+import org.maru.muaring.data.api.PostApi;
+import org.maru.muaring.data.api.UploadApi;
 import org.maru.muaring.data.repository.AuthRepository;
 import org.maru.muaring.data.repository.AuthRepositoryImpl;
+import org.maru.muaring.data.repository.FollowRepository;
+import org.maru.muaring.data.repository.FollowRepositoryImpl;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.GroupRepositoryImpl;
+import org.maru.muaring.data.repository.HistoryRepository;
+import org.maru.muaring.data.repository.HistoryRepositoryImpl;
+import org.maru.muaring.data.repository.ImageRepository;
+import org.maru.muaring.data.repository.ImageRepositoryImpl;
+import org.maru.muaring.data.repository.MemberRepository;
+import org.maru.muaring.data.repository.MemberRepositoryImpl;
+import org.maru.muaring.data.repository.PostRepository;
+import org.maru.muaring.data.repository.PostRepositoryImpl;
+import org.maru.muaring.data.repository.UploadRepository;
+import org.maru.muaring.data.repository.UploadRepositoryImpl;
 
 import javax.inject.Singleton;
 
@@ -62,5 +81,83 @@ public class NetworkModule {
     @Singleton
     public GroupRepository provideGroupRepository(GroupApi api) {
         return new GroupRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public ImageApi provideImageApi(Retrofit retrofit) {
+        return retrofit.create(ImageApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public ImageRepository provideImageRepository(ImageApi api) {
+        return new ImageRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public MemberApi provideMemberApi(Retrofit retrofit) {
+        return retrofit.create(MemberApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public MemberRepository provideMemberRepository(MemberApi api) {
+        return new MemberRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public PostApi providePostApi(Retrofit retrofit) {
+        return retrofit.create(PostApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public PostRepository providePostRepository(PostApi api) {
+        return new PostRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public HistoryApi provideHistoryApi(Retrofit retrofit) {
+        return retrofit.create(HistoryApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public HistoryRepository provideHistoryRepository(HistoryApi api) {
+        return new HistoryRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public LibraryApi provideLibraryApi(Retrofit retrofit) {
+        return retrofit.create(LibraryApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public UploadApi provideUploadApi(Retrofit retrofit) {
+        return retrofit.create(UploadApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public UploadRepository provideMusicRepository(UploadApi api) {
+        return new UploadRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public FollowApi provideFollowApi(Retrofit retrofit) {
+        return retrofit.create(FollowApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public FollowRepository provideFollowRepository(FollowApi api) {
+        return new FollowRepositoryImpl(api);
     }
 }

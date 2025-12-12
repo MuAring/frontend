@@ -9,6 +9,7 @@
     <color name="gray">#909090</color>
     <color name="dark_gray">#555555</color>
     <color name="light_gray">#D6D6D6</color>
+    <color name="circle_gray">#E7E7E7</color>
     <color name="text_light_gray">#ADADAD</color>
     <color name="light_gray_search">#F4F4F4</color>
     <color name="light_gray_stroke">#00000026</color>

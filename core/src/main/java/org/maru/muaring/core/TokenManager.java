@@ -26,16 +26,45 @@ public class TokenManager {
     // RefreshToken을 저장할 key 값
     private static final String REFRESH = "refresh";
 
-    public static void save(Context context, String access, String refresh) {
+    // SpotifyAccessToken을 저장할 key 값
+    private static final String SPOTIFY_ACCESS = "spotifyAccess";
+
+    // 로그인한 memberId을 저장할 key 값
+    private static final String MEMBER_ID = "memberId";
+
+    public static void save(
+            Context context,
+            String access,
+            String refresh,
+            String spotifyAccess,
+            Long memberId
+    ) {
         SharedPreferences sp = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
         sp.edit()
                 .putString(ACCESS, access)
                 .putString(REFRESH, refresh)
+                .putString(SPOTIFY_ACCESS, spotifyAccess)
+                .putLong(MEMBER_ID, memberId)
+                .apply();
+    }
+
+    public static void saveSpotifyAccess(Context context, String spotifyAccessToken) {
+        SharedPreferences sp = context.getSharedPreferences(PREF, Context.MODE_PRIVATE);
+        sp.edit()
+                .putString(SPOTIFY_ACCESS, spotifyAccessToken)
                 .apply();
     }
 
     public String getAccessToken() {
         return prefs.getString(ACCESS, null);
+    }
+
+    public String getSpotifyAccessToken() {
+        return prefs.getString(SPOTIFY_ACCESS, null);
+    }
+
+    public Long getMemberId() {
+        return prefs.getLong(MEMBER_ID, -1L);
     }
 
     // 저장된 토큰 삭제하는 임시 로직

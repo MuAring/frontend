@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FFFFFF">
+
+    <!-- 메인 컨텐츠 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="40dp">
+
+        <!-- 프로필 이미지 영역 -->
+        <RelativeLayout
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginBottom="40dp">
+
+            <!-- 프로필 이미지 (원형) -->
+            <ImageView
+                android:id="@+id/iv_group_profile"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/circle_background_grey"
+                android:src="@drawable/ic_group_default"
+                android:scaleType="centerCrop"
+                android:padding="40dp"
+                android:clipToOutline="true"/>
+
+            <!-- 연필 아이콘 (우측 하단) -->
+            <ImageButton
+                android:id="@+id/btn_edit_profile"
+                android:layout_width="44dp"
+                android:layout_height="44dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/ic_edit"
+                android:background="@android:color/transparent"
+                android:contentDescription="프로필 사진 편집"/>
+        </RelativeLayout>
+
+        <!-- 안내 텍스트 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="그룹 프로필 사진을 추가해주세요."
+            android:textSize="20sp"
+            android:textColor="#000000"
+            android:textStyle="bold"
+            android:layout_marginBottom="12dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="그룹을 대표할 수 있는 사진을 업로드해보세요!"
+            android:textSize="14sp"
+            android:textColor="#666666"
+            android:gravity="center"/>
+    </LinearLayout>
+
+    <!-- 하단 버튼 -->
+    <Button
+        android:id="@+id/btn_skip"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginBottom="250dp"
+        android:text="다음에 하기"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:textStyle="bold"
+        android:background="@drawable/button_gray_background"
+        android:stateListAnimator="@null"/>
+
+</LinearLayout>

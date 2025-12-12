@@ -4,8 +4,10 @@ public class LoginResponse {
 
     private String accessToken;
     private String refreshToken;
-    private long memberId;
+    private String spotifyAccessToken;
+    private Long memberId;
     private String email;
+    private String nickname;
     private boolean hasNickname;
 
     public String getAccessToken() {
@@ -16,12 +18,20 @@ public class LoginResponse {
         return refreshToken;
     }
 
+    public String getSpotifyAccessToken() {
+        return spotifyAccessToken;
+    }
+
     public long getMemberId() {
         return memberId;
     }
 
     public String getEmail() {
         return email;
+    }
+
+    public String getNickname() {
+        return nickname;
     }
 
     public boolean hasNickname() {

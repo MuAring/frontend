@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center_horizontal"
+    android:paddingHorizontal="4dp">
+
+    <!-- 바깥 컨테이너: 여기 배경에 stroke 적용 -->
+    <FrameLayout
+        android:id="@+id/avatarContainer"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/bg_circle_gray">
+
+        <ImageView
+            android:id="@+id/ivAvatar"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="centerCrop"
+            android:padding="12dp" />
+        <!-- 여기에는 background 지정 X -->
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/tvLabel"
+        style="@style/Type.Body"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textSize="13sp" />
+</LinearLayout>

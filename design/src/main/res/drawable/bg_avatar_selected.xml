@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- 1. 원래 원 배경 그대로 -->
+    <item android:drawable="@drawable/bg_circle_gray" />
+
+    <!-- 2. 그 위에 초록색 테두리만 한 번 더 그리기 -->
+    <!-- (바깥으로 나오게 inset을 음수로 줌) -->
+    <item
+        android:insetLeft="-2dp"
+        android:insetTop="-2dp"
+        android:insetRight="-2dp"
+        android:insetBottom="-2dp">
+
+        <shape android:shape="oval">
+            <solid android:color="@android:color/transparent"/>
+            <stroke
+                android:width="4dp"
+                android:color="@color/green"/>
+        </shape>
+    </item>
+
+</layer-list>

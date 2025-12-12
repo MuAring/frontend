@@ -1,29 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_main"
     app:startDestination="@id/homeFragment">
 
+    <!-- 홈 -->
     <fragment
         android:id="@+id/homeFragment"
         android:name="org.maru.muaring.feature.home.ui.HomeFragment" />
 
+    <!-- 검색창 -->
     <fragment
         android:id="@+id/searchFragment"
         android:name="org.maru.muaring.feature.search.ui.SearchFragment" />
 
+    <!-- 가운데 업로드 -->
+    <fragment
+        android:id="@+id/musicSearchFragment"
+        android:name="org.maru.muaring.feature.upload.ui.MusicSearchFragment" />
+
+    <!-- 보관함 -->
     <fragment
         android:id="@+id/archiveFragment"
         android:name="org.maru.muaring.feature.archive.ui.ArchiveFragment" />
 
+    <!-- 사용자 프로필 -->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="org.maru.muaring.feature.profile.ui.ProfileFragment" />
+        android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment" />
 
-    <!-- 가운데 업로드 FAB 목적지 -->
     <fragment
         android:id="@+id/uploadFragment"
         android:name="org.maru.muaring.feature.upload.ui.UploadFragment" />
+
+    <fragment
+        android:id="@+id/uploadCompleteFragment"
+        android:name="org.maru.muaring.feature.upload.ui.UploadCompleteFragment" />
 
     <fragment
         android:id="@+id/mapFragment"
@@ -35,4 +48,18 @@
         android:name="org.maru.muaring.feature.library.ui.LibraryFragment"
         />
 
+    <fragment
+        android:id="@+id/groupProfileFragment"
+        android:name="org.maru.muaring.feature.group.ui.profile.GroupProfileFragment"
+        tools:layout="@layout/fragment_group_profile">
+        <argument
+            android:name="groupId"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="org.maru.muaring.feature.member.ui.ProfileEditFragment"
+        android:label="ProfileEditFragment"
+        tools:layout="@layout/fragment_profile_edit" />
 </navigation>
