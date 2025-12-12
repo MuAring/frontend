@@ -13,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -45,6 +46,9 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class LibraryFragment extends Fragment {
 
+    // Toolbar
+    private TextView toolbarTitle;
+    private ImageButton toolbarBack;
     private RecyclerView rvLibrary;
     private TextView tvTotalCount, btnSelectAll, btnClearSelect;
     private LibraryAdapter adapter;
@@ -78,6 +82,7 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initToolbar(view);
         loadLibrary();
 
         btnSelectAll.setOnClickListener(v -> {
@@ -122,6 +127,23 @@ public class LibraryFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v -> showDeleteDialog());
+    }
+
+    private void initToolbar(@NonNull View root) {
+        View toolbar = root.findViewById(R.id.include_toolbar_group);
+        if (toolbar == null) return;
+
+        toolbarTitle = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_title);
+        toolbarBack = toolbar.findViewById(R.id.btn_back);
+//        toolbarAction = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_action);
+
+        toolbarTitle.setText("보관함");
+        toolbarBack.setVisibility(View.INVISIBLE);
+//        toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+//        toolbarAction.setVisibility(View.VISIBLE);
+//        toolbarAction.setOnClickListener(v -> {
+//            // TODO: 그룹 설정 이동
+//        });
     }
 
     private void showDeleteDialog() {
