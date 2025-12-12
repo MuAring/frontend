@@ -12,7 +12,7 @@ import retrofit2.http.Query;
 public interface HistoryApi {
 
     // === Member History ===
-    @GET("/post/history")
+    @GET("/members/{memberId}/history")
     Call<ApiResponse<PageResponse<MusicHistoryResponse>>> getMemberHistory(
             @Path("memberId") Long memberId,
             @Query("year") Integer year,
