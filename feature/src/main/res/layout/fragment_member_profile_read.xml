@@ -11,12 +11,16 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
         android:orientation="vertical">
-
-        <include
-            android:id="@+id/include_toolbar_group"
-            layout="@layout/toolbar_common" />
+        <TextView
+            android:id="@+id/tvProfileTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="내 프로필"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:layout_marginTop="55dp"/>
 
         <!-- 프로필 이미지 -->
         <ImageView
