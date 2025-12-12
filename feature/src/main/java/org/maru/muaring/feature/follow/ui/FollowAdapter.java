@@ -40,6 +40,11 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
         return userList.size();
     }
 
+    public void updateList(List<FollowUser> newList) {
+        this.userList = newList;
+        notifyDataSetChanged();
+    }
+
     static class FollowViewHolder extends RecyclerView.ViewHolder {
 
         TextView tvName, tvMusic;
