@@ -88,6 +88,29 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
         nav.navigate(destId, args);
     }
 
+    @Override
+    public void navigateToProfileEdit() {
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host);
+
+        if (host == null) return;
+
+        NavController nav = host.getNavController();
+
+        int destId = getResources().getIdentifier(
+                "profileEditFragment",
+                "id",
+                getPackageName()
+        );
+
+        if (destId == 0) {
+            Toast.makeText(this, "profileEditFragment id 를 찾을 수 없어요 🥲", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        nav.navigate(destId);
+    }
+
     public void openMyProfile() {
         long myId = tokenManager.getMemberId();
         if (myId == -1L) {
