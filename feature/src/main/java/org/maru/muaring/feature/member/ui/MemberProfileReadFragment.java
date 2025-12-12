@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -30,13 +31,25 @@ public class MemberProfileReadFragment extends Fragment {
 
     private MusicHistoryAdapter historyAdapter;
     private MemberProfileReadViewModel viewModel;
+
+    // 프로필 정보
     private ImageView profileImage;
     private TextView profileName;
+
+    // 버튼들
+    private Button btnEditProfile;
+    private Button btnAlarm;
+    private Button btnFollow;
+    private Button btnFollowed;
+
+    // 통계
     private TextView sharedMusicCount;
     private TextView followerCount;
     private TextView followingCount;
     private TextView joinedGroupCount;
 //    private View privateLayout;
+
+    // 히스토리
     private LinearLayout historySection;
     private TextView textHistoryMonth;
     private ImageView btnMonthPrev;
@@ -90,6 +103,10 @@ public class MemberProfileReadFragment extends Fragment {
     private void bindViews(View v) {
         profileImage = v.findViewById(R.id.image_profile);
         profileName = v.findViewById(R.id.text_profile_name);
+        btnEditProfile = v.findViewById(R.id.btn_edit_profile);
+        btnAlarm = v.findViewById(R.id.btn_alarm);
+        btnFollow = v.findViewById(R.id.btn_follow);
+        btnFollowed = v.findViewById(R.id.btn_followed);
 //        privateLayout = v.findViewById(R.id.layout_private_account);
         historySection = v.findViewById(R.id.include_history);
         sharedMusicCount = v.findViewById(R.id.text_stat_shared);
@@ -135,12 +152,29 @@ public class MemberProfileReadFragment extends Fragment {
         });
     }
 
-    private void updateProfileUI(MemberProfileReadResponse profile) {
-        profileName.setText(profile.getNickname());
-        sharedMusicCount.setText(String.valueOf(profile.getSharedMusicCount()));
-        followerCount.setText(String.valueOf(profile.getFollowerCount()));
-        followingCount.setText(String.valueOf(profile.getFolloweeCount()));
-        joinedGroupCount.setText(String.valueOf(profile.getJoinedGroupCount()));
+    private void updateProfileUI(MemberProfileReadResponse response) {
+        profileName.setText(response.getNickname());
+        sharedMusicCount.setText(String.valueOf(response.getSharedMusicCount()));
+        followerCount.setText(String.valueOf(response.getFollowerCount()));
+        followingCount.setText(String.valueOf(response.getFolloweeCount()));
+        joinedGroupCount.setText(String.valueOf(response.getJoinedGroupCount()));
+
+        if (response.isMe()) {
+            btnEditProfile.setVisibility(View.VISIBLE);
+            btnAlarm.setVisibility(View.VISIBLE);
+            btnFollowed.setVisibility(View.GONE);
+            btnFollow.setVisibility(View.GONE);
+        } else if (response.isFollowing()) {
+            btnEditProfile.setVisibility(View.GONE);
+            btnAlarm.setVisibility(View.GONE);
+            btnFollowed.setVisibility(View.VISIBLE);
+            btnFollow.setVisibility(View.GONE);
+        } else {  // 내가 팔로우하지 않는 타인의 프로필 조회
+            btnEditProfile.setVisibility(View.GONE);
+            btnAlarm.setVisibility(View.GONE);
+            btnFollowed.setVisibility(View.GONE);
+            btnFollow.setVisibility(View.VISIBLE);
+        }
 
 //        // 타인 프로필 + 비공개 계정 + 팔로우 안함 → 위 레이아웃 보여주기
 //        if (!profile.isMe() && !profile.isPublic() && !profile.isFollowing()) {
@@ -152,7 +186,7 @@ public class MemberProfileReadFragment extends Fragment {
         historySection.setVisibility(View.VISIBLE);
 
         Glide.with(profileImage.getContext())
-                .load(profile.getImageUrl())
+                .load(response.getImageUrl())
                 .centerCrop()
                 .into(profileImage);
     }
