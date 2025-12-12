@@ -71,8 +71,7 @@
                 android:layout_height="36dp"
                 android:text="팔로우"
                 android:textColor="@color/white"
-                android:background="@drawable/bg_button_group_join"
-                android:visibility="gone"/>
+                android:background="@drawable/bg_button_group_join" />
 
             <Button
                 android:id="@+id/btn_followed"
@@ -80,8 +79,7 @@
                 android:layout_height="36dp"
                 android:text="팔로잉"
                 android:textColor="@color/black"
-                android:background="@drawable/bg_button_outline_green"
-                android:visibility="gone"/>
+                android:background="@drawable/bg_button_outline_green"/>
         </LinearLayout>
 
         <!-- 숫자 통계 -->
