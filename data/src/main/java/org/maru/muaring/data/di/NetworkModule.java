@@ -1,6 +1,7 @@
 package org.maru.muaring.data.di;
 
 import org.maru.muaring.data.api.LikeApi;
+import org.maru.muaring.data.api.NearbyApi;
 import org.maru.muaring.data.api.RecommendationApi;
 import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
@@ -31,6 +32,8 @@ import org.maru.muaring.data.repository.LikeRepository;
 import org.maru.muaring.data.repository.LikeRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
+import org.maru.muaring.data.repository.NearbyRepository;
+import org.maru.muaring.data.repository.NearbyRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
 import org.maru.muaring.data.repository.PostRepositoryImpl;
 import org.maru.muaring.data.repository.RecommendationRepository;
@@ -213,4 +216,17 @@ public class NetworkModule {
     public RecommendationRepository provideRecommendationRepository(RecommendationApi api) {
         return new RecommendationRepositoryImpl(api);
     }
+
+    @Provides
+    @Singleton
+    public NearbyApi provideNearbyApi(Retrofit retrofit) {
+        return retrofit.create(NearbyApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public NearbyRepository provideNearbyRepository(NearbyApi api) {
+        return new NearbyRepositoryImpl(api);
+    }
+
 }

@@ -33,12 +33,14 @@ import com.kakao.vectormap.camera.CameraUpdate;
 import com.kakao.vectormap.camera.CameraUpdateFactory;
 
 import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.LocationRequestDTO;
+import org.maru.muaring.data.api.dto.TodayNearbyMusicDTO;
 import org.maru.muaring.data.repository.LocationRepository;
+import org.maru.muaring.data.repository.NearbyRepository;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.nearby.ui.model.Music;
 
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -47,6 +49,9 @@ import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
 public class MapFragment extends Fragment {
+
+    private MusicAdapter adapter;
+    private final List<Music> musicList = new java.util.ArrayList<>();
 
     private MapView mapView;
     private KakaoMap kakaoMap;
@@ -60,6 +65,9 @@ public class MapFragment extends Fragment {
     private static final float MIN_DISTANCE = 20f;
     @Inject
     LocationRepository locationRepository;
+
+    @Inject
+    NearbyRepository nearbyRepository;
 
     @Nullable
     @Override
@@ -159,8 +167,13 @@ public class MapFragment extends Fragment {
                 LatLng current = LatLng.from(lat, lng);
                 kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 15));
 
+                if (lat == 0.0 && lng == 0.0) {
+                    Log.w("Location", "아직 유효한 위치 아님");
+                    return;
+                }
+
                 if (lastSentLocation == null) {
-                    lastSentLocation = location;
+                    lastSentLocation = new Location(location);
                     sendLocation(lat, lng);
                     return;
                 }
@@ -204,6 +217,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onSuccess(Void result) {
                 Log.d("Location", "위치 전송 성공");
+                fetchTodayNearbyMusic(lat, lng, 0.3);
             }
 
             @Override
@@ -217,14 +231,40 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Music> musicList = Arrays.asList(
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image)
-        );
-
-        MusicAdapter adapter = new MusicAdapter(musicList);
+        adapter = new MusicAdapter(requireContext(), musicList);
         rvMusic.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMusic.setAdapter(adapter);
     }
+    private void fetchTodayNearbyMusic(double lat, double lng, double radiusKm) {
+
+        nearbyRepository
+                .getTodayNearbyMusic(lat, lng, radiusKm)
+                .observe(getViewLifecycleOwner(), resource -> {
+
+                    if (resource.status == Resource.Status.SUCCESS
+                            && resource.data != null) {
+
+                        musicList.clear();
+
+                        for (TodayNearbyMusicDTO dto : resource.data) {
+                            musicList.add(new Music(
+                                    dto.getMemberId(),
+                                    dto.getProfileImageUrl(),
+                                    dto.getMusicName(),
+                                    dto.getArtistName(),
+                                    dto.getAlbumImageUrl()
+                            ));
+                        }
+
+                        adapter.notifyDataSetChanged();
+                        return;
+                    }
+
+                    if (resource.status == Resource.Status.ERROR) {
+                        Log.e("Nearby", "인근 음악 조회 실패: " + resource.message);
+                    }
+                });
+    }
+
+
 }
