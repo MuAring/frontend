@@ -66,6 +66,8 @@ public class GroupProfileFragment extends Fragment {
     private TextView tvLikeCount;
     private TextView tvCommentCount;
     private ImageView btnAdd;
+    private androidx.cardview.widget.CardView cardTodayMusic;
+    private LinearLayout layoutEmptyState;
 
     // History UI
     private TextView textHistoryMonth;
@@ -216,14 +218,16 @@ public class GroupProfileFragment extends Fragment {
         tvLikeCount = includeTodayShared.findViewById(R.id.tvLikeCount);
         tvCommentCount = includeTodayShared.findViewById(R.id.tvCommentCount);
         btnAdd = includeTodayShared.findViewById(R.id.btnAdd);
+        cardTodayMusic = includeTodayShared.findViewById(R.id.cardTodayMusic);
+        layoutEmptyState = includeTodayShared.findViewById(R.id.layoutEmptyState);
 
         // 추가 버튼 클릭 리스너
-        if (btnAdd != null) {
-            btnAdd.setOnClickListener(v -> {
-                // TODO: 음악을 내 보관함에 추가하는 기능
-                Toast.makeText(requireContext(), "보관함에 추가", Toast.LENGTH_SHORT).show();
-            });
-        }
+//        if (btnAdd != null) {
+//            btnAdd.setOnClickListener(v -> {
+//                // TODO: 음악을 내 보관함에 추가하는 기능
+//                Toast.makeText(requireContext(), "보관함에 추가", Toast.LENGTH_SHORT).show();
+//            });
+//        }
 
         // 카드 전체 클릭 리스너 (게시글 상세로 이동)
         includeTodayShared.setOnClickListener(v -> {
@@ -443,16 +447,23 @@ public class GroupProfileFragment extends Fragment {
 
             switch (res.status) {
                 case LOADING:
-                    // TODO: 로딩 UI (선택사항)
+                    // 로딩 중에는 둘 다 숨김
+                    if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.GONE);
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
                     break;
 
                 case SUCCESS:
                     if (res.data != null) {
+                        // 데이터가 있으면 카드 표시, 빈 상태 숨김
                         bindTodayMusic(res.data);
+                        if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.VISIBLE);
+                        if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
                         includeTodayShared.setVisibility(View.VISIBLE);
                     } else {
-                        // 오늘 공유된 음악이 없음
-                        includeTodayShared.setVisibility(View.GONE);
+                        // 데이터가 없으면 빈 상태 표시, 카드 숨김
+                        if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.GONE);
+                        if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.VISIBLE);
+                        includeTodayShared.setVisibility(View.VISIBLE);
                     }
                     break;
 
