@@ -58,16 +58,20 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
         Music item = musicList.get(position);
 
+        holder.tvTitle.setText(item.getTitle());
+        holder.tvArtist.setText(item.getArtist());
+
         Glide.with(context)
                 .load(item.getAlbumImageUrl())
                 .into(holder.ivAlbum);
 
-        Glide.with(context)
-                .load(item.getProfileImageUrl())
-                .into(holder.ivProfile);
-
-        holder.tvTitle.setText(item.getTitle());
-        holder.tvArtist.setText(item.getArtist());
+        if (item.getProfileImageUrl() == null || item.getProfileImageUrl().isEmpty()) {
+            holder.ivProfile.setImageResource(R.drawable.profile_default); // 기본 이미지
+        } else {
+            Glide.with(context)
+                    .load(item.getProfileImageUrl())
+                    .into(holder.ivProfile);
+        }
     }
 
     @Override

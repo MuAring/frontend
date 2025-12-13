@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -58,6 +59,8 @@ public class MapFragment extends Fragment {
     private RecyclerView rvMusic;
     private ImageButton btnShowMusic;
     private CardView musicCard;
+    private TextView tvCount;
+
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
@@ -80,6 +83,7 @@ public class MapFragment extends Fragment {
         rvMusic = view.findViewById(R.id.rvMusic);
         btnShowMusic = view.findViewById(R.id.btnShowMusic);
         musicCard = view.findViewById(R.id.musicCard);
+        tvCount = view.findViewById(R.id.tvCount);
 
         mapView = view.findViewById(R.id.map_view);
 
@@ -257,6 +261,11 @@ public class MapFragment extends Fragment {
                         }
 
                         adapter.notifyDataSetChanged();
+
+                        int count = musicList.size();
+                        tvCount.setText(String.valueOf(count));
+                        tvCount.setText(count == 0 ? "0" : String.valueOf(count));
+
                         return;
                     }
 
