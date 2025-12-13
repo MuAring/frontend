@@ -1,0 +1,138 @@
+package org.maru.muaring.feature.post.ui;
+
+import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import com.bumptech.glide.Glide;
+import org.maru.muaring.data.api.dto.PostDetailReadResponse;
+import org.maru.muaring.feature.R;
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
+public class PostDetailFragment extends Fragment {
+
+    private PostDetailReadViewModel viewModel;
+    private View toolBar;
+    private ImageButton toolBarBtnBack;
+    private TextView toolbarTitle;
+    private ImageView ivPosterProfile;
+    private TextView tvNickname;
+    private TextView tvCreatedAt;
+    private TextView tvPostContent;
+    private TextView tvLikeCount;
+    private TextView tvCommentCount;
+    private Long postId;
+
+    // 음악 카드
+    private View musicCardView;
+
+    private ImageView ivAlbum;
+    private TextView tvMusicTitle;
+    private TextView tvArtist;
+    private ImageButton btnAddLibrary;
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_post_detail, container, false);
+        return view;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view,
+                              @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        viewModel = new ViewModelProvider(this).get(PostDetailReadViewModel.class);
+
+        if (getArguments() != null) {
+            postId = getArguments().getLong("postId");
+        }
+
+        bindViews(view);
+        initArgs();
+        observePostDetail(postId);
+    }
+
+    private void initArgs() {
+        Bundle args = getArguments();
+        if (args != null && args.containsKey("postId")) {
+            postId = args.getLong("postId");
+        } else {
+            throw new IllegalArgumentException("postId를 받지 못했습니다.");
+        }
+    }
+
+    private void bindViews(View v) {
+        toolBar =  v.findViewById(R.id.include_toolbar);
+        toolBarBtnBack = toolBar.findViewById(R.id.btn_back);
+        toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
+        toolbarTitle.setText("게시물");
+
+        ivPosterProfile = v.findViewById(R.id.iv_poster_profile);
+        tvNickname = v.findViewById(R.id.tv_nickname);
+        tvCreatedAt = v.findViewById(R.id.tv_created_at);
+        tvPostContent = v.findViewById(R.id.tv_post_content);
+        tvLikeCount = v.findViewById(R.id.tv_like_count);
+        tvCommentCount = v.findViewById(R.id.tv_comment_count);
+
+        // 음악카드
+        musicCardView = v.findViewById(R.id.include_music);
+        ivAlbum = musicCardView.findViewById(R.id.iv_album);
+        tvMusicTitle = musicCardView.findViewById(R.id.tv_music_title);
+        tvArtist = musicCardView.findViewById(R.id.tv_artist);
+        btnAddLibrary = musicCardView.findViewById(R.id.btn_add_library);
+    }
+
+    private void bindPostDetail(PostDetailReadResponse response) {
+        tvNickname.setText(response.getAuthor().getNickname());
+        tvCreatedAt.setText(response.getCreatedAt());
+        tvPostContent.setText(response.getContent());
+        tvLikeCount.setText(String.valueOf(response.getLikeCount()));
+        tvCommentCount.setText(String.valueOf(response.getCommentCount()));
+
+        Glide.with(this)
+                .load(response.getAuthor().getProfileImageUrl())
+                .circleCrop()
+                .into(ivPosterProfile);
+
+        // 음악카드
+        Glide.with(this)
+                .load(response.getMusic().getAlbumImgUrl())
+                .into(ivAlbum);
+        tvMusicTitle.setText(response.getMusic().getName());
+        tvArtist.setText(response.getMusic().getArtistName());
+    }
+
+    private void observePostDetail(Long postId) {
+        viewModel.getPostDetail(postId)
+                .observe(getViewLifecycleOwner(), resource -> {
+                    if (resource == null) return;
+                    switch (resource.status) {
+                        case LOADING:
+                            // TODO 로딩 UI 표시
+                            return;
+
+                        case ERROR:
+                            // TODO 에러 토스트 / 에러 UI
+                            return;
+
+                        case SUCCESS:
+                            if (resource.data == null) return;
+                            bindPostDetail(resource.data);
+                            return;
+                    }
+                });
+    }
+}

@@ -3,10 +3,8 @@ package org.maru.muaring.data.api;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MusicPostFeedResponse;
 import org.maru.muaring.data.api.dto.PageResponse;
+import org.maru.muaring.data.api.dto.PostDetailReadResponse;
 import org.maru.muaring.data.api.dto.TodayPostResponse;
-
-import java.util.List;
-
 import retrofit2.Call;
 import retrofit2.http.*;
 
@@ -28,4 +26,9 @@ public interface PostApi {
             @Path("memberId") Long memberId
     );
 
+    // 게시물 상세 조회
+    @GET("/posts/{postId}")
+    Call<ApiResponse<PostDetailReadResponse>> getPostDetail(
+            @Path("postId") Long postId
+    );
 }
