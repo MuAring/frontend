@@ -31,6 +31,10 @@
         android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment" />
 
     <fragment
+        android:id="@+id/followFragment"
+        android:name="org.maru.muaring.feature.follow.ui.FollowFragment" />
+
+    <fragment
         android:id="@+id/uploadFragment"
         android:name="org.maru.muaring.feature.upload.ui.UploadFragment" />
 
