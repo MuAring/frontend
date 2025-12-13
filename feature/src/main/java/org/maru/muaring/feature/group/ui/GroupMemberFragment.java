@@ -15,14 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.maru.muaring.core.ui.CommonToolbarView;
 import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.group.ui.GroupMemberAdapter;
-import org.maru.muaring.feature.group.ui.GroupMemberViewModel;
 
 import dagger.hilt.android.AndroidEntryPoint;
 
@@ -101,14 +101,38 @@ public class GroupMemberFragment extends Fragment {
         adapter = new GroupMemberAdapter();
 
         adapter.setOnMemberClickListener(member -> {
-            // TODO: 멤버 클릭 시 프로필로 이동
-            Toast.makeText(requireContext(),
-                    member.getNickname() + " 프로필",
-                    Toast.LENGTH_SHORT).show();
+            navigateToMemberProfile(member);
         });
 
         recyclerMembers.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerMembers.setAdapter(adapter);
+    }
+
+    // 각 그룹 멤버 프로필 조회하러 이동
+    private void navigateToMemberProfile(GroupMemberResponse member) {
+        // 전달할 데이터
+        Bundle args = new Bundle();
+        args.putLong("memberId", member.getMemberId());
+
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            // 리소스 이름으로 action ID 가져오기
+            int actionId = getResources().getIdentifier(
+                    "action_groupMember_to_memberProfile",
+                    "id",
+                    requireContext().getPackageName()
+            );
+            // 액션 ID 유효성 체크
+            if (actionId == 0) {
+                throw new IllegalArgumentException("Action ID not found: action_groupMember_to_memberProfile");
+            }
+            navController.navigate(actionId, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(),
+                    "화면 전환 실패: " + e.getMessage(),
+                    Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void setupSearchBar() {

@@ -96,7 +96,14 @@ public class GroupProfileFragment extends Fragment {
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.d("DEBUG", "Host Activity = " + requireActivity().getClass().getSimpleName());
-
+        Log.d("DEBUG", "NavController exists = " + (NavHostFragment.findNavController(this) != null));
+        // 백스택 확인
+        try {
+            NavController nav = NavHostFragment.findNavController(this);
+            Log.d("DEBUG", "BackStack count = " + nav.getCurrentBackStackEntry());
+        } catch (Exception e) {
+            Log.e("DEBUG", "NavController error", e);
+        }
         // === groupId 전달 받기 (네비게이션 또는 Bundle 등) ===
         if (getArguments() != null) {
             if (!getArguments().containsKey("groupId")) {
