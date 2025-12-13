@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.search.ui.model.SearchResultItem;
 
@@ -21,7 +23,8 @@ import java.util.List;
 public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapter.ResultViewHolder> {
 
     public interface OnItemActionClickListener {
-        void onActionClick(SearchResultItem item);
+        void onItemClick(SearchResultItem item);   // 카드 전체 클릭
+        void onActionClick(SearchResultItem item); // 버튼 클릭
     }
 
     private final List<SearchResultItem> items = new ArrayList<>();
@@ -78,6 +81,18 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
         void bind(SearchResultItem item) {
             LayoutInflater inflater = LayoutInflater.from(itemView.getContext());
 
+            ivThumbnail.setImageResource(org.maru.muaring.design.R.drawable.bg_group_circle);
+
+            String imageUrl = item.getImageUrl();
+            if (imageUrl != null && !imageUrl.isEmpty()) {
+                Glide.with(itemView.getContext())
+                        .load(imageUrl)
+                        .placeholder(org.maru.muaring.design.R.drawable.bg_group_circle)
+                        .error(org.maru.muaring.design.R.drawable.bg_group_circle)
+                        .circleCrop()
+                        .into(ivThumbnail);
+            }
+
             tvTitle.setText(item.getTitle());
             btnAction.setText(item.getActionText());
 
@@ -120,7 +135,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
                 if (joined) {
                     btnAction.setText("가입 중");
-                    btnAction.setEnabled(false);
+//                    btnAction.setEnabled(false);
                     btnAction.setBackgroundResource(
                             org.maru.muaring.design.R.drawable.bg_button_group_joined
                     );
@@ -139,7 +154,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                     );
                 }
 
-            } else { // USER
+            } else { // 멤버 검색 결과
                 View extra = inflater.inflate(
                         R.layout.view_search_user_extra,
                         containerExtra,
@@ -150,28 +165,81 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
 
                 String today = item.getTodayMusicText();
                 if (today != null && !today.isEmpty()) {
-                    ivMusicIcon.setImageResource(org.maru.muaring.design.R.drawable.ic_today_music_active);
+                    ivMusicIcon.setImageResource(
+                            org.maru.muaring.design.R.drawable.ic_today_music_active
+                    );
                     tvMusicInfo.setText(today);
                     tvMusicInfo.setTextColor(
-                            itemView.getResources().getColor(org.maru.muaring.design.R.color.green)
+                            itemView.getResources().getColor(
+                                    org.maru.muaring.design.R.color.green
+                            )
                     );
                 } else {
-                    ivMusicIcon.setImageResource(org.maru.muaring.design.R.drawable.ic_today_music_inactive);
+                    ivMusicIcon.setImageResource(
+                            org.maru.muaring.design.R.drawable.ic_today_music_inactive
+                    );
                     tvMusicInfo.setText("오늘의 음악을 등록하지 않았습니다.");
                     tvMusicInfo.setTextColor(
-                            itemView.getResources().getColor(org.maru.muaring.design.R.color.text_light_gray)
+                            itemView.getResources().getColor(
+                                    org.maru.muaring.design.R.color.text_light_gray
+                            )
                     );
                 }
 
                 containerExtra.addView(extra);
+
+                // ==== 멤버용 버튼: isFollowing 에 따라 스타일 분기 ====
+                btnAction.setBackgroundTintList(null);
+                boolean following = Boolean.TRUE.equals(item.getIsFollowing());
+
+                if (following) {
+                    // 팔로잉 상태 → 흰 배경
+                    btnAction.setText("팔로잉");
+                    btnAction.setEnabled(true); // 언팔 가능해야 하니까 활성화 유지
+                    btnAction.setBackgroundResource(
+                            org.maru.muaring.design.R.drawable.bg_button_group_joined
+                    );
+                    btnAction.setTextColor(
+                            itemView.getResources().getColor(
+                                    org.maru.muaring.design.R.color.black
+                            )
+                    );
+                } else {
+                    // 팔로우 전 상태 → 초록 버튼
+                    btnAction.setText("팔로우");
+                    btnAction.setEnabled(true);
+                    btnAction.setBackgroundResource(
+                            org.maru.muaring.design.R.drawable.bg_button_group_join
+                    );
+                    btnAction.setTextColor(
+                            itemView.getResources().getColor(android.R.color.white)
+                    );
+                }
             }
 
-            btnAction.setOnClickListener(v -> {
-                // 이미 참여 중이면 클릭 막기
-                if (Boolean.TRUE.equals(item.getIsJoined())) return;
+            // 카드 전체 클릭 → onItemClick
+            itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(item);
+                }
+            });
 
+            // 버튼 클릭 → onActionClick
+            btnAction.setOnClickListener(v -> {
+                // 그룹인 경우 참여 중이면 막기
+                if (item.getType() == SearchResultItem.Type.GROUP &&
+                        Boolean.TRUE.equals(item.getIsJoined())) {
+                    return;
+                }
                 if (listener != null) listener.onActionClick(item);
             });
+        }
+    }
+
+    public void refreshItem(SearchResultItem item) {
+        int index = items.indexOf(item);
+        if (index != -1) {
+            notifyItemChanged(index);
         }
     }
 }

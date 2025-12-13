@@ -9,26 +9,25 @@
     android:background="@color/surface"
     android:layout_marginTop="20dp">
 
-    <!-- 뒤로가기 -->
-    <ImageButton
-        android:id="@+id/btn_back"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:background="@android:color/transparent"
-        android:src="@drawable/ic_arrow_back"
-        android:contentDescription="뒤로가기"
+    <!-- 툴바 -->
+    <include
+        android:id="@+id/include_toolbar_group"
+        layout="@layout/toolbar_common"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <!-- 그룹 / 사용자 토글 -->
     <org.maru.muaring.core.ui.SegmentedToggleView
         android:id="@+id/segmentedToggle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/btn_back"
+        app:layout_constraintTop_toBottomOf="@id/include_toolbar_group"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="20dp" />
+        android:layout_marginTop="30dp" />
 
     <!-- 제목 -->
     <TextView
@@ -38,7 +37,7 @@
         android:text="어떤 사용자를 찾아볼까요?"
         android:textColor="@color/muaring_primary_2"
         android:textStyle="bold"
-        android:textSize="16sp"
+        android:textSize="18sp"
         app:layout_constraintTop_toBottomOf="@id/segmentedToggle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -69,5 +68,19 @@
         android:layout_marginTop="16dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp" />
+
+    <!-- 검색 결과 없음 표시 -->
+    <TextView
+        android:id="@+id/tvEmptyResult"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="검색 결과가 없습니다."
+        android:textColor="@color/text_light_gray"
+        android:textSize="14sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="32dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

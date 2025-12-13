@@ -1,6 +1,7 @@
 package org.maru.muaring.data.api;
 
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.GroupImageUploadRequest;
 import org.maru.muaring.data.api.dto.ImageUploadRequest;
 import org.maru.muaring.data.api.dto.PresignedUrlResponse;
 
@@ -16,4 +17,8 @@ public interface ImageApi {
 
 //    @POST("/{imageId}/download-presigned-url")
 //    Call<ApiResponse<PresignedUrlResponse>> getDownloadPresignedUrl(@Path("imageId") Long imageId);
+
+    // 그룹 프로필 이미지 설정
+    @POST("/images/group-upload")
+    Call<ApiResponse<Void>> confirmGroupImageUpload(@Body GroupImageUploadRequest request);
 }

@@ -5,7 +5,8 @@
     android:layout_height="match_parent"
     android:fillViewport="true"
     android:background="@color/white"
-    android:paddingBottom="80dp">
+    android:paddingBottom="80dp"
+    android:layout_marginBottom="40dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,7 +26,6 @@
             android:layout_marginTop="32dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="centerCrop"
-            android:src="@drawable/ic_launcher_background"
             android:background="@drawable/profile_circle_mask"
             android:clipToOutline="true" />
 
@@ -37,8 +37,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
             android:textSize="24sp"
-            android:layout_gravity="center_horizontal"
-            android:text="뮤어링" />
+            android:layout_gravity="center_horizontal" />
 
         <!-- 프로필 버튼들 -->
         <LinearLayout
@@ -54,13 +53,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
                 android:layout_marginEnd="8dp"
-                android:text="프로필 편집" />
+                android:text="프로필 편집"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join"/>
 
             <Button
                 android:id="@+id/btn_alarm"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:text="알림 설정" />
+                android:text="알림 설정"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join"/>
+
+            <Button
+                android:id="@+id/btn_follow"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="팔로우"
+                android:textColor="@color/white"
+                android:background="@drawable/bg_button_group_join" />
+
+            <Button
+                android:id="@+id/btn_followed"
+                android:layout_width="wrap_content"
+                android:layout_height="36dp"
+                android:text="팔로잉"
+                android:textColor="@color/black"
+                android:background="@drawable/bg_button_outline_green"/>
         </LinearLayout>
 
         <!-- 숫자 통계 -->
@@ -87,7 +106,6 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     style="@style/Type.Title"
-                    android:text="142"
                     android:textSize="20sp"/>
 
                 <TextView
@@ -111,7 +129,6 @@
                     android:layout_height="wrap_content"
                     style="@style/Type.Title"
                     android:gravity="center"
-                    android:text="8"
                     android:textSize="20sp" />
 
                 <TextView
@@ -135,7 +152,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="8"
                     android:textSize="20sp" />
 
                 <TextView
@@ -159,7 +175,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="2"
                     android:textSize="20sp" />
 
                 <TextView
@@ -171,15 +186,55 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 오늘 공유한 음악 카드 -->
-        <include
-            android:id="@+id/include_today_shared"
-            layout="@layout/item_today_music" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+            <!-- 오늘 공유한 음악 카드 -->
+            <include
+                android:id="@+id/include_today_shared"
+                layout="@layout/item_today_music" />
 
-        <!-- ======= 히스토리 섹션 ======= -->
-        <include
-            android:id="@+id/include_history"
-            layout="@layout/fragment_history" />
+            <!-- 히스토리 섹션 -->
+            <include
+                android:id="@+id/include_history"
+                layout="@layout/fragment_history" />
+        </LinearLayout>
 
+        <!-- 팔로우 안하는데 비공개 계정인 경우-->
+        <LinearLayout
+            android:id="@+id/layout_private_account"
+            android:layout_width="match_parent"
+            android:layout_height="540dp"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            <ImageView
+                android:id="@+id/icon_private"
+                android:layout_width="120dp"
+                android:layout_height="120dp"
+                android:layout_margin="16dp"
+                android:src="@drawable/ic_private" />
+
+            <TextView
+                android:id="@+id/text_private_account"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginBottom="8dp"
+                android:text="비공개 계정입니다."
+                android:textColor="@color/black"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/text_private_account_description"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="팔로우하여 사용자의 음악 취향을 확인해보세요."
+                android:textColor="@color/dark_gray"
+                android:textSize="18sp" />
+
+        </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

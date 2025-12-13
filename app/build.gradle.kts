@@ -94,6 +94,8 @@ dependencies {
 
     implementation("com.kakao.maps.open:android:2.9.5")
 
+    implementation("com.google.android.material:material:1.11.0")
+
     // Glide 추가
     implementation("com.github.bumptech.glide:glide:4.16.0")
     annotationProcessor("com.github.bumptech.glide:compiler:4.16.0")

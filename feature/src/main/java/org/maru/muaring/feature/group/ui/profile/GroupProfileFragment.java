@@ -85,13 +85,12 @@ public class GroupProfileFragment extends Fragment {
 
         // === groupId 전달 받기 (네비게이션 또는 Bundle 등) ===
         if (getArguments() != null) {
-            groupId = getArguments().getLong("groupId", 6); // TODO: 하드코딩 해둔 거라서 이 부분 전달받게 바꿔야 됨!!!
-        }
-
-        if (groupId == null || groupId <= 0) {
-            Toast.makeText(requireContext(), "유효하지 않은 그룹입니다.", Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed();
-            return;
+            if (!getArguments().containsKey("groupId")) {
+                throw new IllegalStateException("groupId가 전달되지 않았습니다.");
+            }
+            groupId = getArguments().getLong("groupId");
+        } else {
+            throw new IllegalStateException("GroupProfileFragment의 인자값이 없습니다.");
         }
 
         viewModel = new ViewModelProvider(this).get(GroupProfileViewModel.class);
@@ -162,7 +161,7 @@ public class GroupProfileFragment extends Fragment {
         btnHistoryList = historyRoot.findViewById(R.id.image_history_list);
         btnHistoryCalendar = historyRoot.findViewById(R.id.image_history_calendar);
         recyclerHistory = historyRoot.findViewById(R.id.recycler_history);
-        calendarView = historyRoot.findViewById(R.id.view_history_calendar);
+        calendarView = historyRoot.findViewById(R.id.view_music_history_calendar);
 
         // Adapter
         historyAdapter = new MusicHistoryAdapter(item -> {
@@ -284,8 +283,7 @@ public class GroupProfileFragment extends Fragment {
         }
 
         // 통계 숫자들
-//        Integer level = profile.getLevel();                   // 그룹 레벨
-        Integer level = 17;                                     // 일단 하드코딩
+        Integer level = profile.getLevel();                     // 그룹 레벨
         Integer totalPostCount = profile.getTotalPostCount();   // 공유한 음악
         Integer totalMusicCount = profile.getTotalMusicCount(); // 보관함
         Integer memberCount = profile.getMemberCount();         // 멤버 수

@@ -35,6 +35,8 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     private final Listener listener;
     private final List<MyGroupSummary> groups = new ArrayList<>();
     private boolean isExpanded = false;
+    private String myProfileImageUrl;
+    private Long selectedGroupId = null; // null이면 "나" 선택
 
     public GroupSelectorAdapter(Listener listener) {
         this.listener = listener;
@@ -49,12 +51,35 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     public void setExpanded(boolean expanded) {
-        isExpanded = expanded;
-        notifyDataSetChanged();
+        if (this.isExpanded == expanded) return;
+
+        // 그룹 아이템들이 시작하는 position = 2 ("나", "그룹 토글" 다음)
+        int startPosition = 2;
+        int groupCount = groups.size();
+
+        if (expanded) {
+            // 펼치는 경우: 아이템이 생기는 것처럼
+            this.isExpanded = true;
+            notifyItemRangeInserted(startPosition, groupCount);
+        } else {
+            // 접는 경우: 아이템이 사라지는 것처럼
+            notifyItemRangeRemoved(startPosition, groupCount);
+            this.isExpanded = false;
+        }
     }
 
     public boolean isExpanded() {
         return isExpanded;
+    }
+
+    public void setMyProfileImage(String url) {
+        this.myProfileImageUrl = url;
+        notifyItemChanged(0); // 0번 포지션이 '나'
+    }
+
+    public void setSelectedGroup(Long groupId) {
+        this.selectedGroupId = groupId;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -106,8 +131,42 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
     }
 
     private void bindMe(AvatarViewHolder holder) {
+        resetAvatarStyle(holder);
+
         holder.tvLabel.setText("나");
-        holder.ivAvatar.setImageResource(R.drawable.ic_profile_me);
+
+        boolean isSelected = (selectedGroupId == null);
+
+        // 내 프사 가져오기
+        if (myProfileImageUrl != null && !myProfileImageUrl.isEmpty()) {
+            Glide.with(holder.ivAvatar.getContext())
+                    .load(myProfileImageUrl)
+                    .circleCrop()
+                    .placeholder(R.drawable.ic_profile_me)
+                    .error(R.drawable.ic_profile_me)
+                    .into(holder.ivAvatar);
+        } else {
+            holder.ivAvatar.setImageResource(R.drawable.ic_profile_me);
+        }
+
+        // 선택 여부에 따라 stroke 적용
+        if (isSelected) {
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_selected
+            );
+        } else {
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_unselected
+            );
+        }
+
+//        if (isSelected) {
+//            holder.ivAvatar.setBackgroundResource(
+//                    org.maru.muaring.design.R.drawable.bg_avatar_selected);
+//        } else {
+//            holder.ivAvatar.setBackgroundResource(
+//                    org.maru.muaring.design.R.drawable.bg_circle_gray);
+//        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onMeClicked();
@@ -116,8 +175,15 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
     private void bindGroupToggle(AvatarViewHolder holder) {
         holder.tvLabel.setText("그룹");
+//        holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
+//        holder.itemView.setSelected(isExpanded);
+
+        // 토글은 '아이콘'이니까 crop 말고 inside + padding
+        int padding = dpToPx(holder.itemView.getContext(), 12); // 12~16dp
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        holder.ivAvatar.setPadding(padding, padding, padding, padding);
+
         holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
-        holder.itemView.setSelected(isExpanded);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onGroupToggleClicked();
@@ -128,16 +194,46 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
         int groupIndex = position - 2;
         MyGroupSummary group = groups.get(groupIndex);
 
-        holder.tvLabel.setText(group.getName());
+        // 항상 초기화 (재사용 버그 방지)
+        holder.ivAvatar.setPadding(0, 0, 0, 0);
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_CROP);
 
-        if (group.getImageUrl() != null) {
-            Glide.with(holder.ivAvatar.getContext())
-                    .load(group.getImageUrl())
-                    .circleCrop()
-                    .into(holder.ivAvatar);
-        } else {
+        holder.tvLabel.setText(group.getName());
+        String imageUrl = group.getImageUrl();
+
+        if (imageUrl == null || imageUrl.trim().isEmpty()) {
+            // 프사 없으면: 아이콘 모드 (원 안에만)
+            int padding = dpToPx(holder.itemView.getContext(), 12); // 12~16dp
+            holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+            holder.ivAvatar.setPadding(padding, padding, padding, padding);
             holder.ivAvatar.setImageResource(R.drawable.ic_profile_group);
+        } else {
+            // 프사 있으면: 프사 모드 (꽉 차게)
+            Glide.with(holder.ivAvatar.getContext())
+                    .load(imageUrl)
+                    .circleCrop()
+                    .placeholder(org.maru.muaring.design.R.drawable.bg_avatar_unselected)
+                    .error(org.maru.muaring.design.R.drawable.bg_avatar_unselected)
+                    .into(holder.ivAvatar);
         }
+
+        boolean isSelected = (selectedGroupId != null && selectedGroupId.equals(group.getGroupId()));
+
+        if (isSelected) {
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_selected
+            );
+        } else {
+            holder.avatarContainer.setBackgroundResource(
+                    org.maru.muaring.design.R.drawable.bg_avatar_unselected
+            );
+        }
+
+//        if (isSelected) {
+//            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_avatar_selected);
+//        } else {
+//            holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_circle_gray);
+//        }
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onGroupItemClicked(group);
@@ -146,29 +242,44 @@ public class GroupSelectorAdapter extends RecyclerView.Adapter<GroupSelectorAdap
 
     private void bindAdd(AvatarViewHolder holder) {
         holder.tvLabel.setText("");
-        holder.ivAvatar.setImageResource(R.drawable.ic_add);
+//        holder.ivAvatar.setImageResource(R.drawable.ic_add);
 
-        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
-        int padding = dpToPx(holder.itemView.getContext());  // 원하는 값으로 조절
+        int padding = dpToPx(holder.itemView.getContext(), 16);
+        holder.ivAvatar.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
         holder.ivAvatar.setPadding(padding, padding, padding, padding);
+        holder.ivAvatar.setImageResource(R.drawable.ic_add);
+        holder.ivAvatar.setBackgroundResource(org.maru.muaring.design.R.drawable.bg_group_add);
+//        int padding = dpToPx(holder.itemView.getContext(), 16);  // 원하는 값으로 조절
+//        holder.ivAvatar.setPadding(padding, padding, padding, padding);
 
         holder.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onAddGroupClicked();
         });
     }
 
-    private int dpToPx(Context context) {
-        return Math.round(16 * context.getResources().getDisplayMetrics().density);
+    private int dpToPx(Context context, int dp) {
+        return Math.round(dp * context.getResources().getDisplayMetrics().density);
     }
 
     static class AvatarViewHolder extends RecyclerView.ViewHolder {
+        View avatarContainer;
         ImageView ivAvatar;
         TextView tvLabel;
 
         AvatarViewHolder(@NonNull View itemView) {
             super(itemView);
+            avatarContainer = itemView.findViewById(org.maru.muaring.design.R.id.avatarContainer);
             ivAvatar = itemView.findViewById(org.maru.muaring.design.R.id.ivAvatar);
             tvLabel = itemView.findViewById(org.maru.muaring.design.R.id.tvLabel);
         }
     }
+
+    private void resetAvatarStyle(AvatarViewHolder holder) {
+        holder.ivAvatar.setPadding(0, 0, 0, 0);
+    }
+
+    public int getGroupCount() {
+        return groups.size();
+    }
+
 }

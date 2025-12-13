@@ -16,6 +16,7 @@ import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 
@@ -43,6 +44,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         this.groupApi = groupApi;
     }
 
+    
     @Override
     public LiveData<Resource<GroupInviteResponse>> createInviteLink(Long groupId) {
         MutableLiveData<Resource<GroupInviteResponse>> result = new MutableLiveData<>();
@@ -52,9 +54,10 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         groupApi.createInviteLink(groupId).enqueue(new Callback<>() {
             @Override
-            public void onResponse(Call<ApiResponse<GroupInviteResponse>> call,
-                                   Response<ApiResponse<GroupInviteResponse>> response) {
-
+            public void onResponse(
+                    Call<ApiResponse<GroupInviteResponse>> call,
+                    Response<ApiResponse<GroupInviteResponse>> response
+            ) {
                 Log.d(TAG, "응답 코드: " + response.code());
 
                 if (response.isSuccessful() && response.body() != null) {
@@ -87,7 +90,10 @@ public class GroupRepositoryImpl implements GroupRepository {
             }
 
             @Override
-            public void onFailure(Call<ApiResponse<GroupInviteResponse>> call, Throwable t) {
+            public void onFailure(
+                    Call<ApiResponse<GroupInviteResponse>> call,
+                    Throwable t
+            ) {
                 Log.e(TAG, "네트워크 오류", t);
                 result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
             }
@@ -96,6 +102,121 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+    
+    @Override
+    public LiveData<Resource<InvitePreviewResponse>> getInvitePreview(String inviteToken) {
+        MutableLiveData<Resource<InvitePreviewResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "초대 정보 조회 시작 - token: " + inviteToken);
+
+        groupApi.getInvitePreview(inviteToken).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<InvitePreviewResponse>> call,
+                    Response<ApiResponse<InvitePreviewResponse>> response
+            ) {
+                Log.d(TAG, "응답 코드: " + response.code());
+
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<InvitePreviewResponse> apiResponse = response.body();
+                    InvitePreviewResponse data = apiResponse.getData();
+
+                    if (data != null) {
+                        Log.d(TAG, "초대 정보 조회 성공: " + data.getGroupName());
+                        result.setValue(Resource.success(data));
+                    } else {
+                        Log.e(TAG, "데이터가 null입니다");
+                        result.setValue(Resource.error("초대 정보를 찾을 수 없습니다", null));
+                    }
+                } else {
+                    Log.e(TAG, "응답 실패: " + response.message());
+
+                    String errorMessage;
+                    switch (response.code()) {
+                        case 404:
+                            errorMessage = "초대 링크를 찾을 수 없습니다";
+                            break;
+                        case 410:
+                            errorMessage = "만료된 초대 링크입니다";
+                            break;
+                        default:
+                            errorMessage = "초대 정보 조회 실패 (코드: " + response.code() + ")";
+                    }
+                    result.setValue(Resource.error(errorMessage, null));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<InvitePreviewResponse>> call,
+                    Throwable t
+            ) {
+                Log.e(TAG, "네트워크 오류", t);
+                result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+
+    
+    @Override
+    public LiveData<Resource<Void>> joinByInviteToken(String inviteToken) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "그룹 참여 시작 - token: " + inviteToken);
+
+        groupApi.joinByInviteToken(inviteToken).enqueue(new Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<Void>> call,
+                    Response<ApiResponse<Void>> response
+            ) {
+                Log.d(TAG, "응답 코드: " + response.code());
+
+                if (response.isSuccessful()) {
+                    Log.d(TAG, "그룹 참여 성공");
+                    result.setValue(Resource.success(null));
+                } else {
+                    Log.e(TAG, "응답 실패: " + response.message());
+
+                    String errorMessage;
+                    switch (response.code()) {
+                        case 400:
+                            errorMessage = "이미 참여한 그룹입니다";
+                            break;
+                        case 404:
+                            errorMessage = "초대 링크를 찾을 수 없습니다";
+                            break;
+                        case 409:
+                            errorMessage = "그룹이 가득 찼습니다";
+                            break;
+                        case 410:
+                            errorMessage = "만료된 초대 링크입니다";
+                            break;
+                        default:
+                            errorMessage = "그룹 참여 실패 (코드: " + response.code() + ")";
+                    }
+                    result.setValue(Resource.error(errorMessage, null));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<Void>> call,
+                    Throwable t
+            ) {
+                Log.e(TAG, "네트워크 오류", t);
+                result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
+    
+    
     // 그룹 검색
     @Override
     public void searchGroups(String name, int page, int size, SearchGroupsCallback callback) {
@@ -134,13 +255,14 @@ public class GroupRepositoryImpl implements GroupRepository {
             }
         });
     }
-
-
+    
+    
     // 그룹 카테고리 조회
     @Override
     public Call<ApiResponse<List<GroupCategoryResponse>>> getGroupCategories() {
         return groupApi.getGroupCategories();
     }
+
 
     // 홈 화면용 내 그룹 조회
     @Override
@@ -148,12 +270,12 @@ public class GroupRepositoryImpl implements GroupRepository {
         MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        groupApi.getMyGroups().enqueue(new Callback<ApiResponse<MyGroupListResponse>>() {
+        groupApi.getMyGroups().enqueue(new retrofit2.Callback<ApiResponse<MyGroupListResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
                                    Response<ApiResponse<MyGroupListResponse>> response) {
 
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
                     List<MyGroupSummary> groups = response.body().getData().getGroups();
                     result.setValue(Resource.success(groups));
                 } else {
@@ -163,6 +285,7 @@ public class GroupRepositoryImpl implements GroupRepository {
 
             @Override
             public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                t.printStackTrace(); // 또는 Log.e(TAG, "getMyGroups 실패", t);
                 result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
             }
         });
@@ -170,6 +293,8 @@ public class GroupRepositoryImpl implements GroupRepository {
         return result;
     }
 
+
+    // 그룹 프로필 조회
     @Override
     public LiveData<Resource<GroupProfileResponse>> getGroupProfile(Long groupId) {
         MutableLiveData<Resource<GroupProfileResponse>> result = new MutableLiveData<>();
@@ -209,6 +334,30 @@ public class GroupRepositoryImpl implements GroupRepository {
         });
 
         return result;
+    }
+
+    
+    // 공개 그룹 가입
+    @Override
+    public void joinPublicGroup(Long groupId, JoinGroupCallback callback) {
+        groupApi.joinPublicGroup(groupId)
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<Void>> call,
+                                           Response<ApiResponse<Void>> response) {
+
+                        if (response.isSuccessful()) {
+                            callback.onSuccess();
+                        } else {
+                            callback.onError(new Exception("가입 실패 code=" + response.code()));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                        callback.onError(t);
+                    }
+                });
     }
 
 }

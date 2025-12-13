@@ -2,8 +2,8 @@ package org.maru.muaring.data.api.dto;
 
 public class MemberProfileCreateRequest {
 
-    public String nickname;
-    public ImageCreateRequest imageRequest;
+    private String nickname;
+    private ImageCreateRequest imageRequest;
 
     private MemberProfileCreateRequest(String nickname, ImageCreateRequest request) {
         this.nickname = nickname;

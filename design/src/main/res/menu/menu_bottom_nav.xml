@@ -11,7 +11,7 @@
         android:title="@string/nav_search" />
 
     <item
-        android:id="@+id/uploadFragment"
+        android:id="@+id/musicSearchFragment"
         android:icon="@drawable/nav_upload_selector"
         android:title="@string/nav_upload" />
 

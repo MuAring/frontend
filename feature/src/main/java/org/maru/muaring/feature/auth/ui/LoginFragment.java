@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.browser.customtabs.CustomTabsIntent;
 import androidx.fragment.app.Fragment;
@@ -88,6 +87,7 @@ public class LoginFragment extends Fragment {
             }
             else if (state instanceof LoginState.Success successState) {
                 LoginResponse response = successState.response;
+
                 if (response.hasNickname()) {
                     String nickname = response.getNickname();
                     // 닉네임 있는 경우 로그인된 메인화면으로 이동

@@ -10,7 +10,7 @@ import java.util.List;
 public interface HistoryRepository {
 
     LiveData<Resource<List<MusicHistoryResponse>>> getMemberHistory(
-            Integer year, Integer month, int page
+            Long memberId, Integer year, Integer month, int page
     );
 
     public LiveData<Resource<List<MusicHistoryResponse>>> getGroupHistory(

@@ -34,7 +34,7 @@ public class LoginViewModel extends ViewModel {
             @Override
             public void onSuccess(LoginResponse response) {
                 try {
-                    TokenManager.save(context, response.getAccessToken(), response.getRefreshToken());
+                    TokenManager.save(context, response.getAccessToken(), response.getRefreshToken(), response.getSpotifyAccessToken(), response.getMemberId());
                     loginState.postValue(new LoginState.Success(response));
                 } catch (Exception e) {
                     loginState.postValue(new LoginState.Error("토큰 저장 실패: " + e.getMessage()));
@@ -74,7 +74,7 @@ public class LoginViewModel extends ViewModel {
             @Override
             public void onSuccess(LoginResponse response) {
                 // 토큰 저장
-                TokenManager.save(context, response.getAccessToken(), response.getRefreshToken());
+                TokenManager.save(context, response.getAccessToken(), response.getRefreshToken(), response.getSpotifyAccessToken(), response.getMemberId());
                 loginState.postValue(new LoginState.Success(response));
             }
 
