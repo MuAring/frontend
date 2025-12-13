@@ -16,6 +16,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -251,13 +252,28 @@ public class MemberProfileReadFragment extends Fragment {
     private void updateProfileUI(MemberProfileReadResponse response) {
         toolBarBtnBack.setVisibility(View.INVISIBLE);
         toolbarTitle.setText("프로필");
+
+        boolean isMe = response.isMe();
+
+        //내 프로필이면 back 숨김, 남의 프로필이면 back 보이게
+        toolBarBtnBack.setVisibility(isMe ? View.INVISIBLE : View.VISIBLE);
+
+        // 남의 프로필일 때만 뒤로가기 동작
+        toolBarBtnBack.setOnClickListener(v -> {
+            if (!isMe) {
+                NavHostFragment
+                        .findNavController(MemberProfileReadFragment.this)
+                        .popBackStack();
+            }
+        });
+
         profileName.setText(response.getNickname());
         sharedMusicCount.setText(String.valueOf(response.getSharedMusicCount()));
         followerCount.setText(String.valueOf(response.getFollowerCount()));
         followingCount.setText(String.valueOf(response.getFolloweeCount()));
         joinedGroupCount.setText(String.valueOf(response.getJoinedGroupCount()));
 
-        if (response.isMe()) {
+        if (isMe) {
             btnEditProfile.setVisibility(View.VISIBLE);
             btnAlarm.setVisibility(View.VISIBLE);
             btnFollowed.setVisibility(View.GONE);
