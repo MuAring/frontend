@@ -2,14 +2,17 @@ package org.maru.muaring;
 
 import android.os.Bundle;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
+
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
 

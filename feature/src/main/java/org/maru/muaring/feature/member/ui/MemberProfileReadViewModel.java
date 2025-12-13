@@ -6,8 +6,10 @@ import androidx.lifecycle.ViewModel;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.MusicHistoryResponse;
+import org.maru.muaring.data.api.dto.TodayPostResponse;
 import org.maru.muaring.data.repository.HistoryRepository;
 import org.maru.muaring.data.repository.MemberRepository;
+import org.maru.muaring.data.repository.PostRepository;
 import org.maru.muaring.feature.history.ui.model.HistoryMapper;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
 import java.util.Collections;
@@ -21,16 +23,23 @@ public class MemberProfileReadViewModel extends ViewModel {
 
     private final MemberRepository memberRepository;
     private final HistoryRepository historyRepository;
+    private final PostRepository postRepository;
+
     private final MediatorLiveData<Resource<MemberProfileReadResponse>> memberProfile =
             new MediatorLiveData<>();
 
     private final MediatorLiveData<Resource<List<MusicHistoryItem>>> memberHistory =
             new MediatorLiveData<>();
+
+    private final MediatorLiveData<Resource<TodayPostResponse>> todayPost = new MediatorLiveData<>();
+
+    private LiveData<Resource<TodayPostResponse>> currentTodayPostSource;
     @Inject
     public MemberProfileReadViewModel(MemberRepository memberRepository,
-                                      HistoryRepository historyRepository) {
+                                      HistoryRepository historyRepository, PostRepository postRepository) {
         this.memberRepository = memberRepository;
         this.historyRepository = historyRepository;
+        this.postRepository = postRepository;
 
         memberProfile.setValue(Resource.loading(null));
         memberHistory.setValue(Resource.loading(Collections.emptyList()));
@@ -98,6 +107,36 @@ public class MemberProfileReadViewModel extends ViewModel {
                 case ERROR:
                     memberHistory.setValue(Resource.error(res.message, null));
                     memberHistory.removeSource(source);
+                    break;
+            }
+        });
+    }
+
+    // 프로필의 오늘 공유한 음악 조회 메서드
+    public LiveData<Resource<TodayPostResponse>> getTodayPost() {
+        return todayPost;
+    }
+
+    public void loadTodayPost(Long memberId) {
+        LiveData<Resource<TodayPostResponse>> source =
+                postRepository.getTodayPostByMember(memberId);
+
+        todayPost.addSource(source, res -> {
+            if (res == null) return;
+
+            switch (res.status) {
+                case LOADING:
+                    todayPost.setValue(Resource.loading(null));
+                    break;
+
+                case SUCCESS:
+                    todayPost.setValue(Resource.success(res.data));
+                    todayPost.removeSource(source);  //SUCCESS일 때만 제거
+                    break;
+
+                case ERROR:
+                    todayPost.setValue(Resource.error(res.message, null));
+                    todayPost.removeSource(source);  //ERROR일 때도 제거
                     break;
             }
         });
