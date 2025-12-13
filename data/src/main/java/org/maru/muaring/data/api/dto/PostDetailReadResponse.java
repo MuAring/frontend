@@ -38,5 +38,6 @@ public class PostDetailReadResponse {
         private String albumImgUrl;
         private Integer durationMs;
         private String previewUrl;
+        private Boolean isAlreadyInLibrary;
     }
 }

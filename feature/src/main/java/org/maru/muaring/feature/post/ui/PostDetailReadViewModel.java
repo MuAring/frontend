@@ -5,11 +5,14 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
+import org.maru.muaring.data.api.dto.LibraryMusicDTO;
 import org.maru.muaring.data.api.dto.LikeResponseDTO;
 import org.maru.muaring.data.api.dto.PostDetailReadResponse;
+import org.maru.muaring.data.repository.LibraryRepository;
 import org.maru.muaring.data.repository.LikeRepository;
 import org.maru.muaring.data.repository.PostRepository;
 import dagger.hilt.android.lifecycle.HiltViewModel;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 
 @HiltViewModel
@@ -17,12 +20,14 @@ public class PostDetailReadViewModel extends ViewModel {
 
     private final PostRepository postRepository;
     private final LikeRepository likeRepository;
+    private final LibraryRepository libraryRepository;
     private final MutableLiveData<Resource<PostDetailReadResponse>> postDetail = new MutableLiveData<>();
 
     @Inject
-    public PostDetailReadViewModel(PostRepository postRepository, LikeRepository likeRepository) {
+    public PostDetailReadViewModel(PostRepository postRepository, LikeRepository likeRepository, LibraryRepository libraryRepository) {
         this.postRepository = postRepository;
         this.likeRepository = likeRepository;
+        this.libraryRepository = libraryRepository;
         postDetail.setValue(Resource.loading(null));
     }
 
@@ -47,5 +52,12 @@ public class PostDetailReadViewModel extends ViewModel {
 
     public LiveData<Resource<LikeResponseDTO>> toggleLike(Long postId) {
         return likeRepository.toggleLike(postId);
+    }
+
+    public LiveData<Resource<LibraryMusicDTO>> addMusicToLibrary(
+            Long musicId,
+            @Nullable String category
+    ) {
+        return libraryRepository.addMusicToLibrary(musicId, category);
     }
 }

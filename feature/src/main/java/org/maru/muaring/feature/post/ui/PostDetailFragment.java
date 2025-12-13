@@ -40,6 +40,7 @@ public class PostDetailFragment extends Fragment {
     private TextView tvMusicTitle;
     private TextView tvArtist;
     private ImageButton btnAddLibrary;
+    private boolean isAlreadyInLibrary;
 
     // 좋아요 영역
     private LinearLayout likeSection;
@@ -124,6 +125,9 @@ public class PostDetailFragment extends Fragment {
                 .into(ivAlbum);
         tvMusicTitle.setText(response.getMusic().getName());
         tvArtist.setText(response.getMusic().getArtistName());
+        isAlreadyInLibrary = response.getMusic().getIsAlreadyInLibrary();
+        updateLibraryIcon();
+        setupLibraryClick(response.getMusic().getMusicId());
 
         // 좋아요
         isLiked = response.isLiked();
@@ -185,6 +189,53 @@ public class PostDetailFragment extends Fragment {
                         : R.drawable.ic_heart_outline
         );
         tvLikeCount.setText(String.valueOf(likeCount));
+    }
+
+    private void updateLibraryIcon() {
+        btnAddLibrary.setImageResource(
+                isAlreadyInLibrary
+                        ? org.maru.muaring.design.R.drawable.ic_is_in_library
+                        : org.maru.muaring.design.R.drawable.ic_is_not_in_library
+        );
+    }
+
+    private void setupLibraryClick(Long musicId) {
+
+        btnAddLibrary.setOnClickListener(v -> {
+            if (isAlreadyInLibrary) {
+                btnAddLibrary.setEnabled(!isAlreadyInLibrary);
+                return;
+            }
+
+            viewModel.addMusicToLibrary(musicId, null)
+                    .observe(getViewLifecycleOwner(), resource -> {
+                        if (resource == null) return;
+                        switch (resource.status) {
+                            case LOADING:
+                                // 필요하면 로딩 처리
+                                break;
+
+                            case SUCCESS:
+                                isAlreadyInLibrary = true;
+                                updateLibraryIcon();
+
+                                Toast.makeText(
+                                        requireContext(),
+                                        "보관함에 음악을 추가했어요 🎵",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                break;
+
+                            case ERROR:
+                                Toast.makeText(
+                                        requireContext(),
+                                        "보관함 음악 추가에 실패했어요 😢",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                break;
+                        }
+                    });
+        });
     }
 
     private void observePostDetail(Long postId) {
