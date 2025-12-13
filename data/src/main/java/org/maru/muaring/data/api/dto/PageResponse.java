@@ -39,4 +39,12 @@ public class PageResponse<T> {
     public boolean isLast() {
         return last;
     }
+
+    public boolean isEmpty() {
+        return content == null || content.isEmpty();
+    }
+
+    public boolean isNotEmpty() {
+        return !isEmpty();
+    }
 }

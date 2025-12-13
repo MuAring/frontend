@@ -2,6 +2,7 @@ package org.maru.muaring.feature.group.ui.profile;
 
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -26,6 +29,7 @@ import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
 import org.maru.muaring.feature.history.ui.model.MusicHistoryItem;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.Calendar;
 import java.util.List;
@@ -53,6 +57,17 @@ public class GroupProfileFragment extends Fragment {
     private TextView textStatSharedMusic;
     private TextView textStatArchive;
     private TextView textStatMemberCount;
+
+    // 그룹 오늘 공유한 음악 UI
+    private View includeTodayShared;
+    private ImageView ivAlbumCover;
+    private TextView tvSongTitle;
+    private TextView tvArtistName;
+    private TextView tvLikeCount;
+    private TextView tvCommentCount;
+    private ImageView btnAdd;
+    private androidx.cardview.widget.CardView cardTodayMusic;
+    private LinearLayout layoutEmptyState;
 
     // History UI
     private TextView textHistoryMonth;
@@ -82,7 +97,15 @@ public class GroupProfileFragment extends Fragment {
     public void onViewCreated(@NonNull View view,
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
+        Log.d("DEBUG", "Host Activity = " + requireActivity().getClass().getSimpleName());
+        Log.d("DEBUG", "NavController exists = " + (NavHostFragment.findNavController(this) != null));
+        // 백스택 확인
+        try {
+            NavController nav = NavHostFragment.findNavController(this);
+            Log.d("DEBUG", "BackStack count = " + nav.getCurrentBackStackEntry());
+        } catch (Exception e) {
+            Log.e("DEBUG", "NavController error", e);
+        }
         // === groupId 전달 받기 (네비게이션 또는 Bundle 등) ===
         if (getArguments() != null) {
             if (!getArguments().containsKey("groupId")) {
@@ -97,11 +120,13 @@ public class GroupProfileFragment extends Fragment {
 
         initToolbar(view);
         initProfileSection(view);
+        initTodayMusicSection(view);
         initHistorySection(view);
         initCurrentYearMonth();
         updateMonthText();
 
         observeProfile();
+        observeTodayMusic();
         observeHistory();
 
         // 기본은 리스트 모드
@@ -109,6 +134,7 @@ public class GroupProfileFragment extends Fragment {
 
         // 첫 로딩
         viewModel.loadGroupProfile(groupId);
+        viewModel.loadTodayMusic(groupId);
         loadHistory();
     }
 
@@ -143,12 +169,72 @@ public class GroupProfileFragment extends Fragment {
         textStatArchive = root.findViewById(R.id.text_stat_archive);
         textStatMemberCount = root.findViewById(R.id.text_stat_member_count);
 
+        // 멤버 섹션 클릭 리스너 추가
+        LinearLayout layoutMemberSection = root.findViewById(R.id.layout_member_section);
+        if (layoutMemberSection != null) {
+            layoutMemberSection.setOnClickListener(v -> navigateToGroupMember());
+        }
+
         // 디버그용
         if (textStatGroupLevel == null) {
             System.out.println("DEBUG >>> textStatGroupLevel is NULL");
         }
+
     }
 
+    private void navigateToGroupMember() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putLong("group_id", groupId);
+
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            // 리소스 이름으로 ID 찾기
+            int actionId = getResources().getIdentifier(
+                    "action_groupProfile_to_groupMember",
+                    "id",
+                    requireContext().getPackageName()
+            );
+            navController.navigate(actionId, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    // ====================== 그룹 오늘 공유한 음악 Section ======================
+    private void initTodayMusicSection(@NonNull View root) {
+        includeTodayShared = root.findViewById(R.id.include_today_shared);
+        if (includeTodayShared == null) return;
+
+        ivAlbumCover = includeTodayShared.findViewById(R.id.ivAlbumCover);
+        tvSongTitle = includeTodayShared.findViewById(R.id.tvSongTitle);
+        tvArtistName = includeTodayShared.findViewById(R.id.tvArtistName);
+        tvLikeCount = includeTodayShared.findViewById(R.id.tvLikeCount);
+        tvCommentCount = includeTodayShared.findViewById(R.id.tvCommentCount);
+        btnAdd = includeTodayShared.findViewById(R.id.btnAdd);
+        cardTodayMusic = includeTodayShared.findViewById(R.id.cardTodayMusic);
+        layoutEmptyState = includeTodayShared.findViewById(R.id.layoutEmptyState);
+
+        // 추가 버튼 클릭 리스너
+//        if (btnAdd != null) {
+//            btnAdd.setOnClickListener(v -> {
+//                // TODO: 음악을 내 보관함에 추가하는 기능
+//                Toast.makeText(requireContext(), "보관함에 추가", Toast.LENGTH_SHORT).show();
+//            });
+//        }
+
+        // 카드 전체 클릭 리스너 (게시글 상세로 이동)
+        includeTodayShared.setOnClickListener(v -> {
+            // TODO: 게시글 상세 페이지로 이동
+            Toast.makeText(requireContext(), "게시글 상세 보기", Toast.LENGTH_SHORT).show();
+        });
+    }
 
     // ====================== History Section ======================
     private void initHistorySection(@NonNull View root) {
@@ -349,6 +435,83 @@ public class GroupProfileFragment extends Fragment {
             return String.format(Locale.US, "%.1fK", k);
         }
         return String.valueOf(v);
+    }
+
+
+    // ====================== ViewModel 연결: 오늘의 음악 ======================
+    private void observeTodayMusic() {
+        viewModel.getTodayMusic().observe(getViewLifecycleOwner(), res -> {
+            if (res == null) return;
+
+            Log.d("DEBUG", "오늘의 음악 status = " + res.status);
+
+            switch (res.status) {
+                case LOADING:
+                    // 로딩 중에는 둘 다 숨김
+                    if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.GONE);
+                    if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
+                    break;
+
+                case SUCCESS:
+                    if (res.data != null) {
+                        // 데이터가 있으면 카드 표시, 빈 상태 숨김
+                        bindTodayMusic(res.data);
+                        if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.VISIBLE);
+                        if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.GONE);
+                        includeTodayShared.setVisibility(View.VISIBLE);
+                    } else {
+                        // 데이터가 없으면 빈 상태 표시, 카드 숨김
+                        if (cardTodayMusic != null) cardTodayMusic.setVisibility(View.GONE);
+                        if (layoutEmptyState != null) layoutEmptyState.setVisibility(View.VISIBLE);
+                        includeTodayShared.setVisibility(View.VISIBLE);
+                    }
+                    break;
+
+                case ERROR:
+                    Log.e("DEBUG", "오늘의 음악 조회 실패: " + res.message);
+                    includeTodayShared.setVisibility(View.GONE);
+                    break;
+            }
+        });
+    }
+
+    private void bindTodayMusic(TodayMusicPostResponse post) {
+        if (post == null) return;
+
+        // 곡 제목
+        if (!TextUtils.isEmpty(post.getMusicName())) {
+            tvSongTitle.setText(post.getMusicName());
+        }
+
+        // 아티스트 이름
+        if (!TextUtils.isEmpty(post.getArtistName())) {
+            tvArtistName.setText(post.getArtistName());
+        }
+
+        // 앨범 커버 이미지
+        if (!TextUtils.isEmpty(post.getAlbumImgUrl())) {
+            Glide.with(this)
+                    .load(post.getAlbumImgUrl())
+                    .placeholder(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .error(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .centerCrop()
+                    .into(ivAlbumCover);
+        }
+
+        // 좋아요 수
+        tvLikeCount.setText(String.valueOf(post.getLikeCount()));
+
+        // 댓글 수
+        tvCommentCount.setText(String.valueOf(post.getCommentCount()));
+
+        // 카드 클릭 시 게시글 상세로 이동
+        includeTodayShared.setOnClickListener(v -> {
+            // TODO: postId를 이용해 게시글 상세 화면으로 이동
+            Long postId = post.getPostId();
+            Toast.makeText(requireContext(),
+                    "게시글 상세 (postId: " + postId + ")",
+                    Toast.LENGTH_SHORT).show();
+        });
     }
 
     // ====================== ViewModel 연결: History ======================

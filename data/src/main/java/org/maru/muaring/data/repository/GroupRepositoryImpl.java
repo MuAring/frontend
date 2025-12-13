@@ -14,11 +14,14 @@ import org.maru.muaring.data.api.dto.GroupCreateRequest;
 import org.maru.muaring.data.api.dto.GroupCreateResponse;
 import org.maru.muaring.data.api.dto.GroupInviteResponse;
 import org.maru.muaring.data.api.dto.GroupListResponse;
+import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
+import org.maru.muaring.data.api.dto.PageResponse;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
 import java.util.Collections;
 import java.util.List;
@@ -270,7 +273,7 @@ public class GroupRepositoryImpl implements GroupRepository {
         MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        groupApi.getMyGroups().enqueue(new retrofit2.Callback<ApiResponse<MyGroupListResponse>>() {
+        groupApi.getMyGroups(null).enqueue(new retrofit2.Callback<ApiResponse<MyGroupListResponse>>() {
             @Override
             public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
                                    Response<ApiResponse<MyGroupListResponse>> response) {
@@ -358,6 +361,129 @@ public class GroupRepositoryImpl implements GroupRepository {
                         callback.onError(t);
                     }
                 });
+    }
+
+    // 그룹 멤버 조회 및 검색
+    @Override
+    public void getGroupMembers(Long groupId, String search, GetGroupMembersCallback callback) {
+        Log.d(TAG, "그룹 멤버 조회 시작 - groupId: " + groupId + ", search: " + search);
+
+        groupApi.getGroupMembers(groupId, search)
+                .enqueue(new Callback<ApiResponse<List<GroupMemberResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            @NonNull Call<ApiResponse<List<GroupMemberResponse>>> call,
+                            @NonNull Response<ApiResponse<List<GroupMemberResponse>>> response
+                    ) {
+                        Log.d(TAG, "응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<List<GroupMemberResponse>> apiResponse = response.body();
+                            List<GroupMemberResponse> members = apiResponse.getData();
+
+                            if (members != null) {
+                                Log.d(TAG, "멤버 조회 성공 - 멤버 수: " + members.size());
+                                callback.onSuccess(members);
+                            } else {
+                                Log.e(TAG, "멤버 데이터가 null입니다");
+                                callback.onError(new Exception("멤버 데이터를 받아오지 못했습니다"));
+                            }
+                        } else {
+                            Log.e(TAG, "응답 실패: " + response.message());
+                            String errorMessage = "멤버 조회 실패 (코드: " + response.code() + ")";
+                            callback.onError(new Exception(errorMessage));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull Call<ApiResponse<List<GroupMemberResponse>>> call,
+                            @NonNull Throwable t
+                    ) {
+                        Log.e(TAG, "네트워크 오류", t);
+                        callback.onError(t);
+                    }
+                });
+    }
+
+    // 검색 메서드
+    @Override
+    public LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName) {
+        MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        groupApi.getMyGroups(searchName).enqueue(new retrofit2.Callback<ApiResponse<MyGroupListResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
+                                   Response<ApiResponse<MyGroupListResponse>> response) {
+
+                if (response.isSuccessful() && response.body() != null && response.body().getData() != null) {
+                    List<MyGroupSummary> groups = response.body().getData().getGroups();
+                    result.setValue(Resource.success(groups));
+                } else {
+                    result.setValue(Resource.error("그룹 정보를 불러오지 못했어요.", null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                t.printStackTrace();
+                result.setValue(Resource.error("네트워크 오류가 발생했어요.", null));
+            }
+        });
+
+        return result;
+    }
+
+    // 그룹 오늘 공유한 음악 조회 메서드
+    @Override
+    public LiveData<Resource<TodayMusicPostResponse>> getTodayGroupFeed(Long groupId) {
+        MutableLiveData<Resource<TodayMusicPostResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "오늘의 피드 조회 시작 - groupId: " + groupId);
+
+        // page=0, size=1 (최신 1개만)
+        groupApi.getTodayGroupFeed(groupId, 0, 1)
+                .enqueue(new Callback<ApiResponse<PageResponse<TodayMusicPostResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            @NonNull Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> call,
+                            @NonNull Response<ApiResponse<PageResponse<TodayMusicPostResponse>>> response
+                    ) {
+                        Log.d(TAG, "오늘의 피드 응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<PageResponse<TodayMusicPostResponse>> apiResponse = response.body();
+                            PageResponse<TodayMusicPostResponse> pageData = apiResponse.getData();
+
+                            if (pageData != null && pageData.isNotEmpty()) {
+                                // 첫 번째 항목만 추출
+                                TodayMusicPostResponse todayPost = pageData.getContent().get(0);
+                                Log.d(TAG, "오늘의 피드 조회 성공: " + todayPost.getMusicName());
+                                result.setValue(Resource.success(todayPost));
+                            } else {
+                                Log.d(TAG, "오늘 공유된 음악이 없습니다");
+                                result.setValue(Resource.success(null)); // 데이터 없음
+                            }
+                        } else {
+                            Log.e(TAG, "오늘의 피드 조회 실패: " + response.message());
+                            String errorMessage = "오늘의 피드 조회 실패 (코드: " + response.code() + ")";
+                            result.setValue(Resource.error(errorMessage, null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> call,
+                            @NonNull Throwable t
+                    ) {
+                        Log.e(TAG, "오늘의 피드 네트워크 오류", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
     }
 
 }

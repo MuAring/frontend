@@ -14,6 +14,8 @@ public class FollowListResponse implements Parcelable {
     private Boolean isPublic;
 
     private String followStatus;
+    private String musicTitle;
+    private String musicArtist;
 
     public Long getMemberId() {
         return memberId;
@@ -34,6 +36,9 @@ public class FollowListResponse implements Parcelable {
     public String getFollowStatus() {
         return followStatus;
     }
+
+    public String getMusicTitle() { return musicTitle; }
+    public String getMusicArtist() { return musicArtist; }
 
     // Parcelable 구현
     protected FollowListResponse(Parcel in) {

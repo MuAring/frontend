@@ -3,6 +3,7 @@ package org.maru.muaring.data.api;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MusicPostFeedResponse;
 import org.maru.muaring.data.api.dto.PageResponse;
+import org.maru.muaring.data.api.dto.TodayPostResponse;
 
 import java.util.List;
 
@@ -19,6 +20,12 @@ public interface PostApi {
     @GET("/groups/{groupId}/posts/today")
     Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getTodayPostsForGroup(
             @Path("groupId") Long groupId
+    );
+
+    // 프로필의 오늘 공유한 음악 조회
+    @GET("/post/{memberId}/today")
+    Call<ApiResponse<TodayPostResponse>> getTodayPostByMember(
+            @Path("memberId") Long memberId
     );
 
 }
