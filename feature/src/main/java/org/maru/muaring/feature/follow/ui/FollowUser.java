@@ -4,13 +4,15 @@ public class FollowUser {
     private String name;
     private String profileImage;
     private String followStatus;
-    private String title;
-    private String artist;
+    private String musicTitle;
+    private String musicArtist;
 
-    public FollowUser(String name, String profileImage, String followStatus) {
+    public FollowUser(String name, String profileImage, String followStatus, String musicTitle, String musicArtist) {
         this.name = name;
         this.profileImage = profileImage;
         this.followStatus = followStatus;
+        this.musicTitle = musicTitle;
+        this.musicArtist = musicArtist;
     }
 
     public String getName() { return name; }
@@ -21,6 +23,6 @@ public class FollowUser {
         return followStatus;
     }
     public String getMusicInfo() {
-        return title + " - " + artist;
+        return musicTitle + " - " + musicArtist;
     }
 }

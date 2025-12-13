@@ -84,7 +84,9 @@ public class FollowFragment extends Fragment {
                     mapped.add(new FollowUser(
                             r.getName(),
                             r.getProfileImage(),
-                            r.getFollowStatus()
+                            r.getFollowStatus(),
+                            r.getMusicTitle() != null ? r.getMusicTitle() : "",
+                            r.getMusicArtist() != null ? r.getMusicArtist() : ""
                     ));
                 }
 
@@ -113,7 +115,9 @@ public class FollowFragment extends Fragment {
                     mapped.add(new FollowUser(
                             r.getName(),
                             r.getProfileImage(),
-                            "FOLLOWING"
+                            "FOLLOWING",
+                            r.getMusicTitle() != null ? r.getMusicTitle() : "",
+                            r.getMusicArtist() != null ? r.getMusicArtist() : ""
                     ));
                 }
 
