@@ -161,10 +161,12 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/layout_member_section"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
+                android:clickable="true"
                 android:orientation="vertical">
 
                 <TextView

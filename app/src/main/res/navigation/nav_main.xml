@@ -28,7 +28,11 @@
     <!-- 사용자 프로필 -->
     <fragment
         android:id="@+id/profileFragment"
-        android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment" />
+        android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment">
+        <action
+            android:id="@+id/action_memberProfile_to_myGroups"
+            app:destination="@id/myGroupsFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/followFragment"
@@ -52,6 +56,7 @@
         android:name="org.maru.muaring.feature.library.ui.LibraryFragment"
         />
 
+<!--    그룹 프로필-->
     <fragment
         android:id="@+id/groupProfileFragment"
         android:name="org.maru.muaring.feature.group.ui.profile.GroupProfileFragment"
@@ -59,7 +64,26 @@
         <argument
             android:name="groupId"
             app:argType="long" />
+
+        <action
+            android:id="@+id/action_groupProfile_to_groupMember"
+            app:destination="@id/groupMemberFragment" />
     </fragment>
+
+<!--    그룹 멤버 목록-->
+    <fragment
+        android:id="@+id/groupMemberFragment"
+        android:name="org.maru.muaring.feature.group.ui.GroupMemberFragment"
+        tools:layout="@layout/fragment_group_member">
+        <argument
+            android:name="group_id"
+            app:argType="long" />
+        <action
+            android:id="@+id/action_groupMember_to_memberProfile"
+            app:destination="@id/memberProfileFragment" />
+    </fragment>
+
+<!--    멤버 프로필-->
     <fragment
         android:id="@+id/memberProfileFragment"
         android:name="org.maru.muaring.feature.member.ui.MemberProfileReadFragment"
@@ -67,6 +91,9 @@
         <argument
             android:name="memberId"
             app:argType="long" />
+        <action
+            android:id="@+id/action_memberProfile_to_myGroups"
+            app:destination="@id/myGroupsFragment" />
     </fragment>
 
     <fragment
@@ -74,4 +101,14 @@
         android:name="org.maru.muaring.feature.member.ui.ProfileEditFragment"
         android:label="ProfileEditFragment"
         tools:layout="@layout/fragment_profile_edit" />
+
+    <!-- 가입한 그룹 목록 -->
+    <fragment
+        android:id="@+id/myGroupsFragment"
+        android:name="org.maru.muaring.feature.group.ui.MyGroupsFragment"
+        tools:layout="@layout/fragment_my_groups">
+        <action
+            android:id="@+id/action_myGroups_to_groupProfile"
+            app:destination="@id/groupProfileFragment" />
+    </fragment>
 </navigation>

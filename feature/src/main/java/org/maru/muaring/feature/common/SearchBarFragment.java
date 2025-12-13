@@ -26,7 +26,12 @@ public class SearchBarFragment extends Fragment {
         void onSearchClick(String query);
     }
 
+    public interface OnFocusChangeListener {
+        void onFocusChanged(boolean hasFocus);
+    }
+
     private OnSearchClickListener listener;
+    private OnFocusChangeListener focusChangeListener;
 
     // 빈 생성자 필수
     public SearchBarFragment() {}
@@ -67,6 +72,10 @@ public class SearchBarFragment extends Fragment {
                 rootLayout.setBackgroundResource(
                         org.maru.muaring.design.R.drawable.bg_search_bar
                 );
+            }
+
+            if (focusChangeListener != null) {
+                focusChangeListener.onFocusChanged(hasFocus);
             }
         });
 
@@ -122,5 +131,18 @@ public class SearchBarFragment extends Fragment {
             etSearch.setText("");
         }
     }
+
+    public void setOnFocusChangeListener(OnFocusChangeListener listener) {
+        this.focusChangeListener = listener;
+    }
+
+    public boolean hasFocus() {
+        return etSearch != null && etSearch.hasFocus();
+    }
+
+    public void clearFocus() {
+        if (etSearch != null) etSearch.clearFocus();
+    }
+
 
 }

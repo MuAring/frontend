@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModel;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.MusicHistoryResponse;
+import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.HistoryRepository;
 import org.maru.muaring.feature.history.ui.model.HistoryMapper;
@@ -34,6 +35,10 @@ public class GroupProfileViewModel extends ViewModel {
     private final MediatorLiveData<Resource<List<MusicHistoryItem>>> groupHistory =
             new MediatorLiveData<>();
 
+    // 그룹 오늘 공유한 음악
+    private final MediatorLiveData<Resource<TodayMusicPostResponse>> todayMusic =
+            new MediatorLiveData<>();
+
     @Inject
     public GroupProfileViewModel(GroupRepository groupRepository,
                                  HistoryRepository historyRepository) {
@@ -42,6 +47,7 @@ public class GroupProfileViewModel extends ViewModel {
 
         groupProfile.setValue(Resource.loading(null));
         groupHistory.setValue(Resource.loading(Collections.emptyList()));
+        todayMusic.setValue(Resource.loading(null));
     }
 
     // ===== 프로필 =====
@@ -69,6 +75,36 @@ public class GroupProfileViewModel extends ViewModel {
                 case ERROR:
                     groupProfile.setValue(Resource.error(res.message, null));
                     groupProfile.removeSource(source);
+                    break;
+            }
+        });
+    }
+
+    // 그룹 오늘 공유한 음악 조회
+    public LiveData<Resource<TodayMusicPostResponse>> getTodayMusic() {
+        return todayMusic;
+    }
+
+    public void loadTodayMusic(Long groupId) {
+        LiveData<Resource<TodayMusicPostResponse>> source =
+                groupRepository.getTodayGroupFeed(groupId);
+
+        todayMusic.addSource(source, res -> {
+            if (res == null) return;
+
+            switch (res.status) {
+                case LOADING:
+                    todayMusic.setValue(Resource.loading(null));
+                    break;
+
+                case SUCCESS:
+                    todayMusic.setValue(Resource.success(res.data));
+                    todayMusic.removeSource(source);
+                    break;
+
+                case ERROR:
+                    todayMusic.setValue(Resource.error(res.message, null));
+                    todayMusic.removeSource(source);
                     break;
             }
         });
