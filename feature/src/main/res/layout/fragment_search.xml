@@ -68,7 +68,7 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="8dp"/>
+        android:layout_marginTop="20dp"/>
 
     <!-- 검색 결과 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
