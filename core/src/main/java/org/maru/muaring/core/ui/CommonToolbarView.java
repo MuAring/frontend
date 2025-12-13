@@ -9,7 +9,10 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import org.maru.muaring.core.R;
 
@@ -41,8 +44,30 @@ public class CommonToolbarView extends RelativeLayout {
                 return;
             }
 
-            // Fragment 뒤로가기
+            // Navigation Component 뒤로가기 시도
             if (activity instanceof FragmentActivity fa) {
+                // NavHostFragment 찾기
+                // 리소스 이름으로 ID 찾기
+                int navHostId = activity.getResources().getIdentifier(
+                        "nav_host",
+                        "id",
+                        activity.getPackageName()
+                );
+
+                Fragment navHost = fa.getSupportFragmentManager()
+                        .findFragmentById(navHostId);
+
+                if (navHost instanceof NavHostFragment) {
+                    NavController navController = ((NavHostFragment) navHost).getNavController();
+                    // Navigation 백스택이 있으면 뒤로가기
+                    if (navController.getCurrentDestination() != null
+                            && navController.getPreviousBackStackEntry() != null) {
+                        navController.popBackStack();
+                        return;
+                    }
+                }
+
+                // Navigation이 없거나 백스택이 비었으면 FragmentManager 확인
                 if (fa.getSupportFragmentManager().getBackStackEntryCount() > 0) {
                     fa.getSupportFragmentManager().popBackStack();
                     return;
