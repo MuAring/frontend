@@ -6,6 +6,7 @@ import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
@@ -22,6 +23,7 @@ public interface MemberRepository {
     void updateProfile(MemberProfileUpdateRequest request, Callback<Void> callback);
 
     LiveData<Resource<MemberSettingsResponse>> getMySettings();
+    LiveData<Resource<MemberProfileReadResponse>> getMemberProfile(Long memberId);
 
     void searchMembers(String name, int page, int size, SearchMembersCallback callback);
 

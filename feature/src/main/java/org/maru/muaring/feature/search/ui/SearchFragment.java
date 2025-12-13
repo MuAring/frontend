@@ -42,7 +42,7 @@ public class SearchFragment extends Fragment {
     // Toolbar
     private TextView toolbarTitle;
     private ImageButton toolbarBack;
-    private ImageButton toolbarAction;
+//    private ImageButton toolbarAction;
 
     private SegmentedToggleView segmentedToggleView;    // 상단 토글
     private ImageButton btnBack;                        // 뒤로가기 버튼
@@ -102,7 +102,8 @@ public class SearchFragment extends Fragment {
 //        toolbarAction = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_action);
 
         toolbarTitle.setText("검색");
-        toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+        toolbarBack.setVisibility(View.INVISIBLE);
+//        toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
 //        toolbarAction.setVisibility(View.VISIBLE);
 //        toolbarAction.setOnClickListener(v -> {
 //            // TODO: 그룹 설정 이동

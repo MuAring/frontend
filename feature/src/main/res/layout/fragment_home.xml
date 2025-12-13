@@ -4,7 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:layout_marginTop="55dp" >
+    android:layout_marginTop="55dp"
+    android:id="@+id/homeFragment">
 
     <!-- 홈 상단 로고 + 알림 -->
     <include
@@ -14,7 +15,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvGroupSelector"
         android:layout_width="match_parent"
-        android:layout_height="88dp"
+        android:layout_height="100dp"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
         android:clipToPadding="false"

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.bumptech.glide.Glide;
 
@@ -94,8 +95,11 @@ public class UploadFragment extends Fragment {
             uploadRepository.createMusicPost(request, new Callback<Void>() {
                 @Override
                 public void onSuccess(Void result) {
-                    Toast.makeText(requireContext(), "게시글 등록 완료!", Toast.LENGTH_SHORT).show();
-                    requireActivity().onBackPressed(); // 화면 뒤로가기
+                    Bundle bundle = new Bundle();
+                    bundle.putString("albumImgUrl", selectedMusic.getAlbumImgUrl());
+
+                    NavHostFragment.findNavController(UploadFragment.this)
+                            .navigate(R.id.uploadCompleteFragment, bundle);
                 }
 
                 @Override

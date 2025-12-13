@@ -10,14 +10,17 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-
-import org.maru.muaring.feature.group.ui.GroupMemberFragment;
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
 
 @AndroidEntryPoint
 public class MainActivity extends AppCompatActivity implements SearchNavigator {
+
+    @Inject
+    TokenManager tokenManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,6 +46,11 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
         BottomNavigationView bottom = findViewById(R.id.bottomNav);
         NavigationUI.setupWithNavController(bottom, nav);
         // 이걸로 bottomNav <-> nav_main.xml 연결 전부 해줌
+
+        bottom.setOnItemSelectedListener(item -> {
+            return NavigationUI.onNavDestinationSelected(item, nav);
+        });
+
     }
 
     // SearchNavigator 구현: 여기서만 nav_main.xml 리소스 사용
@@ -75,4 +83,61 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
 
         nav.navigate(destId, args);
     }
+
+    @Override
+    public void navigateToProfileEdit() {
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host);
+
+        if (host == null) return;
+
+        NavController nav = host.getNavController();
+
+        int destId = getResources().getIdentifier(
+                "profileEditFragment",
+                "id",
+                getPackageName()
+        );
+
+        if (destId == 0) {
+            Toast.makeText(this, "profileEditFragment id 를 찾을 수 없어요 🥲", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        nav.navigate(destId);
+    }
+
+    public void openMyProfile() {
+        long myId = tokenManager.getMemberId();
+        if (myId == -1L) {
+            Toast.makeText(this, "로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // NavHost 가져오기
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host);
+
+        if (host == null) return;
+
+        NavController nav = host.getNavController();
+
+        // Argument 구성
+        Bundle args = new Bundle();
+        args.putLong("memberId", myId);
+
+        int destId = getResources().getIdentifier(
+                "profileFragment",  // xml에 정의된 id
+                "id",
+                getPackageName()
+        );
+
+        if (destId == 0) {
+            Toast.makeText(this, "memberProfileReadFragment id 를 찾을 수 없어요 🥲", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        nav.navigate(destId, args);
+    }
+
 }

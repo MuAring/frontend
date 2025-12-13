@@ -11,6 +11,7 @@ import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
 import org.maru.muaring.data.api.dto.MemberProfileCreateRequest;
 import org.maru.muaring.data.api.dto.MemberProfileCreateResponse;
+import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.api.dto.MemberSettingsResponse;
 import org.maru.muaring.data.api.dto.MemberProfileSettingReadResponse;
@@ -197,4 +198,34 @@ public class MemberRepositoryImpl implements MemberRepository {
                 });
     }
 
+    @Override
+    public LiveData<Resource<MemberProfileReadResponse>> getMemberProfile(Long memberId) {
+        MutableLiveData<Resource<MemberProfileReadResponse>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        api.readMemberProfile(memberId).enqueue(new retrofit2.Callback<ApiResponse<MemberProfileReadResponse>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<MemberProfileReadResponse>> call,
+                                   Response<ApiResponse<MemberProfileReadResponse>> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    ApiResponse<MemberProfileReadResponse> body = response.body();
+                    if (body.getData() != null) {
+                        result.setValue(Resource.success(body.getData()));
+                    } else {
+                        result.setValue(Resource.error("data가 null입니다.", null));
+                    }
+                } else {
+                    String msg = "response 실패 - code: " + response.code();
+                    result.setValue(Resource.error(msg, null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<MemberProfileReadResponse>> call, Throwable t) {
+                result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+            }
+        });
+
+        return result;
+    }
 }

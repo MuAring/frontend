@@ -1,5 +1,6 @@
 package org.maru.muaring.data.di;
 
+import org.maru.muaring.data.api.LikeApi;
 import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.FollowApi;
@@ -20,6 +21,10 @@ import org.maru.muaring.data.repository.HistoryRepository;
 import org.maru.muaring.data.repository.HistoryRepositoryImpl;
 import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.ImageRepositoryImpl;
+import org.maru.muaring.data.repository.LibraryRepository;
+import org.maru.muaring.data.repository.LibraryRepositoryImpl;
+import org.maru.muaring.data.repository.LikeRepository;
+import org.maru.muaring.data.repository.LikeRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
@@ -139,6 +144,13 @@ public class NetworkModule {
 
     @Provides
     @Singleton
+    public LibraryRepository provideLibraryRepository(LibraryApi api) {
+        return new LibraryRepositoryImpl(api);
+    }
+
+
+    @Provides
+    @Singleton
     public UploadApi provideUploadApi(Retrofit retrofit) {
         return retrofit.create(UploadApi.class);
     }
@@ -159,5 +171,16 @@ public class NetworkModule {
     @Singleton
     public FollowRepository provideFollowRepository(FollowApi api) {
         return new FollowRepositoryImpl(api);
+    }
+    @Provides
+    @Singleton
+    public LikeApi provideLikeApi(Retrofit retrofit) {
+        return retrofit.create(LikeApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public LikeRepository provideLikeRepository(LikeApi api) {
+        return new LikeRepositoryImpl(api);
     }
 }
