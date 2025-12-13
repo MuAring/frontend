@@ -15,6 +15,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -219,6 +221,26 @@ public class MemberProfileReadFragment extends Fragment {
                 .load(response.getImageUrl())
                 .centerCrop()
                 .into(profileImage);
+
+        followerCount.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putLong("memberId", memberId);
+            bundle.putString("tab", "FOLLOWER");
+
+            NavController navController =
+                    NavHostFragment.findNavController(MemberProfileReadFragment.this);
+            navController.navigate(R.id.followFragment, bundle);
+        });
+
+        followingCount.setOnClickListener(v -> {
+            Bundle bundle = new Bundle();
+            bundle.putLong("memberId", memberId);
+            bundle.putString("tab", "FOLLOWING");
+
+            NavController navController =
+                    NavHostFragment.findNavController(MemberProfileReadFragment.this);
+            navController.navigate(R.id.followFragment, bundle);
+        });
     }
 
     private void observeHistory() {

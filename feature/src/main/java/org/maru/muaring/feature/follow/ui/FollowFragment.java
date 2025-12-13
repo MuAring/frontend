@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -46,7 +48,18 @@ public class FollowFragment extends Fragment {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+
         super.onViewCreated(view, savedInstanceState);
+
+        View toolbar = view.findViewById(R.id.toolbar);
+        TextView title = toolbar.findViewById(R.id.toolbar_title);
+        title.setVisibility(View.GONE);
+
+        ImageButton btnBack = toolbar.findViewById(R.id.btn_back);
+
+        btnBack.setOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
 
         FollowToggleView toggleView = view.findViewById(R.id.followToggle);
 
@@ -54,7 +67,21 @@ public class FollowFragment extends Fragment {
         adapter = new FollowAdapter(new ArrayList<>());
         rvFollowList.setAdapter(adapter);
 
-        showFollowerList();
+        Bundle args = getArguments();
+        if (args != null) {
+            String tab = args.getString("tab");
+
+            if ("FOLLOWING".equals(tab)) {
+                showFollowingList();
+                toggleView.selectFollowing();
+            } else {
+                showFollowerList();
+                toggleView.selectFollower();
+            }
+        } else {
+            showFollowerList();
+            toggleView.selectFollower();
+        }
 
         toggleView.setOnSegmentSelectedListener(new FollowToggleView.OnSegmentSelectedListener() {
             @Override
