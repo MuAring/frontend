@@ -8,6 +8,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -39,6 +40,12 @@ public class PostDetailFragment extends Fragment {
     private TextView tvMusicTitle;
     private TextView tvArtist;
     private ImageButton btnAddLibrary;
+
+    // 좋아요 영역
+    private LinearLayout likeSection;
+    private ImageView ivLike;
+    private boolean isLiked;
+    private int likeCount;
 
     @Nullable
     @Override
@@ -93,6 +100,10 @@ public class PostDetailFragment extends Fragment {
         tvMusicTitle = musicCardView.findViewById(R.id.tv_music_title);
         tvArtist = musicCardView.findViewById(R.id.tv_artist);
         btnAddLibrary = musicCardView.findViewById(R.id.btn_add_library);
+
+        // 좋아요 영역
+        likeSection = v.findViewById(R.id.like_section);
+        ivLike = v.findViewById(R.id.iv_like);
     }
 
     private void bindPostDetail(PostDetailReadResponse response) {
@@ -113,6 +124,67 @@ public class PostDetailFragment extends Fragment {
                 .into(ivAlbum);
         tvMusicTitle.setText(response.getMusic().getName());
         tvArtist.setText(response.getMusic().getArtistName());
+
+        // 좋아요
+        isLiked = response.isLiked();
+        likeCount = response.getLikeCount() != null
+                ? response.getLikeCount()
+                : 0;
+        ivLike.setImageResource(
+                isLiked
+                        ? org.maru.muaring.design.R.drawable.ic_heart_filled
+                        : R.drawable.ic_heart_outline
+        );
+
+        likeSection.setOnClickListener(v -> {
+            boolean prevLiked = isLiked;
+            int prevCount = likeCount;
+
+            // UI 먼저 변경 (Optimistic)
+            isLiked = !isLiked;
+            likeCount = isLiked ? likeCount + 1 : Math.max(0, likeCount - 1);
+            updateLikeUI();
+
+            viewModel.toggleLike(postId)
+                    .observe(getViewLifecycleOwner(), resource -> {
+                        if (resource == null) return;
+                        switch (resource.status) {
+                            case LOADING:
+                                // 필요하면 로딩 표시
+                                break;
+
+                            case SUCCESS:
+                                if (resource.data != null) {
+                                    isLiked = resource.data.isLiked();
+                                    likeCount = resource.data.getNumOfLikes();
+                                    updateLikeUI();
+                                }
+                                break;
+
+                            case ERROR:
+                                // 실패 시 롤백
+                                isLiked = prevLiked;
+                                likeCount = prevCount;
+                                updateLikeUI();
+
+                                Toast.makeText(
+                                        requireContext(),
+                                        "좋아요 처리에 실패했어요 😢",
+                                        Toast.LENGTH_SHORT
+                                ).show();
+                                break;
+                        }
+                    });
+        });
+    }
+
+    private void updateLikeUI() {
+        ivLike.setImageResource(
+                isLiked
+                        ? org.maru.muaring.design.R.drawable.ic_heart_filled
+                        : R.drawable.ic_heart_outline
+        );
+        tvLikeCount.setText(String.valueOf(likeCount));
     }
 
     private void observePostDetail(Long postId) {
