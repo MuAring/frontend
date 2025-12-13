@@ -17,8 +17,16 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
 
     private List<FollowUser> userList;
 
-    public FollowAdapter(List<FollowUser> userList) {
+    public interface OnFollowActionListener {
+        void onFollow(long targetMemberId);
+        void onUnfollow(long targetMemberId);
+    }
+
+    private OnFollowActionListener listener;
+
+    public FollowAdapter(List<FollowUser> userList, OnFollowActionListener listener) {
         this.userList = userList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -46,6 +54,18 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
             holder.btnFollow.setVisibility(View.VISIBLE);
             holder.btnFollowing.setVisibility(View.INVISIBLE);
         }
+
+        holder.btnFollow.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onFollow(user.getMemberId());
+            }
+        });
+
+        holder.btnFollowing.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onUnfollow(user.getMemberId());
+            }
+        });
     }
 
     @Override
@@ -56,6 +76,10 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
     public void updateList(List<FollowUser> newList) {
         this.userList = newList;
         notifyDataSetChanged();
+    }
+
+    public List<FollowUser> getUserList() {
+        return userList;
     }
 
     static class FollowViewHolder extends RecyclerView.ViewHolder {

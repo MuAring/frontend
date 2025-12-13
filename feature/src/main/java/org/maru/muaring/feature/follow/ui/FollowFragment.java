@@ -5,8 +5,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,6 +33,8 @@ import jakarta.inject.Inject;
 public class FollowFragment extends Fragment {
     private RecyclerView rvFollowList;
     private FollowAdapter adapter;
+
+    private boolean isFollowing;
     @Inject
     FollowRepository followRepository;
 
@@ -51,6 +55,9 @@ public class FollowFragment extends Fragment {
 
         super.onViewCreated(view, savedInstanceState);
 
+        Button btnFollower = view.findViewById(R.id.btn_follower);
+        Button btnFollowing = view.findViewById(R.id.btn_following);
+
         View toolbar = view.findViewById(R.id.toolbar);
         TextView title = toolbar.findViewById(R.id.toolbar_title);
         title.setVisibility(View.GONE);
@@ -64,7 +71,42 @@ public class FollowFragment extends Fragment {
         FollowToggleView toggleView = view.findViewById(R.id.followToggle);
 
         rvFollowList.setLayoutManager(new LinearLayoutManager(getContext()));
-        adapter = new FollowAdapter(new ArrayList<>());
+        adapter = new FollowAdapter(
+                new ArrayList<>(),
+                new FollowAdapter.OnFollowActionListener() {
+
+                    @Override
+                    public void onFollow(long targetMemberId) {
+                        followRepository.followMember(targetMemberId, new Callback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                updateFollowStatus(targetMemberId, "FOLLOWING");
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(getContext(), "팔로우 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onUnfollow(long targetMemberId) {
+                        followRepository.unfollowMember(targetMemberId, new Callback<Void>() {
+                            @Override
+                            public void onSuccess(Void result) {
+                                updateFollowStatus(targetMemberId, "FOLLOW_BACK");
+                            }
+
+                            @Override
+                            public void onError(Exception e) {
+                                Toast.makeText(getContext(), "언팔로우 실패", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                }
+        );
+
         rvFollowList.setAdapter(adapter);
 
         Bundle args = getArguments();
@@ -96,6 +138,20 @@ public class FollowFragment extends Fragment {
         });
     }
 
+    private void updateFollowStatus(long targetMemberId, String newStatus) {
+        List<FollowUser> currentList = adapter.getUserList();
+
+        for (FollowUser user : currentList) {
+            if (user.getMemberId() == targetMemberId) {
+                user.setFollowStatus(newStatus);
+                break;
+            }
+        }
+
+        adapter.notifyDataSetChanged();
+    }
+
+
     private void showFollowerList() {
 
         TokenManager tokenManager = new TokenManager(requireContext());
@@ -109,6 +165,7 @@ public class FollowFragment extends Fragment {
 
                 for (FollowListResponse r : result) {
                     mapped.add(new FollowUser(
+                            r.getMemberId(),
                             r.getName(),
                             r.getProfileImage(),
                             r.getFollowStatus(),
@@ -140,6 +197,7 @@ public class FollowFragment extends Fragment {
 
                 for (FollowListResponse r : result) {
                     mapped.add(new FollowUser(
+                            r.getMemberId(),
                             r.getName(),
                             r.getProfileImage(),
                             "FOLLOWING",
