@@ -55,13 +55,26 @@
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="12dp" />
 
+    <!-- 추천 섹션 타이틀 (검색 아닐 때만 보임) -->
+    <TextView
+        android:id="@+id/tvRecommendTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뮤어링님이 좋아할 그룹"
+        android:textColor="@color/muaring_primary_2"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="18dp"/>
 
     <!-- 검색 결과 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerSearchResult"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
+        app:layout_constraintTop_toBottomOf="@id/tvRecommendTitle"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -76,9 +89,9 @@
         android:layout_height="wrap_content"
         android:text="검색 결과가 없습니다."
         android:textColor="@color/text_light_gray"
-        android:textSize="14sp"
+        android:textSize="24sp"
         android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
+        app:layout_constraintTop_toBottomOf="@id/tvRecommendTitle"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="32dp"/>
