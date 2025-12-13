@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
+import org.maru.muaring.data.api.dto.TodayPostResponse;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.history.ui.adapter.MusicHistoryAdapter;
 import org.maru.muaring.feature.history.ui.calendar.MusicHistoryCalendarView;
@@ -57,7 +59,16 @@ public class MemberProfileReadFragment extends Fragment {
     private TextView followerCount;
     private TextView followingCount;
     private TextView joinedGroupCount;
-//    private View privateLayout;
+
+    // 오늘 공유한 음악 카드
+    private View todayMusicCard;
+    private CardView cardTodayMusic;
+    private LinearLayout layoutEmptyState;
+    private ImageView todayAlbumImage;
+    private TextView todayMusicName;
+    private TextView todayArtistName;
+    private TextView todayLikeCount;
+    private TextView todayCommentCount;
 
     // 히스토리
     private LinearLayout historySection;
@@ -71,7 +82,7 @@ public class MemberProfileReadFragment extends Fragment {
     private int currentYear;
     private int currentMonth;
 
-    private Long memberId; // 네비게이션으로 전달받음
+    private Long memberId;
     private SearchNavigator navigator;
 
     @Override
@@ -119,15 +130,17 @@ public class MemberProfileReadFragment extends Fragment {
         updateMonthText();
         observeProfile();
         observeHistory();
+        observeTodayPost();
         showListMode();
         loadHistory(memberId);
         if (memberId != -1L) {
             viewModel.loadMemberProfile(memberId);
+            viewModel.loadTodayPost(memberId);
         }
     }
 
     private void bindViews(View v) {
-        toolBar =  v.findViewById(R.id.include_toolbar_group);
+        toolBar = v.findViewById(R.id.include_toolbar_group);
         toolBarBtnBack = toolBar.findViewById(R.id.btn_back);
         toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
         profileImage = v.findViewById(R.id.image_profile);
@@ -135,19 +148,37 @@ public class MemberProfileReadFragment extends Fragment {
         btnAlarm = v.findViewById(R.id.btn_alarm);
         btnFollow = v.findViewById(R.id.btn_follow);
         btnFollowed = v.findViewById(R.id.btn_followed);
-//        privateLayout = v.findViewById(R.id.layout_private_account);
         historySection = v.findViewById(R.id.include_history);
         sharedMusicCount = v.findViewById(R.id.text_stat_shared);
         followerCount = v.findViewById(R.id.text_stat_follower);
         followingCount = v.findViewById(R.id.text_stat_following);
         joinedGroupCount = v.findViewById(R.id.text_stat_group);
+
+        // 오늘 공유한 음악 카드 바인딩
+        todayMusicCard = v.findViewById(R.id.include_today_shared);
+        android.util.Log.d("TodayPost", "todayMusicCard = " + todayMusicCard);
+
+        if (todayMusicCard != null) {
+            cardTodayMusic = todayMusicCard.findViewById(R.id.cardTodayMusic);
+            layoutEmptyState = todayMusicCard.findViewById(R.id.layoutEmptyState);
+
+            android.util.Log.d("TodayPost", "cardTodayMusic = " + cardTodayMusic);
+            android.util.Log.d("TodayPost", "layoutEmptyState = " + layoutEmptyState);
+
+            todayAlbumImage = todayMusicCard.findViewById(R.id.ivAlbumCover);
+            todayMusicName = todayMusicCard.findViewById(R.id.tvSongTitle);
+            todayArtistName = todayMusicCard.findViewById(R.id.tvArtistName);
+            todayLikeCount = todayMusicCard.findViewById(R.id.tvLikeCount);
+            todayCommentCount = todayMusicCard.findViewById(R.id.tvCommentCount);
+        } else {
+            android.util.Log.e("TodayPost", "todayMusicCard is NULL!");
+        }
     }
 
     private void setupHistoryRecycler(View root) {
         RecyclerView recyclerView = root.findViewById(R.id.recycler_history);
 
         historyAdapter = new MusicHistoryAdapter(item -> {
-            // 클릭 시 postId, musicId 갖고 상세 화면으로 이동할 때 쓰기
             Long postId = item.getPostId();
             Long musicId = item.getMusicId();
             // TODO: NavController로 이동
@@ -163,7 +194,6 @@ public class MemberProfileReadFragment extends Fragment {
 
             switch (res.status) {
                 case LOADING:
-                    // 로딩 UI 필요하면 처리
                     break;
 
                 case SUCCESS:
@@ -174,7 +204,6 @@ public class MemberProfileReadFragment extends Fragment {
                     break;
 
                 case ERROR:
-                    // 에러 표시
                     break;
             }
         });
@@ -199,20 +228,13 @@ public class MemberProfileReadFragment extends Fragment {
             btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.VISIBLE);
             btnFollow.setVisibility(View.GONE);
-        } else {  // 내가 팔로우하지 않는 타인의 프로필 조회
+        } else {
             btnEditProfile.setVisibility(View.GONE);
             btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
         }
 
-//        // 타인 프로필 + 비공개 계정 + 팔로우 안함 → 위 레이아웃 보여주기
-//        if (!profile.isMe() && !profile.isPublic() && !profile.isFollowing()) {
-//            privateLayout.setVisibility(View.VISIBLE);
-//            historySection.setVisibility(View.GONE);
-//            return;
-//        }
-//        privateLayout.setVisibility(View.GONE);
         historySection.setVisibility(View.VISIBLE);
 
         Glide.with(profileImage.getContext())
@@ -221,13 +243,111 @@ public class MemberProfileReadFragment extends Fragment {
                 .into(profileImage);
     }
 
+    private void observeTodayPost() {
+        viewModel.getTodayPost().observe(getViewLifecycleOwner(), res -> {
+            android.util.Log.d("TodayPost", "observeTodayPost called, res = " + res);
+
+            if (res == null) {
+                android.util.Log.d("TodayPost", "res is null");
+                return;
+            }
+            android.util.Log.d("TodayPost", "status = " + res.status);
+
+            switch (res.status) {
+                case LOADING:
+                    android.util.Log.d("TodayPost", "LOADING");
+                    // 로딩 중에는 둘 다 숨김
+                    if (cardTodayMusic != null) {
+                        cardTodayMusic.setVisibility(View.GONE);
+                    }
+                    if (layoutEmptyState != null) {
+                        layoutEmptyState.setVisibility(View.GONE);
+                    }
+                    break;
+
+                case SUCCESS:
+                    TodayPostResponse data = res.data;
+                    android.util.Log.d("TodayPost", "SUCCESS, data = " + (data != null ? "있음" : "null"));
+                    if (data != null) {
+                        // 데이터가 있으면 카드 표시
+                        updateTodayPostUI(data);
+                    } else {
+                        // 데이터가 없으면 빈 상태 표시
+                        showEmptyState();
+                    }
+                    break;
+
+                case ERROR:
+                    android.util.Log.e("TodayPost", "ERROR: " + res.message);
+                    // 에러 시 빈 상태 표시
+                    showEmptyState();
+                    break;
+            }
+        });
+    }
+
+    private void updateTodayPostUI(TodayPostResponse post) {
+        if (cardTodayMusic == null || layoutEmptyState == null) return;
+
+        // 카드 표시, 빈 상태 숨김
+        cardTodayMusic.setVisibility(View.VISIBLE);
+        layoutEmptyState.setVisibility(View.GONE);
+
+        // 앨범 이미지
+        if (todayAlbumImage != null) {
+            Glide.with(this)
+                    .load(post.getAlbumImageUrl())
+                    .placeholder(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .error(org.maru.muaring.design.R.drawable.ic_launcher_foreground)
+                    .centerCrop()
+                    .into(todayAlbumImage);
+        }
+
+        // 음악 정보
+        if (todayMusicName != null) {
+            todayMusicName.setText(post.getMusicName());
+        }
+        if (todayArtistName != null) {
+            todayArtistName.setText(post.getArtistName());
+        }
+
+        // 통계
+        if (todayLikeCount != null) {
+            todayLikeCount.setText(String.valueOf(post.getLikeCount()));
+        }
+        if (todayCommentCount != null) {
+            todayCommentCount.setText(String.valueOf(post.getCommentCount()));
+        }
+
+        // 클릭 리스너
+        cardTodayMusic.setOnClickListener(v -> {
+            Long postId = post.getPostId();
+            // TODO: 포스트 상세 페이지로 이동
+            Toast.makeText(requireContext(),
+                    "Post ID: " + postId + " 클릭",
+                    Toast.LENGTH_SHORT).show();
+        });
+    }
+
+    private void showEmptyState() {
+        android.util.Log.d("TodayPost", "showEmptyState called");
+        android.util.Log.d("TodayPost", "cardTodayMusic = " + cardTodayMusic);
+        android.util.Log.d("TodayPost", "layoutEmptyState = " + layoutEmptyState);
+        if (cardTodayMusic != null && layoutEmptyState != null) {
+            cardTodayMusic.setVisibility(View.GONE);
+            layoutEmptyState.setVisibility(View.VISIBLE);
+            android.util.Log.d("TodayPost", "Empty state shown");
+        } else {
+            android.util.Log.e("TodayPost", "Views are null!");
+        }
+    }
+
     private void observeHistory() {
         viewModel.getMemberHistory().observe(getViewLifecycleOwner(), res -> {
             if (res == null) return;
 
             switch (res.status) {
                 case LOADING:
-                    // TODO: 로딩 UI
                     break;
 
                 case SUCCESS:
@@ -256,7 +376,6 @@ public class MemberProfileReadFragment extends Fragment {
         recyclerHistory = historyRoot.findViewById(R.id.recycler_history);
         calendarView = historyRoot.findViewById(R.id.view_music_history_calendar);
 
-        // Adapter
         historyAdapter = new MusicHistoryAdapter(item -> {
             // TODO: postId 로 상세 페이지 이동
         });
@@ -264,11 +383,9 @@ public class MemberProfileReadFragment extends Fragment {
         recyclerHistory.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerHistory.setAdapter(historyAdapter);
 
-        // Month navigation
         btnMonthPrev.setOnClickListener(v -> changeMonth(-1));
         btnMonthNext.setOnClickListener(v -> changeMonth(1));
 
-        // Toggle (list/calendar)
         btnHistoryList.setOnClickListener(v -> showListMode());
         btnHistoryCalendar.setOnClickListener(v -> showCalendarMode());
     }
@@ -294,7 +411,6 @@ public class MemberProfileReadFragment extends Fragment {
         calendarView.loadMonth(currentYear, currentMonth);
         loadHistory(memberId);
     }
-
 
     private void updateMonthText() {
         String text = String.format(Locale.KOREA, "%d년 %d월", currentYear, currentMonth);

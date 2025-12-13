@@ -20,6 +20,7 @@
 
     <!-- 음악 카드 -->
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardTodayMusic"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
@@ -38,7 +39,6 @@
                 android:id="@+id/ivAlbumCover"
                 android:layout_width="80dp"
                 android:layout_height="80dp"
-                android:src="@drawable/ic_launcher_foreground"
                 android:background="@drawable/album_image"
                 android:scaleType="centerCrop"/>
 
@@ -56,7 +56,6 @@
                     android:id="@+id/tvSongTitle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Girls Never Die"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:textColor="@color/black"
@@ -69,7 +68,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="tripleS (트리플에스)"
                     android:textSize="14sp"
                     android:textColor="@color/gray"
                     android:maxLines="1"
@@ -99,7 +97,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="12"
                             android:textSize="14sp"
                             android:textColor="@color/gray"/>
                     </LinearLayout>
@@ -117,14 +114,12 @@
                             android:layout_height="20dp"
                             android:src="@drawable/ic_comment_outline"
                             app:tint="@color/gray"/>
-<!--                        android:tint="@color/gray"-->
 
                         <TextView
                             android:id="@+id/tvCommentCount"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
-                            android:text="12"
                             android:textSize="14sp"
                             android:textColor="@color/gray"/>
                     </LinearLayout>
@@ -141,10 +136,30 @@
                 android:src="@drawable/add_button"
                 android:layout_marginTop="58dp"
                 android:layout_marginRight="17dp"
-                android:contentDescription="추가 버튼"
-                />
+                android:contentDescription="추가 버튼"/>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
+
+    <!-- 빈 상태 레이아웃 -->
+    <LinearLayout
+        android:id="@+id/layoutEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="32dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="오늘 공유한 음악이 없습니다."
+            android:textSize="16sp"
+            android:textColor="@color/gray"
+            android:gravity="center"/>
+
+    </LinearLayout>
 
 </LinearLayout>
