@@ -53,7 +53,8 @@
         app:layout_constraintTop_toBottomOf="@id/text_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="12dp" />
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="22dp"/>
 
     <!-- 추천 섹션 타이틀 (검색 아닐 때만 보임) -->
     <TextView
@@ -67,7 +68,7 @@
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/fragmentSearchBar"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginTop="18dp"/>
+        android:layout_marginTop="8dp"/>
 
     <!-- 검색 결과 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
@@ -78,7 +79,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="8dp"
         android:clipToPadding="false"
         android:paddingBottom="16dp" />
 

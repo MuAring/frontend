@@ -1,6 +1,7 @@
 package org.maru.muaring.data.di;
 
 import org.maru.muaring.data.api.LikeApi;
+import org.maru.muaring.data.api.RecommendationApi;
 import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
 import org.maru.muaring.data.api.FollowApi;
@@ -29,6 +30,8 @@ import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
 import org.maru.muaring.data.repository.PostRepositoryImpl;
+import org.maru.muaring.data.repository.RecommendationRepository;
+import org.maru.muaring.data.repository.RecommendationRepositoryImpl;
 import org.maru.muaring.data.repository.UploadRepository;
 import org.maru.muaring.data.repository.UploadRepositoryImpl;
 
@@ -172,6 +175,7 @@ public class NetworkModule {
     public FollowRepository provideFollowRepository(FollowApi api) {
         return new FollowRepositoryImpl(api);
     }
+
     @Provides
     @Singleton
     public LikeApi provideLikeApi(Retrofit retrofit) {
@@ -182,5 +186,17 @@ public class NetworkModule {
     @Singleton
     public LikeRepository provideLikeRepository(LikeApi api) {
         return new LikeRepositoryImpl(api);
+    }
+
+    @Provides
+    @Singleton
+    public RecommendationApi provideRecommendationApi(Retrofit retrofit) {
+        return retrofit.create(RecommendationApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public RecommendationRepository provideRecommendationRepository(RecommendationApi api) {
+        return new RecommendationRepositoryImpl(api);
     }
 }

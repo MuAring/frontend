@@ -74,7 +74,37 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
 
         if (destId == 0) {
             // 혹시라도 못 찾으면 토스트만 띄우고 리턴
-            Toast.makeText(this, "groupProfileFragment id 를 찾을 수 없어요 🥲", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "해당 그룹을 찾을 수 없어요 🥲",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        nav.navigate(destId, args);
+    }
+
+    @Override
+    public void openMemberProfile(long memberId) {
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host);
+
+        if (host == null) return;
+
+        NavController nav = host.getNavController();
+
+        Bundle args = new Bundle();
+        args.putLong("memberId", memberId);
+
+        int destId = getResources().getIdentifier(
+                "memberProfileFragment",
+                "id",
+                getPackageName()
+        );
+
+        if (destId == 0) {
+            Toast.makeText(this,
+                    "해당 멤버를 찾을 수 없어요 🥲",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 

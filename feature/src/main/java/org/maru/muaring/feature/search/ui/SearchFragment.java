@@ -97,9 +97,9 @@ public class SearchFragment extends Fragment {
 
         initToolbar(view);
         initViews(view);
+        setupRecyclerView();
         setupInitialState();
         setupListeners();
-        setupRecyclerView();
     }
 
     private void initToolbar(@NonNull View root) {
@@ -152,9 +152,19 @@ public class SearchFragment extends Fragment {
 
                     if (navigator != null) {
                         navigator.openGroupProfile(groupId);   // 여기서 Activity에게 부탁
+                        // 추천 클릭 로그
+//                        recommendationRepository.logGroupClick(groupId);
                     }
                 } else {
                     // TODO: 사용자 프로필 이동
+                    Long memberId = item.getId();
+
+                    // 멤버 추천 / 멤버 검색 → 멤버 프로필
+                    if (navigator != null) {
+                        navigator.openMemberProfile(memberId);
+                        // 추천 클릭 로그
+//                      recommendationRepository.logMemberClick(memberId);
+                    }
                 }
             }
 
@@ -494,76 +504,144 @@ public class SearchFragment extends Fragment {
         }
     }
 
+    // TODO: 추천 API 연동 완료 후 제거 (UI 확인용 더미 데이터)
     private void loadGroupRecommendations() {
-        recommendationRepository.getGroupRecommendations(
-                20, new Callback<GroupRecommendListResponseDto>() {
-            @Override
-            public void onSuccess(GroupRecommendListResponseDto dto) {
-                if (!isAdded()) return;
+        if (searchResultAdapter == null) return;
 
-                List<SearchResultItem> items = new ArrayList<>();
-                for (var g : dto.getGroups()) {
-                    boolean joined = Boolean.TRUE.equals(g.getIsJoined());
+        // ====== UI 확인용 더미 데이터 ======
+        List<SearchResultItem> items = new ArrayList<>();
 
-                    items.add(new SearchResultItem(
-                            SearchResultItem.Type.GROUP,
-                            g.getGroupId(),
-                            g.getName(),
-                            g.getCategoryNames(),
-                            null,
-                            joined ? "가입 중" : "가입",
-                            joined,
-                            null,
-                            g.getImgUrl()
-                    ));
-                }
-                searchResultAdapter.setItems(items);
-            }
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.GROUP,
+                1L,
+                "인디 음악 좋아하는 사람들",
+                List.of("인디", "감성", "밴드"),
+                null,
+                "가입",
+                false,
+                null,
+                null
+        ));
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(requireContext(), "그룹 추천 실패", Toast.LENGTH_SHORT).show();
-            }
-        });
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.GROUP,
+                2L,
+                "힙합 덕후 모임",
+                List.of("힙합", "랩", "비트"),
+                null,
+                "가입",
+                false,
+                null,
+                null
+        ));
+
+        searchResultAdapter.setItems(items);
     }
 
+    // TODO: 추천 API 연동 완료 후 제거 (UI 확인용 더미 데이터)
     private void loadMemberRecommendations() {
-        recommendationRepository.getMemberRecommendations(
-                20, new Callback<List<MemberRecommendItemDto>>() {
-            @Override
-            public void onSuccess(List<MemberRecommendItemDto> members) {
-                if (!isAdded()) return;
+        if (searchResultAdapter == null) return;
 
-                List<SearchResultItem> items = new ArrayList<>();
-                for (MemberRecommendItemDto m : members) {
-                    String today = null;
-                    if (m.getTodayMusicName() != null && m.getTodayMusicArtistName() != null) {
-                        today = m.getTodayMusicName() + " - " + m.getTodayMusicArtistName();
-                    }
+        // ====== UI 확인용 더미 데이터 ======
+        List<SearchResultItem> items = new ArrayList<>();
 
-                    boolean following = Boolean.TRUE.equals(m.getIsFollowing());
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.USER,
+                101L,
+                "뮤어링",
+                null,
+                "LOVE DIVE - IVE",
+                "팔로우",
+                null,
+                false,
+                null
+        ));
 
-                    items.add(new SearchResultItem(
-                            SearchResultItem.Type.USER,
-                            m.getMemberId(),
-                            m.getNickname(),
-                            null,
-                            today,
-                            following ? "팔로잉" : "팔로우",
-                            null,
-                            following,
-                            m.getProfileImageUrl()
-                    ));
-                }
-                searchResultAdapter.setItems(items);
-            }
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.USER,
+                102L,
+                "헤헤",
+                null,
+                null,   // 오늘의 음악 없음
+                "팔로우",
+                null,
+                false,
+                null
+        ));
 
-            @Override
-            public void onError(Exception e) {
-                Toast.makeText(requireContext(), "사용자 추천 실패", Toast.LENGTH_SHORT).show();
-            }
-        });
+        searchResultAdapter.setItems(items);
     }
+
+//    private void loadGroupRecommendations() {
+//        recommendationRepository.getGroupRecommendations(
+//                20, new Callback<GroupRecommendListResponseDto>() {
+//            @Override
+//            public void onSuccess(GroupRecommendListResponseDto dto) {
+//                if (!isAdded()) return;
+//
+//                List<SearchResultItem> items = new ArrayList<>();
+//                for (var g : dto.getGroups()) {
+//                    boolean joined = Boolean.TRUE.equals(g.getIsJoined());
+//
+//                    items.add(new SearchResultItem(
+//                            SearchResultItem.Type.GROUP,
+//                            g.getGroupId(),
+//                            g.getName(),
+//                            g.getCategoryNames(),
+//                            null,
+//                            joined ? "가입 중" : "가입",
+//                            joined,
+//                            null,
+//                            g.getImgUrl()
+//                    ));
+//                }
+//                searchResultAdapter.setItems(items);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Toast.makeText(requireContext(), "그룹 추천 실패", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+//    private void loadMemberRecommendations() {
+//        recommendationRepository.getMemberRecommendations(
+//                20, new Callback<List<MemberRecommendItemDto>>() {
+//            @Override
+//            public void onSuccess(List<MemberRecommendItemDto> members) {
+//                if (!isAdded()) return;
+//
+//                List<SearchResultItem> items = new ArrayList<>();
+//                for (MemberRecommendItemDto m : members) {
+//                    String today = null;
+//                    if (m.getTodayMusicName() != null && m.getTodayMusicArtistName() != null) {
+//                        today = m.getTodayMusicName() + " - " + m.getTodayMusicArtistName();
+//                    }
+//
+//                    boolean following = Boolean.TRUE.equals(m.getIsFollowing());
+//
+//                    items.add(new SearchResultItem(
+//                            SearchResultItem.Type.USER,
+//                            m.getMemberId(),
+//                            m.getNickname(),
+//                            null,
+//                            today,
+//                            following ? "팔로잉" : "팔로우",
+//                            null,
+//                            following,
+//                            m.getProfileImageUrl()
+//                    ));
+//                }
+//                searchResultAdapter.setItems(items);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Toast.makeText(requireContext(), "사용자 추천 실패", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
 
 
 }
