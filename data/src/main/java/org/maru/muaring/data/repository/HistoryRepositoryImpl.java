@@ -28,12 +28,12 @@ public class HistoryRepositoryImpl implements HistoryRepository {
 
     // === Member History ===
     public LiveData<Resource<List<MusicHistoryResponse>>> getMemberHistory(
-            Integer year, Integer month, int page
+            Long memberId, Integer year, Integer month, int page
     ) {
         MutableLiveData<Resource<List<MusicHistoryResponse>>> result = new MutableLiveData<>();
         result.setValue(Resource.loading(null));
 
-        api.getMemberHistory(year, month, page)
+        api.getMemberHistory(memberId, year, month, page)
                 .enqueue(new Callback<ApiResponse<PageResponse<MusicHistoryResponse>>>() {
                     @Override
                     public void onResponse(Call<ApiResponse<PageResponse<MusicHistoryResponse>>> call,

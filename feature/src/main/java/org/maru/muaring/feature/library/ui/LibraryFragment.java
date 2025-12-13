@@ -1,6 +1,8 @@
 package org.maru.muaring.feature.library.ui;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -11,6 +13,7 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,16 +25,15 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
-import org.maru.muaring.data.api.dto.ExportRequest;
-import org.maru.muaring.data.api.dto.LibraryDeleteRequest;
+import org.maru.muaring.data.api.dto.SpotifyExportRequest;
 import org.maru.muaring.data.api.dto.LibraryMusicListRequestDto;
 import org.maru.muaring.data.api.dto.LibraryMusicListResponseDto;
 import org.maru.muaring.feature.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -44,6 +46,9 @@ import retrofit2.Response;
 @AndroidEntryPoint
 public class LibraryFragment extends Fragment {
 
+    // Toolbar
+    private TextView toolbarTitle;
+    private ImageButton toolbarBack;
     private RecyclerView rvLibrary;
     private TextView tvTotalCount, btnSelectAll, btnClearSelect;
     private LibraryAdapter adapter;
@@ -51,6 +56,9 @@ public class LibraryFragment extends Fragment {
     private ImageView btnDelete, btnSpotify;
     @Inject
     LibraryApi libraryApi;
+
+    @Inject
+    TokenManager tokenManager;
 
     @Nullable
     @Override
@@ -74,6 +82,7 @@ public class LibraryFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        initToolbar(view);
         loadLibrary();
 
         btnSelectAll.setOnClickListener(v -> {
@@ -87,7 +96,17 @@ public class LibraryFragment extends Fragment {
         btnSpotify.setOnClickListener(v -> {
             List<Long> selectedIds = adapter.getSelectedMusicIds();
 
-            ExportRequest request = new ExportRequest(selectedIds);
+            String spotifyToken = tokenManager.getSpotifyAccessToken();
+
+            if (spotifyToken == null) {
+                Toast.makeText(requireContext(), "스포티파이 로그인이 필요합니다.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            Log.d("Spotify", "token=" + spotifyToken);
+
+
+            SpotifyExportRequest request = new SpotifyExportRequest(spotifyToken, selectedIds);
 
             libraryApi.exportToSpotify(request).enqueue(new Callback<Void>() {
 
@@ -108,6 +127,23 @@ public class LibraryFragment extends Fragment {
         });
 
         btnDelete.setOnClickListener(v -> showDeleteDialog());
+    }
+
+    private void initToolbar(@NonNull View root) {
+        View toolbar = root.findViewById(R.id.include_toolbar_group);
+        if (toolbar == null) return;
+
+        toolbarTitle = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_title);
+        toolbarBack = toolbar.findViewById(R.id.btn_back);
+//        toolbarAction = toolbar.findViewById(org.maru.muaring.core.R.id.toolbar_action);
+
+        toolbarTitle.setText("보관함");
+        toolbarBack.setVisibility(View.INVISIBLE);
+//        toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+//        toolbarAction.setVisibility(View.VISIBLE);
+//        toolbarAction.setOnClickListener(v -> {
+//            // TODO: 그룹 설정 이동
+//        });
     }
 
     private void showDeleteDialog() {

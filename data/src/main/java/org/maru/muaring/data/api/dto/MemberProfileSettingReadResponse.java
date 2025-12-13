@@ -1,10 +1,10 @@
 package org.maru.muaring.data.api.dto;
 
 public class MemberProfileSettingReadResponse {
-    public String imageUrl;
-    public String nickname;
-    public Boolean isAccountPublic;
-    public Boolean isDiscoveryEnabled;
+    private String imageUrl;
+    private String nickname;
+    private Boolean isAccountPublic;
+    private Boolean isDiscoveryEnabled;
 
     public String getImageUrl() {
         return imageUrl;

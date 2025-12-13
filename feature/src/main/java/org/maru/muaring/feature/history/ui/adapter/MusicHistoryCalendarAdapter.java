@@ -23,7 +23,8 @@ public class MusicHistoryCalendarAdapter extends RecyclerView.Adapter<MusicHisto
     }
 
     public void setDays(List<MusicHistoryCalendarDayItem> newDays) {
-        this.days = newDays;
+        days.clear();
+        days.addAll(newDays);
         notifyDataSetChanged();
     }
 
