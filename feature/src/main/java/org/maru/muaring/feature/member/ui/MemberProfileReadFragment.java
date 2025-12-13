@@ -16,6 +16,8 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
@@ -59,6 +61,7 @@ public class MemberProfileReadFragment extends Fragment {
     private TextView followerCount;
     private TextView followingCount;
     private TextView joinedGroupCount;
+    private LinearLayout layoutGroupSection;
 
     // 오늘 공유한 음악 카드
     private View todayMusicCard;
@@ -154,6 +157,12 @@ public class MemberProfileReadFragment extends Fragment {
         followingCount = v.findViewById(R.id.text_stat_following);
         joinedGroupCount = v.findViewById(R.id.text_stat_group);
 
+        // 가입한 그룹 섹션 클릭 리스너 추가
+        layoutGroupSection = v.findViewById(R.id.layout_group_section);
+        if (layoutGroupSection != null) {
+            layoutGroupSection.setOnClickListener(view -> navigateToMyGroups());
+        }
+
         // 오늘 공유한 음악 카드 바인딩
         todayMusicCard = v.findViewById(R.id.include_today_shared);
         android.util.Log.d("TodayPost", "todayMusicCard = " + todayMusicCard);
@@ -172,6 +181,36 @@ public class MemberProfileReadFragment extends Fragment {
             todayCommentCount = todayMusicCard.findViewById(R.id.tvCommentCount);
         } else {
             android.util.Log.e("TodayPost", "todayMusicCard is NULL!");
+        }
+    }
+
+    private void navigateToMyGroups() {
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            int actionId = getResources().getIdentifier(
+                    "action_memberProfile_to_myGroups",
+                    "id",
+                    requireContext().getPackageName()
+            );
+
+            if (actionId != 0) {
+                navController.navigate(actionId);
+            } else {
+                // action이 없으면 직접 destination으로 이동
+                int destinationId = getResources().getIdentifier(
+                        "myGroupsFragment",       // ← nav_graph의 fragment ID 이름
+                        "id",
+                        requireContext().getPackageName()
+                );
+
+                if (destinationId == 0) {
+                    throw new IllegalArgumentException("Destination ID not found: myGroupsFragment");
+                }
+                navController.navigate(destinationId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
