@@ -1,6 +1,7 @@
 package org.maru.muaring.data.di;
 
 import org.maru.muaring.data.api.LikeApi;
+import org.maru.muaring.data.api.NearbyApi;
 import org.maru.muaring.data.api.RecommendationApi;
 import org.maru.muaring.data.network.AuthInterceptor;
 import org.maru.muaring.data.api.AuthApi;
@@ -8,6 +9,7 @@ import org.maru.muaring.data.api.FollowApi;
 import org.maru.muaring.data.api.GroupApi;
 import org.maru.muaring.data.api.HistoryApi;
 import org.maru.muaring.data.api.ImageApi;
+import org.maru.muaring.data.api.LocationApi;
 import org.maru.muaring.data.api.LibraryApi;
 import org.maru.muaring.data.api.MemberApi;
 import org.maru.muaring.data.api.PostApi;
@@ -22,12 +24,16 @@ import org.maru.muaring.data.repository.HistoryRepository;
 import org.maru.muaring.data.repository.HistoryRepositoryImpl;
 import org.maru.muaring.data.repository.ImageRepository;
 import org.maru.muaring.data.repository.ImageRepositoryImpl;
+import org.maru.muaring.data.repository.LocationRepository;
+import org.maru.muaring.data.repository.LocationRepositoryImpl;
 import org.maru.muaring.data.repository.LibraryRepository;
 import org.maru.muaring.data.repository.LibraryRepositoryImpl;
 import org.maru.muaring.data.repository.LikeRepository;
 import org.maru.muaring.data.repository.LikeRepositoryImpl;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.MemberRepositoryImpl;
+import org.maru.muaring.data.repository.NearbyRepository;
+import org.maru.muaring.data.repository.NearbyRepositoryImpl;
 import org.maru.muaring.data.repository.PostRepository;
 import org.maru.muaring.data.repository.PostRepositoryImpl;
 import org.maru.muaring.data.repository.RecommendationRepository;
@@ -141,6 +147,17 @@ public class NetworkModule {
 
     @Provides
     @Singleton
+    public LocationApi provideLocationApi(Retrofit retrofit) {
+        return retrofit.create(LocationApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public LocationRepository provideLocationRepository(LocationApi api) {
+        return new LocationRepositoryImpl(api);
+    }
+    @Provides
+    @Singleton
     public LibraryApi provideLibraryApi(Retrofit retrofit) {
         return retrofit.create(LibraryApi.class);
     }
@@ -199,4 +216,17 @@ public class NetworkModule {
     public RecommendationRepository provideRecommendationRepository(RecommendationApi api) {
         return new RecommendationRepositoryImpl(api);
     }
+
+    @Provides
+    @Singleton
+    public NearbyApi provideNearbyApi(Retrofit retrofit) {
+        return retrofit.create(NearbyApi.class);
+    }
+
+    @Provides
+    @Singleton
+    public NearbyRepository provideNearbyRepository(NearbyApi api) {
+        return new NearbyRepositoryImpl(api);
+    }
+
 }

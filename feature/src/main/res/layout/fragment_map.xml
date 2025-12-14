@@ -31,7 +31,6 @@
             android:id="@+id/tvCount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="3"
             android:textColor="@color/white"
             android:textStyle="bold"
             android:textSize="24sp"
