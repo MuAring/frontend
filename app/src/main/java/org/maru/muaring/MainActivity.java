@@ -1,6 +1,7 @@
 package org.maru.muaring;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
@@ -9,12 +10,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.maru.muaring.core.TokenManager;
+import org.maru.muaring.core.common.CommentInputController;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements SearchNavigator {
+public class MainActivity extends AppCompatActivity implements SearchNavigator, CommentInputController {
 
     @Inject
     TokenManager tokenManager;
@@ -186,5 +188,14 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
 
         // destination id로 이동
         nav.navigate(org.maru.muaring.R.id.postDetailFragment, args);
+    }
+
+    // PostDetailFragment에서만 댓글 입력창 보이도록
+    @Override
+    public void setCommentInputVisible(boolean visible) {
+        View commentInput = findViewById(R.id.comment_input);
+        if (commentInput != null) {
+            commentInput.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
     }
 }

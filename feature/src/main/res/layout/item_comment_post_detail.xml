@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    android:padding="6dp">
+    android:background="@drawable/bg_item_top_border"
+    android:paddingHorizontal="6dp"
+    android:paddingVertical="14dp">
     <ImageView
         android:id="@+id/iv_profile"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/bg_circle_gray"
         android:scaleType="centerCrop"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -30,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:textColor="@color/black"
-            android:textSize="14sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/btn_change_to_reply_mode"

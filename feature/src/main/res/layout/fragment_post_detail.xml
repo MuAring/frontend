@@ -20,7 +20,10 @@
 
             <include
                 android:id="@+id/include_toolbar"
-                layout="@layout/toolbar_common" />
+                layout="@layout/toolbar_common"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -144,33 +147,4 @@
             </LinearLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
-
-    <!-- 댓글 입력창 -->
-    <LinearLayout
-        android:id="@+id/comment_input_container"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:orientation="horizontal"
-        android:background="@drawable/bg_slim_rounded_outline_gray"
-        android:gravity="center_vertical"
-        android:paddingHorizontal="14dp"
-        android:layout_margin="8dp">
-
-        <EditText
-            android:id="@+id/et_add_comment"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:hint="댓글을 입력하세요."
-            android:background="@null"
-            android:textSize="14dp" />
-
-        <ImageButton
-            android:id="@+id/btn_add_comment"
-            android:layout_width="36dp"
-            android:layout_height="36dp"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_add_comment"
-            android:scaleType="centerInside"/>
-    </LinearLayout>
 </LinearLayout>
