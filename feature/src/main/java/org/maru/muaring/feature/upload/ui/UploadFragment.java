@@ -104,7 +104,7 @@ public class UploadFragment extends Fragment {
 
                 @Override
                 public void onError(Exception e) {
-                    Toast.makeText(requireContext(), "등록 실패: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(requireContext(), "이미 오늘의 음악을 등록했어요!" , Toast.LENGTH_LONG).show();
                     Log.e("UploadFragment", "등록 실패: " + e.getMessage());
                 }
             });

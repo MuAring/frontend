@@ -1,5 +1,6 @@
 package org.maru.muaring.feature.nearby.ui;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,6 +10,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.nearby.ui.model.Music;
 
@@ -16,10 +19,11 @@ import java.util.List;
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHolder> {
 
-    private List<Music> items;
-
-    public MusicAdapter(List<Music> items) {
-        this.items = items;
+    private List<Music> musicList;
+    private Context context;
+    public MusicAdapter(Context context, List<Music> musicList) {
+        this.context = context;
+        this.musicList = musicList;
     }
 
     public static class MusicViewHolder extends RecyclerView.ViewHolder {
@@ -52,15 +56,26 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
 
     @Override
     public void onBindViewHolder(@NonNull MusicViewHolder holder, int position) {
-        Music item = items.get(position);
+        Music item = musicList.get(position);
 
-        holder.ivAlbum.setImageResource(item.getAlbumImageRes());
         holder.tvTitle.setText(item.getTitle());
         holder.tvArtist.setText(item.getArtist());
+
+        Glide.with(context)
+                .load(item.getAlbumImageUrl())
+                .into(holder.ivAlbum);
+
+        if (item.getProfileImageUrl() == null || item.getProfileImageUrl().isEmpty()) {
+            holder.ivProfile.setImageResource(R.drawable.profile_default); // 기본 이미지
+        } else {
+            Glide.with(context)
+                    .load(item.getProfileImageUrl())
+                    .into(holder.ivProfile);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return items.size();
+        return musicList.size();
     }
 }

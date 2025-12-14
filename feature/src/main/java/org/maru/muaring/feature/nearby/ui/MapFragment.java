@@ -5,10 +5,12 @@ import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,22 +33,44 @@ import com.kakao.vectormap.MapView;
 import com.kakao.vectormap.camera.CameraUpdate;
 import com.kakao.vectormap.camera.CameraUpdateFactory;
 
+import org.maru.muaring.core.common.Callback;
+import org.maru.muaring.core.util.Resource;
+import org.maru.muaring.data.api.dto.LocationRequestDTO;
+import org.maru.muaring.data.api.dto.TodayNearbyMusicDTO;
+import org.maru.muaring.data.repository.LocationRepository;
+import org.maru.muaring.data.repository.NearbyRepository;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.nearby.ui.model.Music;
 
-import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import dagger.hilt.android.AndroidEntryPoint;
+
+@AndroidEntryPoint
 public class MapFragment extends Fragment {
+
+    private MusicAdapter adapter;
+    private final List<Music> musicList = new java.util.ArrayList<>();
 
     private MapView mapView;
     private KakaoMap kakaoMap;
     private RecyclerView rvMusic;
     private ImageButton btnShowMusic;
     private CardView musicCard;
+    private TextView tvCount;
+
     private static final int LOCATION_PERMISSION_REQUEST = 1001;
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
+    private Location lastSentLocation = null;
+    private static final float MIN_DISTANCE = 20f;
+    @Inject
+    LocationRepository locationRepository;
+
+    @Inject
+    NearbyRepository nearbyRepository;
 
     @Nullable
     @Override
@@ -59,6 +83,7 @@ public class MapFragment extends Fragment {
         rvMusic = view.findViewById(R.id.rvMusic);
         btnShowMusic = view.findViewById(R.id.btnShowMusic);
         musicCard = view.findViewById(R.id.musicCard);
+        tvCount = view.findViewById(R.id.tvCount);
 
         mapView = view.findViewById(R.id.map_view);
 
@@ -84,7 +109,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onMapReady(@NonNull KakaoMap map) {
                 kakaoMap = map;
-                initMap();       // ← 직접 만든 함수
+                initMap();
                 checkPermission();
             }
         });
@@ -140,13 +165,32 @@ public class MapFragment extends Fragment {
                 Location location = result.getLastLocation();
                 if (location == null || kakaoMap == null) return;
 
-                LatLng current = LatLng.from(location.getLatitude(), location.getLongitude());
+                double lat = location.getLatitude();
+                double lng = location.getLongitude();
 
-                int zoomLevel = 15;
+                LatLng current = LatLng.from(lat, lng);
+                kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 15));
 
-                kakaoMap.moveCamera(
-                        CameraUpdateFactory.newCenterPosition(current, zoomLevel)
-                );
+                if (lat == 0.0 && lng == 0.0) {
+                    Log.w("Location", "아직 유효한 위치 아님");
+                    return;
+                }
+
+                if (lastSentLocation == null) {
+                    lastSentLocation = new Location(location);
+                    sendLocation(lat, lng);
+                    return;
+                }
+
+                float distance = location.distanceTo(lastSentLocation);
+
+                if (distance >= MIN_DISTANCE) {
+                    lastSentLocation = location;
+                    sendLocation(lat, lng);
+                    Log.d("LOCATION", "20m 이상 이동: 서버 전송됨 (" + distance + "m)");
+                } else {
+                    Log.d("LOCATION", "20m 미만 이동: 전송 안함 (" + distance + "m)");
+                }
             }
         };
 
@@ -170,18 +214,66 @@ public class MapFragment extends Fragment {
         }
     }
 
+    private void sendLocation(double lat, double lng) {
+        LocationRequestDTO request = new LocationRequestDTO(lat, lng);
+
+        locationRepository.updateLocation(request, new Callback<Void>() {
+            @Override
+            public void onSuccess(Void result) {
+                Log.d("Location", "위치 전송 성공");
+                fetchTodayNearbyMusic(lat, lng, 0.3);
+            }
+
+            @Override
+            public void onError(Exception e) {
+                Log.e("Location", "위치 전송 실패: " + e.getMessage());
+            }
+        });
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Music> musicList = Arrays.asList(
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image),
-                new Music("Runaway Baby", "Bruno Mars", R.drawable.album_image)
-        );
-
-        MusicAdapter adapter = new MusicAdapter(musicList);
+        adapter = new MusicAdapter(requireContext(), musicList);
         rvMusic.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMusic.setAdapter(adapter);
     }
+    private void fetchTodayNearbyMusic(double lat, double lng, double radiusKm) {
+
+        nearbyRepository
+                .getTodayNearbyMusic(lat, lng, radiusKm)
+                .observe(getViewLifecycleOwner(), resource -> {
+
+                    if (resource.status == Resource.Status.SUCCESS
+                            && resource.data != null) {
+
+                        musicList.clear();
+
+                        for (TodayNearbyMusicDTO dto : resource.data) {
+                            musicList.add(new Music(
+                                    dto.getMemberId(),
+                                    dto.getProfileImageUrl(),
+                                    dto.getMusicName(),
+                                    dto.getArtistName(),
+                                    dto.getAlbumImageUrl()
+                            ));
+                        }
+
+                        adapter.notifyDataSetChanged();
+
+                        int count = musicList.size();
+                        tvCount.setText(String.valueOf(count));
+                        tvCount.setText(count == 0 ? "0" : String.valueOf(count));
+
+                        return;
+                    }
+
+                    if (resource.status == Resource.Status.ERROR) {
+                        Log.e("Nearby", "인근 음악 조회 실패: " + resource.message);
+                    }
+                });
+    }
+
+
 }
