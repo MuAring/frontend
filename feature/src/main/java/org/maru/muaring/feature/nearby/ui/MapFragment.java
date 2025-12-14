@@ -17,6 +17,7 @@ import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -235,7 +236,15 @@ public class MapFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        adapter = new MusicAdapter(requireContext(), musicList);
+        adapter = new MusicAdapter(requireContext(), musicList, memberId -> {
+            Bundle bundle = new Bundle();
+            bundle.putLong("memberId", memberId);
+
+            NavHostFragment
+                    .findNavController(this)
+                    .navigate(R.id.memberProfileFragment, bundle);
+        });
+
         rvMusic.setLayoutManager(new LinearLayoutManager(getContext()));
         rvMusic.setAdapter(adapter);
     }
