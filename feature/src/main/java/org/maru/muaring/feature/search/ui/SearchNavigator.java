@@ -4,5 +4,6 @@ package org.maru.muaring.feature.search.ui;
 public interface SearchNavigator {
     void openGroupProfile(long groupId);
     void navigateToProfileEdit();
+    void navigateToPostDetail(long postId);
     void openMemberProfile(long memberId);
 }

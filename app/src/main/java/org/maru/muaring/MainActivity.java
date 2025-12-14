@@ -2,17 +2,14 @@ package org.maru.muaring;
 
 import android.os.Bundle;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
 
@@ -170,4 +167,24 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
         nav.navigate(destId, args);
     }
 
+    @Override
+    public void navigateToPostDetail(long postId) {
+
+        // NavHostFragment 가져오기
+        NavHostFragment host = (NavHostFragment)
+                getSupportFragmentManager().findFragmentById(R.id.nav_host);
+
+        if (host == null) {
+            return;
+        }
+
+        NavController nav = host.getNavController();
+
+        // Bundle로 postId 전달
+        Bundle args = new Bundle();
+        args.putLong("postId", postId);
+
+        // destination id로 이동
+        nav.navigate(org.maru.muaring.R.id.postDetailFragment, args);
+    }
 }

@@ -129,8 +129,8 @@ public class NetworkModule {
 
     @Provides
     @Singleton
-    public PostRepository providePostRepository(PostApi api) {
-        return new PostRepositoryImpl(api);
+    public PostRepository providePostRepository(PostApi postApi) {
+        return new PostRepositoryImpl(postApi);
     }
 
     @Provides
