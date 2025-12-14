@@ -103,4 +103,38 @@ public class LibraryRepositoryImpl implements LibraryRepository {
         return result;
     }
 
+    @Override
+    public LiveData<Resource<Void>> deleteOneMusicFromLibrary(Long musicId) {
+        MutableLiveData<Resource<Void>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "deleteOneMusicFromLibrary 요청 musicId=" + musicId);
+
+        libraryApi.deleteOneMusic(musicId)
+                .enqueue(new Callback<ApiResponse<Void>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<Void>> call,
+                                           Response<ApiResponse<Void>> response) {
+                        int code = response.code();
+                        Log.d(TAG, "deleteOneMusicFromLibrary onResponse code=" + code);
+
+                        if (response.isSuccessful()) {
+                            result.setValue(Resource.success(null));
+                        } else {
+                            result.setValue(Resource.error(
+                                    "보관함에서 하나 삭제 실패 (HTTP " + code + ")", null
+                            ));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                        Log.e(TAG, "deleteOneMusicFromLibrary onFailure", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
+
 }

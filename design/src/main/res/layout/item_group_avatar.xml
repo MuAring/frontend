@@ -40,10 +40,11 @@
     <TextView
         android:id="@+id/tvLabel"
         style="@style/Type.Body"
-        android:layout_width="wrap_content"
+        android:layout_width="74dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:maxLines="1"
         android:ellipsize="end"
+        android:gravity="center"
         android:textSize="16sp" />
 </LinearLayout>
