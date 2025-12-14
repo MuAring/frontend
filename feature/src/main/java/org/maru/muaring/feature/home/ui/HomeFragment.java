@@ -6,12 +6,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -41,6 +43,7 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
     private HomeViewModel viewModel;
     private RecyclerView rvGroupSelector;
     private GroupSelectorAdapter groupSelectorAdapter;
+    private ImageView ivHomeIcon;
 
     @Inject
     GroupRepository groupRepository;
@@ -73,6 +76,14 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
         // 기본으로 "나"의 오늘의 음악 보여주기
         showTodayPostsFragment(null);
+
+        View header = view.findViewById(R.id.include_home_header);
+        ivHomeIcon = header.findViewById(org.maru.muaring.design.R.id.ivHomeIcon);
+        ivHomeIcon.setOnClickListener(v -> {
+            NavHostFragment
+                    .findNavController(this)
+                    .navigate(R.id.mapFragment);
+        });
     }
 
     private void observeMyProfileSettings() {
