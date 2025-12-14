@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import org.maru.muaring.feature.R;
-import org.maru.muaring.feature.library.ui.Music;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,10 +55,12 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
                 .into(holder.ivAlbum);
 
         if (selectedIds.contains(libraryId)) {
-            holder.itemView.setBackgroundResource(R.drawable.bg_library_selected);
+            holder.cardView.setBackgroundResource(R.drawable.bg_library_selected);
         } else {
-            holder.itemView.setBackgroundResource(R.drawable.frame_library_item);
+            holder.cardView.setBackgroundResource(R.drawable.frame_library_item);
         }
+
+        holder.itemView.setBackground(null);
 
 
         holder.itemView.setOnClickListener(v -> {
@@ -112,10 +114,12 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
 
         ImageView ivAlbum;
         TextView tvTitle, tvArtist;
+        LinearLayout cardView;
 
         public MusicViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            cardView = itemView.findViewById(R.id.cardView);
             ivAlbum = itemView.findViewById(R.id.ivAlbum);
             tvTitle = itemView.findViewById(R.id.tvTitle);
             tvArtist = itemView.findViewById(R.id.tvArtist);

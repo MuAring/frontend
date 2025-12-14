@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/memberProfileFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
@@ -236,7 +237,6 @@
                 android:text="팔로우하여 사용자의 음악 취향을 확인해보세요."
                 android:textColor="@color/dark_gray"
                 android:textSize="18sp" />
-
         </LinearLayout>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>
