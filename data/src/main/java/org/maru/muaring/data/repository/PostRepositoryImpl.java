@@ -7,6 +7,9 @@ import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.CommentCreateRequest;
+import org.maru.muaring.data.api.dto.CommentReadResponse;
+import org.maru.muaring.data.api.dto.CommentResponse;
 import org.maru.muaring.data.api.dto.MusicPostFeedResponse;
 import org.maru.muaring.data.api.dto.PageResponse;
 import org.maru.muaring.data.api.dto.TodayPostResponse;
@@ -192,5 +195,69 @@ public class PostRepositoryImpl implements PostRepository {
                 callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
             }
         });
+    }
+
+    @Override
+    public void getComments(Long postId, Callback<List<CommentReadResponse>> callback) {
+        postApi.getComments(postId).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<List<CommentReadResponse>>> call,
+                    Response<ApiResponse<List<CommentReadResponse>>> response
+            ) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body().getData());
+                } else {
+                    callback.onError(new Exception("API 응답을 가져오던 중 문제가 발생했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<List<CommentReadResponse>>> call, Throwable t
+            ) {
+                callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+            }
+        });
+    }
+
+    @Override
+    public void addComment(Long postId, CommentCreateRequest request, Callback<CommentResponse> callback) {
+        postApi.addComment(postId, request)
+                .enqueue(new retrofit2.Callback<ApiResponse<CommentResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<CommentResponse>> call, Response<ApiResponse<CommentResponse>> response) {
+                        if (response.isSuccessful()) {
+                            callback.onSuccess(response.body().getData());
+                        } else {
+                            callback.onError(new Exception("댓글 작성 실패"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                        callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+                    }
+                });
+    }
+
+    @Override
+    public void addReply(Long commentId, CommentCreateRequest request, Callback<CommentResponse> callback) {
+        postApi.addReply(commentId, request)
+                .enqueue(new retrofit2.Callback<ApiResponse<CommentResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<CommentResponse>> call, Response<ApiResponse<CommentResponse>> response) {
+                        if (response.isSuccessful()) {
+                            callback.onSuccess(response.body().getData());
+                        } else {
+                            callback.onError(new Exception("답글 작성 실패"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                        callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+                    }
+                });
     }
 }

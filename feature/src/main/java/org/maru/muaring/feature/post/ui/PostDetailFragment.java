@@ -1,9 +1,12 @@
 package org.maru.muaring.feature.post.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -13,15 +16,21 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import org.maru.muaring.data.api.dto.PostDetailReadResponse;
 import org.maru.muaring.feature.R;
+import java.util.List;
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
-public class PostDetailFragment extends Fragment {
+public class PostDetailFragment extends Fragment implements CommentAdapter.CommentListener {
 
     private PostDetailReadViewModel viewModel;
+    private CommentAdapter commentAdapter;
+    private RecyclerView recyclerComment;
+
     private View toolBar;
     private ImageButton toolBarBtnBack;
     private TextView toolbarTitle;
@@ -48,6 +57,13 @@ public class PostDetailFragment extends Fragment {
     private boolean isLiked;
     private int likeCount;
 
+    // 댓글 입력창
+    private EditText etAddComment;
+    private ImageButton btnAddComment;
+
+    @Nullable
+    private Long replyTargetCommentId = null; // null이면 댓글, 아니면 답글
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -71,6 +87,21 @@ public class PostDetailFragment extends Fragment {
         bindViews(view);
         initArgs();
         observePostDetail(postId);
+        observeComments(postId);
+        observeComment();
+    }
+
+    @Override
+    public void onReplyClick(CommentItem comment) {
+        replyTargetCommentId = comment.getId();
+
+        etAddComment.setHint("답글을 입력하세요");
+        etAddComment.requestFocus();
+
+        InputMethodManager imm =
+                (InputMethodManager) requireContext()
+                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.showSoftInput(etAddComment, InputMethodManager.SHOW_IMPLICIT);
     }
 
     private void initArgs() {
@@ -105,6 +136,16 @@ public class PostDetailFragment extends Fragment {
         // 좋아요 영역
         likeSection = v.findViewById(R.id.like_section);
         ivLike = v.findViewById(R.id.iv_like);
+
+        // 댓글
+        recyclerComment = v.findViewById(R.id.recycler_comment);
+        recyclerComment.setLayoutManager(new LinearLayoutManager(requireContext()));
+        commentAdapter = new CommentAdapter(this);
+        recyclerComment.setAdapter(commentAdapter);
+
+        // 댓글 입력창
+        etAddComment = v.findViewById(R.id.et_add_comment);
+        btnAddComment = v.findViewById(R.id.btn_add_comment);
     }
 
     private void bindPostDetail(PostDetailReadResponse response) {
@@ -140,6 +181,7 @@ public class PostDetailFragment extends Fragment {
                         : R.drawable.ic_heart_outline
         );
 
+        // 좋아요 업데이트
         likeSection.setOnClickListener(v -> {
             boolean prevLiked = isLiked;
             int prevCount = likeCount;
@@ -179,6 +221,18 @@ public class PostDetailFragment extends Fragment {
                                 break;
                         }
                     });
+        });
+
+        // 댓글 작성
+        btnAddComment.setOnClickListener(v -> {
+            String content = etAddComment.getText().toString().trim();
+            if (content.isEmpty()) return;
+
+            if (replyTargetCommentId == null) {
+                viewModel.addComment(postId, content);
+            } else {
+                viewModel.addReply(replyTargetCommentId, content, postId);
+            }
         });
     }
 
@@ -258,4 +312,99 @@ public class PostDetailFragment extends Fragment {
                     }
                 });
     }
+
+    private void observeComments(Long postId) {
+        viewModel.getComments(postId)
+                .observe(getViewLifecycleOwner(), resource -> {
+
+                    if (resource == null) return;
+
+                    switch (resource.status) {
+                        case LOADING:
+                            break;
+
+                        case ERROR:
+                            Toast.makeText(
+                                    requireContext(),
+                                    "댓글을 불러오지 못했어요 😢",
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                            break;
+
+                        case SUCCESS:
+                            if (resource.data == null) return;
+
+                            List<CommentItem> items =
+                                    CommentMapper.toCommentItems(resource.data);
+
+                            commentAdapter.submitList(items);
+                            break;
+                    }
+                });
+    }
+
+    private void observeComment() {
+        viewModel.getCommentResult()
+                .observe(getViewLifecycleOwner(), resource -> {
+
+                    if (resource == null) return;
+
+                    switch (resource.status) {
+
+                        case LOADING:
+                            btnAddComment.setEnabled(false);
+                            break;
+
+                        case SUCCESS:
+                            btnAddComment.setEnabled(true);
+
+                            // 입력창 초기화
+                            etAddComment.setText("");
+                            etAddComment.setHint("댓글을 입력하세요");
+                            replyTargetCommentId = null;
+
+                            // 키보드 내리기
+                            InputMethodManager imm =
+                                    (InputMethodManager) requireContext()
+                                            .getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(
+                                    etAddComment.getWindowToken(), 0
+                            );
+                            break;
+
+                        case ERROR:
+                            btnAddComment.setEnabled(true);
+                            Toast.makeText(
+                                    requireContext(),
+                                    resource.message,
+                                    Toast.LENGTH_SHORT
+                            ).show();
+                            break;
+                    }
+                });
+    }
+
+
+//    private void onWriteSuccess() {
+//        etAddComment.setText("");
+//        etAddComment.setHint("댓글을 입력하세요");
+//        replyTargetCommentId = null;
+//        btnAddComment.setEnabled(true);
+//
+//        // 키보드 내리기
+//        InputMethodManager imm =
+//                (InputMethodManager) requireContext()
+//                        .getSystemService(Context.INPUT_METHOD_SERVICE);
+//        imm.hideSoftInputFromWindow(etAddComment.getWindowToken(), 0);
+//
+//        // 댓글 새로고침
+//        viewModel.loadComments(postId);
+//    }
+//
+//    private void onWriteFail() {
+//        btnAddComment.setEnabled(true);
+//        Toast.makeText(requireContext(),
+//                "댓글 작성에 실패했어요 😢",
+//                Toast.LENGTH_SHORT).show();
+//    }
 }

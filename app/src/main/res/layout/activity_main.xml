@@ -7,15 +7,16 @@
     android:background="@color/white">
 
     <!-- NavHostFragment -->
-    <fragment
+    <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_host"
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="90dp"
         app:defaultNavHost="true"
         app:navGraph="@navigation/nav_main" />
 
-    <!-- 하단 네비게이션 바 (BottomAppBar 제거하고 이걸 직접 사용) -->
+    <!-- 하단 네비게이션 바 -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNav"
         style="@style/Widget.Muaring.BottomNav"

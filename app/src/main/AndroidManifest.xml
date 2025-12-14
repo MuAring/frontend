@@ -34,7 +34,11 @@
                 <data android:scheme="muaring" android:host="spotify-redirect" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize"
+        />
 
         <activity
             android:name=".ProfileSetupActivity"
