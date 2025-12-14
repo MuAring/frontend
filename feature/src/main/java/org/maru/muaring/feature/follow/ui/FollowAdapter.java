@@ -4,6 +4,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,11 +23,16 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
         void onUnfollow(long targetMemberId);
     }
 
-    private OnFollowActionListener listener;
-
-    public FollowAdapter(List<FollowUser> userList, OnFollowActionListener listener) {
+    private OnFollowActionListener followListener;
+    private OnProfileClickListener profileClickListener;
+    public FollowAdapter(
+            List<FollowUser> userList,
+            OnFollowActionListener followListener,
+            OnProfileClickListener profileClickListener
+    ) {
         this.userList = userList;
-        this.listener = listener;
+        this.followListener = followListener;
+        this.profileClickListener = profileClickListener;
     }
 
     @NonNull
@@ -56,14 +62,20 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
         }
 
         holder.btnFollow.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onFollow(user.getMemberId());
+            if (followListener != null) {
+                followListener.onFollow(user.getMemberId());
             }
         });
 
         holder.btnFollowing.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onUnfollow(user.getMemberId());
+            if (followListener != null) {
+                followListener.onUnfollow(user.getMemberId());
+            }
+        });
+
+        holder.goToProfile.setOnClickListener(v -> {
+            if (profileClickListener != null) {
+                profileClickListener.onProfileClick(user.getMemberId());
             }
         });
     }
@@ -78,6 +90,10 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
         notifyDataSetChanged();
     }
 
+    public interface OnProfileClickListener {
+        void onProfileClick(long memberId);
+    }
+
     public List<FollowUser> getUserList() {
         return userList;
     }
@@ -86,12 +102,14 @@ public class FollowAdapter extends RecyclerView.Adapter<FollowAdapter.FollowView
 
         TextView tvName, tvMusic;
         TextView btnFollow, btnFollowing;
+        LinearLayout goToProfile;
         public FollowViewHolder(@NonNull View itemView) {
             super(itemView);
             tvName = itemView.findViewById(R.id.tvUserName);
             tvMusic = itemView.findViewById(R.id.tvMusicInfo);
             btnFollow = itemView.findViewById(R.id.btnFollow);
             btnFollowing = itemView.findViewById(R.id.btnFollowing);
+            goToProfile = itemView.findViewById(R.id.goToProfile);
         }
     }
 }

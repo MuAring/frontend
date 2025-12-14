@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,7 +24,6 @@ import org.maru.muaring.data.repository.FollowRepository;
 import org.maru.muaring.feature.R;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import dagger.hilt.android.AndroidEntryPoint;
@@ -74,7 +74,6 @@ public class FollowFragment extends Fragment {
         adapter = new FollowAdapter(
                 new ArrayList<>(),
                 new FollowAdapter.OnFollowActionListener() {
-
                     @Override
                     public void onFollow(long targetMemberId) {
                         followRepository.followMember(targetMemberId, new Callback<Void>() {
@@ -104,7 +103,8 @@ public class FollowFragment extends Fragment {
                             }
                         });
                     }
-                }
+                },
+                memberId -> moveToProfile(memberId)
         );
 
         rvFollowList.setAdapter(adapter);
@@ -215,4 +215,14 @@ public class FollowFragment extends Fragment {
             }
         });
     }
+
+    private void moveToProfile(long memberId) {
+        Bundle bundle = new Bundle();
+        bundle.putLong("memberId", memberId);
+
+        NavHostFragment
+                .findNavController(this)
+                .navigate(R.id.memberProfileFragment, bundle);
+    }
+
 }
