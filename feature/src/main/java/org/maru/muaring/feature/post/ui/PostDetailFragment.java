@@ -2,6 +2,7 @@ package org.maru.muaring.feature.post.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +20,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import org.maru.muaring.core.common.CommentInputController;
 import org.maru.muaring.data.api.dto.PostDetailReadResponse;
 import org.maru.muaring.feature.R;
 import java.util.List;
@@ -27,6 +29,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 @AndroidEntryPoint
 public class PostDetailFragment extends Fragment implements CommentAdapter.CommentListener {
 
+    private CommentInputController commentInputController;
     private PostDetailReadViewModel viewModel;
     private CommentAdapter commentAdapter;
     private RecyclerView recyclerComment;
@@ -64,6 +67,15 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
     @Nullable
     private Long replyTargetCommentId = null; // null이면 댓글, 아니면 답글
 
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof CommentInputController) {
+            commentInputController = (CommentInputController) context;
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -78,6 +90,29 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
                               @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        RecyclerView recyclerView = view.findViewById(R.id.recycler_comment);
+
+        // 댓글 입력창(50dp) + BottomNav(90dp) + 여유
+        int bottomPaddingDp = 50 + 90 + 16;
+        int bottomPaddingPx = (int) TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                bottomPaddingDp,
+                getResources().getDisplayMetrics()
+        );
+
+        recyclerView.setPadding(
+                recyclerView.getPaddingLeft(),
+                recyclerView.getPaddingTop(),
+                recyclerView.getPaddingRight(),
+                bottomPaddingPx
+        );
+
+        recyclerView.setClipToPadding(false);
+
+        if (commentInputController != null) {
+            commentInputController.setCommentInputVisible(true);
+        }
+
         viewModel = new ViewModelProvider(this).get(PostDetailReadViewModel.class);
 
         if (getArguments() != null) {
@@ -89,6 +124,15 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
         observePostDetail(postId);
         observeComments(postId);
         observeComment();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+
+        if (commentInputController != null) {
+            commentInputController.setCommentInputVisible(false);
+        }
     }
 
     @Override
@@ -144,8 +188,8 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
         recyclerComment.setAdapter(commentAdapter);
 
         // 댓글 입력창
-        etAddComment = v.findViewById(R.id.et_add_comment);
-        btnAddComment = v.findViewById(R.id.btn_add_comment);
+        etAddComment = requireActivity().findViewById(R.id.et_add_comment);
+        btnAddComment = requireActivity().findViewById(R.id.btn_add_comment);
     }
 
     private void bindPostDetail(PostDetailReadResponse response) {
@@ -383,28 +427,4 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
                     }
                 });
     }
-
-
-//    private void onWriteSuccess() {
-//        etAddComment.setText("");
-//        etAddComment.setHint("댓글을 입력하세요");
-//        replyTargetCommentId = null;
-//        btnAddComment.setEnabled(true);
-//
-//        // 키보드 내리기
-//        InputMethodManager imm =
-//                (InputMethodManager) requireContext()
-//                        .getSystemService(Context.INPUT_METHOD_SERVICE);
-//        imm.hideSoftInputFromWindow(etAddComment.getWindowToken(), 0);
-//
-//        // 댓글 새로고침
-//        viewModel.loadComments(postId);
-//    }
-//
-//    private void onWriteFail() {
-//        btnAddComment.setEnabled(true);
-//        Toast.makeText(requireContext(),
-//                "댓글 작성에 실패했어요 😢",
-//                Toast.LENGTH_SHORT).show();
-//    }
 }
