@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.follow.ui.FollowAdapter;
 import org.maru.muaring.feature.nearby.ui.model.Music;
 
 import java.util.List;
@@ -21,9 +22,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
 
     private List<Music> musicList;
     private Context context;
-    public MusicAdapter(Context context, List<Music> musicList) {
+    private OnProfileClickListener profileClickListener;
+
+    public MusicAdapter(Context context, List<Music> musicList, OnProfileClickListener profileClickListener) {
         this.context = context;
         this.musicList = musicList;
+        this.profileClickListener = profileClickListener;
     }
 
     public static class MusicViewHolder extends RecyclerView.ViewHolder {
@@ -72,10 +76,21 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.MusicViewHol
                     .load(item.getProfileImageUrl())
                     .into(holder.ivProfile);
         }
+
+        holder.ivProfile.setOnClickListener(v -> {
+            if (profileClickListener != null) {
+                profileClickListener.onProfileClick(item.getMemberId());
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return musicList.size();
     }
+
+    public interface OnProfileClickListener {
+        void onProfileClick(long memberId);
+    }
+
 }
