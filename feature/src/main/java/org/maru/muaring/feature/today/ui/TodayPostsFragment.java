@@ -1,23 +1,22 @@
 package org.maru.muaring.feature.today.ui;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
 import org.maru.muaring.data.api.dto.MusicPostFeedResponse;
 import org.maru.muaring.feature.R;
+import org.maru.muaring.feature.search.ui.SearchNavigator;
 import org.maru.muaring.feature.today.model.TodayPostsViewModel;
-
 import dagger.hilt.android.AndroidEntryPoint;
 
 @AndroidEntryPoint
@@ -28,6 +27,7 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
     private TodayPostsViewModel viewModel;
     private TodayPostsAdapter adapter;
     private Long groupId; // null 이면 "나" 모드
+    private SearchNavigator navigator;
 
     public static TodayPostsFragment newInstance(@Nullable Long groupId) {
         TodayPostsFragment fragment = new TodayPostsFragment();
@@ -37,6 +37,20 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
         }
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof SearchNavigator) {
+            navigator = (SearchNavigator) context;
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        navigator = null;
     }
 
     @Nullable
@@ -108,6 +122,9 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
     @Override
     public void onPostClicked(MusicPostFeedResponse post) {
         // TODO: 상세 화면 이동
+        if (navigator != null) {
+            navigator.navigateToPostDetail(post.getPostId());
+        }
     }
 
     @Override
@@ -145,5 +162,4 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
             viewModel.addToLibrary(post.getMusicId(), null);
         }
     }
-
 }

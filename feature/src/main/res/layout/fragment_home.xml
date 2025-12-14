@@ -9,6 +9,7 @@
 
     <!-- 홈 상단 로고 + 알림 -->
     <include
+        android:id="@+id/include_home_header"
         layout="@layout/view_home_header" />
 
     <!-- 상단: 나 / 그룹 / 그룹들 / + -->

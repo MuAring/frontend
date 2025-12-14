@@ -12,4 +12,6 @@ public interface LibraryRepository {
     LiveData<Resource<LibraryMusicDTO>> addMusicToLibrary(Long musicId, String category);
 
     LiveData<Resource<Void>> deleteMusicFromLibrary(List<Long> musicIds);
+
+    LiveData<Resource<Void>> deleteOneMusicFromLibrary(Long musicId);
 }

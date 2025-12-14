@@ -170,7 +170,7 @@ public class TodayPostsViewModel extends ViewModel {
     // =========================
     public void removeFromLibrary(Long musicId) {
         LiveData<Resource<Void>> source =
-                libraryRepository.deleteMusicFromLibrary(Collections.singletonList(musicId));
+                libraryRepository.deleteOneMusicFromLibrary(musicId);
 
         _posts.addSource(source, res -> {
             if (res == null) return;

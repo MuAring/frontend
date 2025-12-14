@@ -1,24 +1,23 @@
 package org.maru.muaring.data.repository;
 
 import android.util.Log;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-
+import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.PostApi;
 import org.maru.muaring.data.api.dto.ApiResponse;
+import org.maru.muaring.data.api.dto.CommentCreateRequest;
+import org.maru.muaring.data.api.dto.CommentReadResponse;
+import org.maru.muaring.data.api.dto.CommentResponse;
 import org.maru.muaring.data.api.dto.MusicPostFeedResponse;
 import org.maru.muaring.data.api.dto.PageResponse;
 import org.maru.muaring.data.api.dto.TodayPostResponse;
-
+import org.maru.muaring.data.api.dto.PostDetailReadResponse;
 import java.util.Collections;
 import java.util.List;
-
 import javax.inject.Inject;
-
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 
 public class PostRepositoryImpl implements PostRepository {
@@ -37,7 +36,7 @@ public class PostRepositoryImpl implements PostRepository {
         result.setValue(Resource.loading(null));
 
         postApi.getTodayPostsForMe()
-                .enqueue(new Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
+                .enqueue(new retrofit2.Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
                     @Override
                     public void onResponse(
                             Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
@@ -80,7 +79,7 @@ public class PostRepositoryImpl implements PostRepository {
         result.setValue(Resource.loading(null));
 
         postApi.getTodayPostsForGroup(groupId)
-                .enqueue(new Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
+                .enqueue(new retrofit2.Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
                     @Override
                     public void onResponse(
                             Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
@@ -134,7 +133,7 @@ public class PostRepositoryImpl implements PostRepository {
         result.setValue(Resource.loading(null));
 
         postApi.getTodayPostByMember(memberId)
-                .enqueue(new Callback<ApiResponse<TodayPostResponse>>() {
+                .enqueue(new retrofit2.Callback<ApiResponse<TodayPostResponse>>() {
                     @Override
                     public void onResponse(
                             Call<ApiResponse<TodayPostResponse>> call,
@@ -173,4 +172,92 @@ public class PostRepositoryImpl implements PostRepository {
         return result;
     }
 
+    @Override
+    public void getPostDetail(Long postId, Callback<PostDetailReadResponse> callback) {
+        postApi.getPostDetail(postId).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<PostDetailReadResponse>> call,
+                    Response<ApiResponse<PostDetailReadResponse>> response
+            ) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body().getData());
+                } else {
+                    callback.onError(new Exception("API 응답을 가져오던 중 문제가 발생했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<PostDetailReadResponse>> call,
+                    Throwable t
+            ) {
+                callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+            }
+        });
+    }
+
+    @Override
+    public void getComments(Long postId, Callback<List<CommentReadResponse>> callback) {
+        postApi.getComments(postId).enqueue(new retrofit2.Callback<>() {
+            @Override
+            public void onResponse(
+                    Call<ApiResponse<List<CommentReadResponse>>> call,
+                    Response<ApiResponse<List<CommentReadResponse>>> response
+            ) {
+                if (response.isSuccessful()) {
+                    callback.onSuccess(response.body().getData());
+                } else {
+                    callback.onError(new Exception("API 응답을 가져오던 중 문제가 발생했습니다."));
+                }
+            }
+
+            @Override
+            public void onFailure(
+                    Call<ApiResponse<List<CommentReadResponse>>> call, Throwable t
+            ) {
+                callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+            }
+        });
+    }
+
+    @Override
+    public void addComment(Long postId, CommentCreateRequest request, Callback<CommentResponse> callback) {
+        postApi.addComment(postId, request)
+                .enqueue(new retrofit2.Callback<ApiResponse<CommentResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<CommentResponse>> call, Response<ApiResponse<CommentResponse>> response) {
+                        if (response.isSuccessful()) {
+                            callback.onSuccess(response.body().getData());
+                        } else {
+                            callback.onError(new Exception("댓글 작성 실패"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                        callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+                    }
+                });
+    }
+
+    @Override
+    public void addReply(Long commentId, CommentCreateRequest request, Callback<CommentResponse> callback) {
+        postApi.addReply(commentId, request)
+                .enqueue(new retrofit2.Callback<ApiResponse<CommentResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<CommentResponse>> call, Response<ApiResponse<CommentResponse>> response) {
+                        if (response.isSuccessful()) {
+                            callback.onSuccess(response.body().getData());
+                        } else {
+                            callback.onError(new Exception("답글 작성 실패"));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<CommentResponse>> call, Throwable t) {
+                        callback.onError(new Exception(t.getMessage() + " 네트워크 오류가 발생했습니다."));
+                    }
+                });
+    }
 }

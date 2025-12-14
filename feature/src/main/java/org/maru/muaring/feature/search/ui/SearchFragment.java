@@ -19,11 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.ui.SegmentedToggleView;
+import org.maru.muaring.data.api.dto.GroupRecommendListResponseDto;
 import org.maru.muaring.data.api.dto.GroupSummary;
+import org.maru.muaring.data.api.dto.MemberRecommendItemDto;
 import org.maru.muaring.data.api.dto.MemberSearchItemDto;
 import org.maru.muaring.data.repository.FollowRepository;
 import org.maru.muaring.data.repository.GroupRepository;
 import org.maru.muaring.data.repository.MemberRepository;
+import org.maru.muaring.data.repository.RecommendationRepository;
 import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.common.SearchBarFragment;
 import org.maru.muaring.feature.search.ui.adapter.SearchResultAdapter;
@@ -52,6 +55,9 @@ public class SearchFragment extends Fragment {
     private SearchBarFragment searchBarFragment;        // 검색창
     private SearchResultAdapter searchResultAdapter;
     private TextView tvEmptyResult;                     // 빈 결과 조회
+    private TextView tvRecommendTitle;
+    private boolean searchHasFocus = false;
+
 
     private SearchNavigator navigator;
 
@@ -63,6 +69,9 @@ public class SearchFragment extends Fragment {
 
     @Inject
     FollowRepository followRepository;
+
+    @Inject
+    RecommendationRepository recommendationRepository;
 
     // Activity를 navigator로 받기
     @Override
@@ -88,9 +97,9 @@ public class SearchFragment extends Fragment {
 
         initToolbar(view);
         initViews(view);
+        setupRecyclerView();
         setupInitialState();
         setupListeners();
-        setupRecyclerView();
     }
 
     private void initToolbar(@NonNull View root) {
@@ -118,12 +127,16 @@ public class SearchFragment extends Fragment {
                 .findFragmentById(R.id.fragmentSearchBar);
         recyclerSearchResult = view.findViewById(R.id.recyclerSearchResult);
         tvEmptyResult = view.findViewById(R.id.tvEmptyResult);
+        tvRecommendTitle = view.findViewById(R.id.tvRecommendTitle);
     }
 
     private void setupInitialState() {
         // 초기 상태: "그룹" 선택
         segmentedToggleView.selectGroup();
         updateUIForGroupSearch();
+
+        // 검색 비활성 + 검색어 없음 → 추천 띄우기
+        loadRecommendationsByToggle();
     }
 
 
@@ -139,9 +152,19 @@ public class SearchFragment extends Fragment {
 
                     if (navigator != null) {
                         navigator.openGroupProfile(groupId);   // 여기서 Activity에게 부탁
+                        // 추천 클릭 로그
+//                        recommendationRepository.logGroupClick(groupId);
                     }
                 } else {
                     // TODO: 사용자 프로필 이동
+                    Long memberId = item.getId();
+
+                    // 멤버 추천 / 멤버 검색 → 멤버 프로필
+                    if (navigator != null) {
+                        navigator.openMemberProfile(memberId);
+                        // 추천 클릭 로그
+//                      recommendationRepository.logMemberClick(memberId);
+                    }
                 }
             }
 
@@ -251,19 +274,47 @@ public class SearchFragment extends Fragment {
             public void onGroupSelected() {
                 updateUIForGroupSearch();
                 clearSearchResults();
-            }
 
+                // 토글 바꾸면 검색어 없애고 추천 모드로 복귀
+                if (searchBarFragment != null) {
+                    searchBarFragment.clearQuery();
+                    searchBarFragment.clearFocus();
+                }
+                searchHasFocus = false;
+                loadRecommendationsByToggle();
+            }
             @Override
             public void onUserSelected() {
                 updateUIForUserSearch();
                 clearSearchResults();
+
+                if (searchBarFragment != null) {
+                    searchBarFragment.clearQuery();
+                    searchBarFragment.clearFocus();
+                }
+                searchHasFocus = false;
+                loadRecommendationsByToggle();
             }
         });
 
         // 검색바 콜백
         if (searchBarFragment != null) {
-            searchBarFragment.setOnSearchClickListener(query -> {
-                performSearch(query);
+            searchBarFragment.setOnSearchClickListener(query -> performSearch(query));
+
+            searchBarFragment.setOnFocusChangeListener(hasFocus -> {
+                searchHasFocus = hasFocus;
+
+                if (hasFocus) {
+                    // 검색창 활성화(입력 모드) → 추천은 무조건 숨김
+                    clearSearchResults();
+                    showSearchUi(false);
+                    return;
+                }
+
+                // 포커스 해제 + 검색어 비었으면 → 추천 복귀
+                if (searchBarFragment.getQuery().trim().isEmpty()) {
+                    loadRecommendationsByToggle();
+                }
             });
         }
     }
@@ -291,10 +342,21 @@ public class SearchFragment extends Fragment {
     }
 
     private void performSearch(String query) {
+        if (query == null) query = "";
+
         if (query.trim().isEmpty()) {
             clearSearchResults();
+
+            if (!searchHasFocus) {
+                loadRecommendationsByToggle();
+            } else {
+                showSearchUi(false);
+            }
             return;
         }
+
+        // 검색어 존재 → 추천 숨김, 검색 결과 모드
+        showSearchUi(false);
 
         if (segmentedToggleView.isGroupSelected()) {
             searchGroups(query);
@@ -411,5 +473,175 @@ public class SearchFragment extends Fragment {
             recyclerSearchResult.setVisibility(View.VISIBLE);
         }
     }
+
+    private void showRecommendUi() {
+        tvRecommendTitle.setVisibility(View.VISIBLE);
+        tvEmptyResult.setVisibility(View.GONE);
+        recyclerSearchResult.setVisibility(View.VISIBLE);
+    }
+
+    private void showSearchUi(boolean empty) {
+        tvRecommendTitle.setVisibility(View.GONE);
+
+        if (empty) {
+            tvEmptyResult.setVisibility(View.VISIBLE);
+            recyclerSearchResult.setVisibility(View.GONE);
+        } else {
+            tvEmptyResult.setVisibility(View.GONE);
+            recyclerSearchResult.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void loadRecommendationsByToggle() {
+        showRecommendUi();
+
+        if (segmentedToggleView.isGroupSelected()) {
+            tvRecommendTitle.setText("뮤어링님이 좋아할 그룹");
+            loadGroupRecommendations();
+        } else {
+            tvRecommendTitle.setText("뮤어링님이 좋아할 사용자");
+            loadMemberRecommendations();
+        }
+    }
+
+    // TODO: 추천 API 연동 완료 후 제거 (UI 확인용 더미 데이터)
+    private void loadGroupRecommendations() {
+        if (searchResultAdapter == null) return;
+
+        // ====== UI 확인용 더미 데이터 ======
+        List<SearchResultItem> items = new ArrayList<>();
+
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.GROUP,
+                1L,
+                "인디 음악 좋아하는 사람들",
+                List.of("인디", "감성", "밴드"),
+                null,
+                "가입",
+                false,
+                null,
+                null
+        ));
+
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.GROUP,
+                2L,
+                "힙합 덕후 모임",
+                List.of("힙합", "랩", "비트"),
+                null,
+                "가입",
+                false,
+                null,
+                null
+        ));
+
+        searchResultAdapter.setItems(items);
+    }
+
+    // TODO: 추천 API 연동 완료 후 제거 (UI 확인용 더미 데이터)
+    private void loadMemberRecommendations() {
+        if (searchResultAdapter == null) return;
+
+        // ====== UI 확인용 더미 데이터 ======
+        List<SearchResultItem> items = new ArrayList<>();
+
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.USER,
+                101L,
+                "뮤어링",
+                null,
+                "LOVE DIVE - IVE",
+                "팔로우",
+                null,
+                false,
+                null
+        ));
+
+        items.add(new SearchResultItem(
+                SearchResultItem.Type.USER,
+                102L,
+                "헤헤",
+                null,
+                null,   // 오늘의 음악 없음
+                "팔로우",
+                null,
+                false,
+                null
+        ));
+
+        searchResultAdapter.setItems(items);
+    }
+
+//    private void loadGroupRecommendations() {
+//        recommendationRepository.getGroupRecommendations(
+//                20, new Callback<GroupRecommendListResponseDto>() {
+//            @Override
+//            public void onSuccess(GroupRecommendListResponseDto dto) {
+//                if (!isAdded()) return;
+//
+//                List<SearchResultItem> items = new ArrayList<>();
+//                for (var g : dto.getGroups()) {
+//                    boolean joined = Boolean.TRUE.equals(g.getIsJoined());
+//
+//                    items.add(new SearchResultItem(
+//                            SearchResultItem.Type.GROUP,
+//                            g.getGroupId(),
+//                            g.getName(),
+//                            g.getCategoryNames(),
+//                            null,
+//                            joined ? "가입 중" : "가입",
+//                            joined,
+//                            null,
+//                            g.getImgUrl()
+//                    ));
+//                }
+//                searchResultAdapter.setItems(items);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Toast.makeText(requireContext(), "그룹 추천 실패", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+//    private void loadMemberRecommendations() {
+//        recommendationRepository.getMemberRecommendations(
+//                20, new Callback<List<MemberRecommendItemDto>>() {
+//            @Override
+//            public void onSuccess(List<MemberRecommendItemDto> members) {
+//                if (!isAdded()) return;
+//
+//                List<SearchResultItem> items = new ArrayList<>();
+//                for (MemberRecommendItemDto m : members) {
+//                    String today = null;
+//                    if (m.getTodayMusicName() != null && m.getTodayMusicArtistName() != null) {
+//                        today = m.getTodayMusicName() + " - " + m.getTodayMusicArtistName();
+//                    }
+//
+//                    boolean following = Boolean.TRUE.equals(m.getIsFollowing());
+//
+//                    items.add(new SearchResultItem(
+//                            SearchResultItem.Type.USER,
+//                            m.getMemberId(),
+//                            m.getNickname(),
+//                            null,
+//                            today,
+//                            following ? "팔로잉" : "팔로우",
+//                            null,
+//                            following,
+//                            m.getProfileImageUrl()
+//                    ));
+//                }
+//                searchResultAdapter.setItems(items);
+//            }
+//
+//            @Override
+//            public void onError(Exception e) {
+//                Toast.makeText(requireContext(), "사용자 추천 실패", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
 
 }

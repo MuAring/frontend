@@ -1,23 +1,22 @@
 package org.maru.muaring;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
-
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.maru.muaring.core.TokenManager;
+import org.maru.muaring.core.common.CommentInputController;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
-
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
 
 @AndroidEntryPoint
-public class MainActivity extends AppCompatActivity implements SearchNavigator {
+public class MainActivity extends AppCompatActivity implements SearchNavigator, CommentInputController {
 
     @Inject
     TokenManager tokenManager;
@@ -77,7 +76,37 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
 
         if (destId == 0) {
             // 혹시라도 못 찾으면 토스트만 띄우고 리턴
-            Toast.makeText(this, "groupProfileFragment id 를 찾을 수 없어요 🥲", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,
+                    "해당 그룹을 찾을 수 없어요 🥲",
+                    Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        nav.navigate(destId, args);
+    }
+
+    @Override
+    public void openMemberProfile(long memberId) {
+        NavHostFragment host = (NavHostFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.nav_host);
+
+        if (host == null) return;
+
+        NavController nav = host.getNavController();
+
+        Bundle args = new Bundle();
+        args.putLong("memberId", memberId);
+
+        int destId = getResources().getIdentifier(
+                "memberProfileFragment",
+                "id",
+                getPackageName()
+        );
+
+        if (destId == 0) {
+            Toast.makeText(this,
+                    "해당 멤버를 찾을 수 없어요 🥲",
+                    Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -140,4 +169,33 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator {
         nav.navigate(destId, args);
     }
 
+    @Override
+    public void navigateToPostDetail(long postId) {
+
+        // NavHostFragment 가져오기
+        NavHostFragment host = (NavHostFragment)
+                getSupportFragmentManager().findFragmentById(R.id.nav_host);
+
+        if (host == null) {
+            return;
+        }
+
+        NavController nav = host.getNavController();
+
+        // Bundle로 postId 전달
+        Bundle args = new Bundle();
+        args.putLong("postId", postId);
+
+        // destination id로 이동
+        nav.navigate(org.maru.muaring.R.id.postDetailFragment, args);
+    }
+
+    // PostDetailFragment에서만 댓글 입력창 보이도록
+    @Override
+    public void setCommentInputVisible(boolean visible) {
+        View commentInput = findViewById(R.id.comment_input);
+        if (commentInput != null) {
+            commentInput.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
 }

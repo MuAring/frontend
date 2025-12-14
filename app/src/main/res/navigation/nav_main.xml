@@ -111,4 +111,20 @@
             android:id="@+id/action_myGroups_to_groupProfile"
             app:destination="@id/groupProfileFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/todayPostsFragment"
+        android:name="org.maru.muaring.feature.today.ui.TodayPostsFragment">
+        <action
+            android:id="@+id/action_todayPostsFragment_to_postDetailFragment"
+            app:destination="@id/postDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/postDetailFragment"
+        android:name="org.maru.muaring.feature.post.ui.PostDetailFragment">
+        <argument
+            android:name="postId"
+            app:argType="long" />
+    </fragment>
 </navigation>
