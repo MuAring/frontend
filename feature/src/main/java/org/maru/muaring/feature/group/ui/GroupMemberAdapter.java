@@ -58,6 +58,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
         private final TextView textName;
         private final TextView textInfo;
         private final ImageView imgCrown;
+        private final ImageView imgMusicIcon;
 
         public MemberViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -67,6 +68,7 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
 
             // 왕관 아이콘 추가 (레이아웃에 없으면 null 체크)
             imgCrown = itemView.findViewById(R.id.img_crown);
+            imgMusicIcon = itemView.findViewById(R.id.img_music_icon);
         }
 
         public void bind(GroupMemberResponse member, OnMemberClickListener listener) {
@@ -90,9 +92,21 @@ public class GroupMemberAdapter extends RecyclerView.Adapter<GroupMemberAdapter.
                 String displayText = member.getRecentMusic().getDisplayText();
                 textInfo.setText(displayText);
                 textInfo.setVisibility(View.VISIBLE);
+
+                // 음악이 있을 때 CD 아이콘 표시
+                if (imgMusicIcon != null) {
+                    imgMusicIcon.setImageResource(R.drawable.ic_cd);
+                    imgMusicIcon.setVisibility(View.VISIBLE);
+                }
             } else {
                 textInfo.setText("오늘의 음악이 없습니다.");
                 textInfo.setVisibility(View.VISIBLE);
+
+                // 음악이 없을 때 NO_CD 아이콘 표시
+                if (imgMusicIcon != null) {
+                    imgMusicIcon.setImageResource(R.drawable.ic_no_cd);
+                    imgMusicIcon.setVisibility(View.VISIBLE);
+                }
             }
 
             // 관리자 표시 (왕관 아이콘)
