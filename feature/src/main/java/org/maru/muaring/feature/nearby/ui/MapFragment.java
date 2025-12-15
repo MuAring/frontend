@@ -170,7 +170,7 @@ public class MapFragment extends Fragment {
                 double lng = location.getLongitude();
 
                 LatLng current = LatLng.from(lat, lng);
-                kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 15));
+                kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 16));
 
                 if (lat == 0.0 && lng == 0.0) {
                     Log.w("Location", "아직 유효한 위치 아님");
