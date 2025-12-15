@@ -18,6 +18,7 @@ import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
+import org.maru.muaring.data.api.dto.MusicArchiveDto;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.data.api.dto.PageResponse;
@@ -104,7 +105,47 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         return result;
     }
+    @Override
+    public LiveData<Resource<List<MyGroupSummary>>> getMemberGroupsWithSearch(Long memberId, String searchName) {
+        MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
 
+        Log.d(TAG, "멤버 그룹 조회 시작 - memberId: " + memberId + ", search: " + searchName);
+
+        groupApi.getMemberGroups(memberId, searchName)
+                .enqueue(new Callback<ApiResponse<MyGroupListResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
+                                           Response<ApiResponse<MyGroupListResponse>> response) {
+
+                        Log.d(TAG, "응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<MyGroupListResponse> apiResponse = response.body();
+
+                            if (apiResponse.getData() != null) {
+                                List<MyGroupSummary> groups = apiResponse.getData().getGroups();
+                                Log.d(TAG, "멤버 그룹 조회 성공 - 그룹 수: " + (groups != null ? groups.size() : 0));
+                                result.setValue(Resource.success(groups));
+                            } else {
+                                Log.e(TAG, "데이터가 null입니다");
+                                result.setValue(Resource.error("데이터를 불러올 수 없습니다.", null));
+                            }
+                        } else {
+                            Log.e(TAG, "응답 실패: " + response.message());
+                            result.setValue(Resource.error("서버 응답 오류: " + response.code(), null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                        Log.e(TAG, "네트워크 오류", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
     
     @Override
     public LiveData<Resource<InvitePreviewResponse>> getInvitePreview(String inviteToken) {
@@ -479,6 +520,55 @@ public class GroupRepositoryImpl implements GroupRepository {
                             @NonNull Throwable t
                     ) {
                         Log.e(TAG, "오늘의 피드 네트워크 오류", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
+
+    // 그룹 보관함 조회
+    @Override
+    public LiveData<Resource<List<MusicArchiveDto>>> getGroupMusicArchive(Long groupId, int page) {
+        MutableLiveData<Resource<List<MusicArchiveDto>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        Log.d(TAG, "그룹 보관함 조회 시작 - groupId: " + groupId + ", page: " + page);
+
+        groupApi.getGroupMusicArchive(groupId, page, 20)
+                .enqueue(new Callback<ApiResponse<PageResponse<MusicArchiveDto>>>() {
+                    @Override
+                    public void onResponse(
+                            @NonNull Call<ApiResponse<PageResponse<MusicArchiveDto>>> call,
+                            @NonNull Response<ApiResponse<PageResponse<MusicArchiveDto>>> response
+                    ) {
+                        Log.d(TAG, "보관함 응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<PageResponse<MusicArchiveDto>> apiResponse = response.body();
+                            PageResponse<MusicArchiveDto> pageData = apiResponse.getData();
+
+                            if (pageData != null && pageData.getContent() != null) {
+                                List<MusicArchiveDto> musicList = pageData.getContent();
+                                Log.d(TAG, "보관함 조회 성공 - 음악 수: " + musicList.size());
+                                result.setValue(Resource.success(musicList));
+                            } else {
+                                Log.d(TAG, "보관함이 비어있습니다");
+                                result.setValue(Resource.success(Collections.emptyList()));
+                            }
+                        } else {
+                            Log.e(TAG, "보관함 조회 실패: " + response.message());
+                            String errorMessage = "보관함 조회 실패 (코드: " + response.code() + ")";
+                            result.setValue(Resource.error(errorMessage, null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            @NonNull Call<ApiResponse<PageResponse<MusicArchiveDto>>> call,
+                            @NonNull Throwable t
+                    ) {
+                        Log.e(TAG, "보관함 네트워크 오류", t);
                         result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
                     }
                 });
