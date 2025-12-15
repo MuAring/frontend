@@ -53,7 +53,7 @@ public class MemberProfileReadFragment extends Fragment {
 
     // 버튼들
     private Button btnEditProfile;
-    private Button btnAlarm;
+//    private Button btnAlarm;
     private Button btnFollow;
     private Button btnFollowed;
 
@@ -149,7 +149,7 @@ public class MemberProfileReadFragment extends Fragment {
         toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
         profileImage = v.findViewById(R.id.image_profile);
         profileName = v.findViewById(R.id.text_profile_name);
-        btnAlarm = v.findViewById(R.id.btn_alarm);
+//        btnAlarm = v.findViewById(R.id.btn_alarm);
         btnFollow = v.findViewById(R.id.btn_follow);
         btnFollowed = v.findViewById(R.id.btn_followed);
         historySection = v.findViewById(R.id.include_history);
@@ -275,17 +275,17 @@ public class MemberProfileReadFragment extends Fragment {
 
         if (isMe) {
             btnEditProfile.setVisibility(View.VISIBLE);
-            btnAlarm.setVisibility(View.VISIBLE);
+//            btnAlarm.setVisibility(View.VISIBLE);
             btnFollowed.setVisibility(View.GONE);
             btnFollow.setVisibility(View.GONE);
         } else if (response.isFollowing()) {
             btnEditProfile.setVisibility(View.GONE);
-            btnAlarm.setVisibility(View.GONE);
+//            btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.VISIBLE);
             btnFollow.setVisibility(View.GONE);
         } else {
             btnEditProfile.setVisibility(View.GONE);
-            btnAlarm.setVisibility(View.GONE);
+//            btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
         }
