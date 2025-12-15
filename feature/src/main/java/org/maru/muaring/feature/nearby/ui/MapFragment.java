@@ -73,7 +73,6 @@ public class MapFragment extends Fragment {
     @Inject
     LocationManager locationManager;
 
-
     @Inject
     NearbyRepository nearbyRepository;
 
@@ -89,6 +88,16 @@ public class MapFragment extends Fragment {
         btnShowMusic = view.findViewById(R.id.btnShowMusic);
         musicCard = view.findViewById(R.id.musicCard);
         tvCount = view.findViewById(R.id.tvCount);
+
+        View toolbar = view.findViewById(R.id.toolbar);
+        TextView title = toolbar.findViewById(R.id.toolbar_title);
+        title.setText("인근 사용자 탐색");
+
+        ImageButton btnBack = toolbar.findViewById(R.id.btn_back);
+
+        btnBack.setOnClickListener(v -> {
+            requireActivity().onBackPressed();
+        });
 
         mapView = view.findViewById(R.id.map_view);
 
