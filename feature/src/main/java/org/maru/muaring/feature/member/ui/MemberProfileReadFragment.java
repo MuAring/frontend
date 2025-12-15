@@ -129,6 +129,7 @@ public class MemberProfileReadFragment extends Fragment {
         }
 
         bindViews(view);
+        sharedMusicCount.setOnClickListener(v -> navigateToMemberSharedMusic());
         setupHistoryRecycler(view);
         initHistorySection(view);
         initCurrentYearMonth();
@@ -225,6 +226,26 @@ public class MemberProfileReadFragment extends Fragment {
             todayCommentCount = todayMusicCard.findViewById(R.id.tvCommentCount);
         } else {
             android.util.Log.e("TodayPost", "todayMusicCard is NULL!");
+        }
+    }
+
+    private void navigateToMemberSharedMusic() {
+        try {
+            NavController navController =
+                    NavHostFragment.findNavController(this);
+
+            int actionId = getResources().getIdentifier(
+                    "action_memberProfile_to_memberSharedMusic",
+                    "id",
+                    requireContext().getPackageName()
+            );
+
+            navController.navigate(actionId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(requireContext(),
+                    "공유한 음악 화면 이동 실패",
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
