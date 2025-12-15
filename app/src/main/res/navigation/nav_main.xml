@@ -142,4 +142,31 @@
             android:name="postId"
             app:argType="long" />
     </fragment>
+
+    <fragment
+        android:id="@+id/groupSharedMusicFragment"
+        android:name="org.maru.muaring.feature.group.ui.profile.GroupSharedMusicFragment"
+        android:label="공유한 음악"
+        tools:layout="@layout/fragment_group_shared_music">
+
+        <argument
+            android:name="arg_group_id"
+            app:argType="long" />
+    </fragment>
+
+    <action
+        android:id="@+id/action_groupProfile_to_groupSharedMusic"
+        app:destination="@id/groupSharedMusicFragment" />
+
+    <fragment
+        android:id="@+id/memberSharedMusicFragment"
+        android:name="org.maru.muaring.feature.member.ui.MemberSharedMusicFragment"
+        android:label="공유한 음악"
+        tools:layout="@layout/fragment_member_shared_music" />
+
+    <action
+        android:id="@+id/action_memberProfile_to_memberSharedMusic"
+        app:destination="@id/memberSharedMusicFragment" />
+
+
 </navigation>

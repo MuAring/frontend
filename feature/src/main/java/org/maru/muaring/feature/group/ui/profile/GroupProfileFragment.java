@@ -45,6 +45,7 @@ public class GroupProfileFragment extends Fragment {
     // Toolbar
     private TextView toolbarTitle;
     private ImageButton toolbarBack;
+
     // 가입 버튼
     private ImageButton toolbarAction;
 
@@ -58,6 +59,9 @@ public class GroupProfileFragment extends Fragment {
     private TextView textStatSharedMusic;
     private TextView textStatArchive;
     private TextView textStatMemberCount;
+
+    // 공유한 음악 섹션(칸 전체)
+    private LinearLayout layoutSharedMusicSection;
 
     // 그룹 오늘 공유한 음악 UI
     private View includeTodayShared;
@@ -193,6 +197,17 @@ public class GroupProfileFragment extends Fragment {
         textStatArchive = root.findViewById(R.id.text_stat_archive);
         textStatMemberCount = root.findViewById(R.id.text_stat_member_count);
 
+        // 공유한 음악 섹션(칸 전체) 클릭 연결
+        layoutSharedMusicSection = root.findViewById(R.id.layout_shared_music_section);
+        if (layoutSharedMusicSection != null) {
+            layoutSharedMusicSection.setOnClickListener(v -> navigateToSharedMusicList());
+        } else {
+            // 혹시 id 추가 안 했으면 숫자 텍스트라도 클릭되게 백업
+            if (textStatSharedMusic != null) {
+                textStatSharedMusic.setOnClickListener(v -> navigateToSharedMusicList());
+            }
+        }
+
         // 멤버 섹션 클릭 리스너 추가
         LinearLayout layoutMemberSection = root.findViewById(R.id.layout_member_section);
         if (layoutMemberSection != null) {
@@ -235,6 +250,23 @@ public class GroupProfileFragment extends Fragment {
             Log.e("GroupProfile", "보관함 이동 실패", e);
             Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    // 공유한 음악 리스트로 이동
+    private void navigateToSharedMusicList() {
+        if (groupId == null || groupId <= 0) return;
+
+        Bundle args = new Bundle();
+        args.putLong("arg_group_id", groupId);
+
+        NavController navController = NavHostFragment.findNavController(this);
+
+        int actionId = getResources().getIdentifier(
+                "action_groupProfile_to_groupSharedMusic",
+                "id",
+                requireContext().getPackageName()
+        );
+        navController.navigate(actionId, args);
     }
 
     private void navigateToGroupMember() {

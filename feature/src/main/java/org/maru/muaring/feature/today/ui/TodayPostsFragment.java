@@ -23,6 +23,7 @@ import dagger.hilt.android.AndroidEntryPoint;
 public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Listener {
 
     private static final String ARG_GROUP_ID = "arg_group_id";
+    private static final String ARG_SHOW_SECTION_TITLE = "arg_show_section_title";
 
     private TodayPostsViewModel viewModel;
     private TodayPostsAdapter adapter;
@@ -30,11 +31,19 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
     private SearchNavigator navigator;
 
     public static TodayPostsFragment newInstance(@Nullable Long groupId) {
+        // 기본값: 섹션 타이틀 보여줌
+        return newInstance(groupId, true);
+    }
+
+    public static TodayPostsFragment newInstance(@Nullable Long groupId, boolean showSectionTitle) {
         TodayPostsFragment fragment = new TodayPostsFragment();
         Bundle args = new Bundle();
+
         if (groupId != null) {
             args.putLong(ARG_GROUP_ID, groupId);
         }
+        args.putBoolean(ARG_SHOW_SECTION_TITLE, showSectionTitle);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -69,7 +78,8 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
         Log.d("TodayFragment", "onViewCreated called!");
 
         if (getArguments() != null && getArguments().containsKey(ARG_GROUP_ID)) {
-            groupId = getArguments().getLong(ARG_GROUP_ID);
+            long gid = getArguments().getLong(ARG_GROUP_ID, -1L);
+            groupId = (gid > 0) ? gid : null;
         } else {
             groupId = null;
         }
@@ -108,6 +118,16 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
                     break;
             }
         });
+
+        boolean showSectionTitle = true;
+        if (getArguments() != null) {
+            showSectionTitle = getArguments().getBoolean(ARG_SHOW_SECTION_TITLE, true);
+        }
+
+        View titleView = view.findViewById(R.id.tvSectionTitle);
+        if (titleView != null) {
+            titleView.setVisibility(showSectionTitle ? View.VISIBLE : View.GONE);
+        }
 
         if (groupId == null) {
             viewModel.loadForMe();
