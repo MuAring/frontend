@@ -35,6 +35,7 @@ public class MyGroupsFragment extends Fragment {
     private EditText etSearch;
     private View progressBar;
     private View emptyView;
+    private Long targetMemberId; // 조회할 멤버 ID
 
     @Nullable
     @Override
@@ -48,6 +49,14 @@ public class MyGroupsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // arguments에서 memberId 가져오기 (없으면 null로 본인 조회)
+        if (getArguments() != null) {
+            targetMemberId = getArguments().getLong("memberId", -1L);
+            if (targetMemberId == -1L) {
+                targetMemberId = null; // 본인의 그룹 조회
+            }
+        }
+
         initToolbar(view);
         initViews(view);
         initViewModel();
@@ -56,13 +65,19 @@ public class MyGroupsFragment extends Fragment {
         observeData();
 
         // 초기 데이터 로드
-        viewModel.loadMyGroups(null);
+        viewModel.loadMemberGroups(targetMemberId, null);
     }
 
     private void initToolbar(View view) {
         View toolbar = view.findViewById(R.id.toolbar);
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("가입한 그룹");
+
+        // 본인 조회인지 다른 사용자 조회인지에 따라 제목 변경
+        if (targetMemberId == null) {
+            toolbarTitle.setText("가입한 그룹");
+        } else {
+            toolbarTitle.setText("가입한 그룹");
+        }
 
         ImageButton btnBack = toolbar.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
@@ -143,7 +158,7 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 String query = s.toString().trim();
-                viewModel.searchGroups(query.isEmpty() ? null : query);
+                viewModel.searchGroups(targetMemberId, query.isEmpty() ? null : query);
             }
         });
     }

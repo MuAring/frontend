@@ -104,7 +104,47 @@ public class GroupRepositoryImpl implements GroupRepository {
 
         return result;
     }
+    @Override
+    public LiveData<Resource<List<MyGroupSummary>>> getMemberGroupsWithSearch(Long memberId, String searchName) {
+        MutableLiveData<Resource<List<MyGroupSummary>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
 
+        Log.d(TAG, "멤버 그룹 조회 시작 - memberId: " + memberId + ", search: " + searchName);
+
+        groupApi.getMemberGroups(memberId, searchName)
+                .enqueue(new Callback<ApiResponse<MyGroupListResponse>>() {
+                    @Override
+                    public void onResponse(Call<ApiResponse<MyGroupListResponse>> call,
+                                           Response<ApiResponse<MyGroupListResponse>> response) {
+
+                        Log.d(TAG, "응답 코드: " + response.code());
+
+                        if (response.isSuccessful() && response.body() != null) {
+                            ApiResponse<MyGroupListResponse> apiResponse = response.body();
+
+                            if (apiResponse.getData() != null) {
+                                List<MyGroupSummary> groups = apiResponse.getData().getGroups();
+                                Log.d(TAG, "멤버 그룹 조회 성공 - 그룹 수: " + (groups != null ? groups.size() : 0));
+                                result.setValue(Resource.success(groups));
+                            } else {
+                                Log.e(TAG, "데이터가 null입니다");
+                                result.setValue(Resource.error("데이터를 불러올 수 없습니다.", null));
+                            }
+                        } else {
+                            Log.e(TAG, "응답 실패: " + response.message());
+                            result.setValue(Resource.error("서버 응답 오류: " + response.code(), null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ApiResponse<MyGroupListResponse>> call, Throwable t) {
+                        Log.e(TAG, "네트워크 오류", t);
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
     
     @Override
     public LiveData<Resource<InvitePreviewResponse>> getInvitePreview(String inviteToken) {

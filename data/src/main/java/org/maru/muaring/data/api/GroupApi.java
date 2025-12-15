@@ -70,6 +70,16 @@ public interface GroupApi {
             @Query("name") String name
     );
 
+    /**
+     * 특정 멤버의 그룹 목록 조회 (새 API)
+     * GET /members/{memberId}/groups
+     */
+    @GET("members/{memberId}/groups")
+    Call<ApiResponse<MyGroupListResponse>> getMemberGroups(
+            @Path("memberId") Long memberId,
+            @Query("name") String name
+    );
+
     // 그룹 프로필 조회
     @GET("/groups/{groupId}")
     Call<ApiResponse<GroupProfileResponse>> getGroupProfile(

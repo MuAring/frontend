@@ -66,6 +66,8 @@ public interface GroupRepository {
         void onError(Throwable t);
     }
 
+    LiveData<Resource<List<MyGroupSummary>>> getMemberGroupsWithSearch(Long memberId, String searchName);
+
     // 가입한 그룹 검색 메서드 (파라미터 있음)
     LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName);
 
