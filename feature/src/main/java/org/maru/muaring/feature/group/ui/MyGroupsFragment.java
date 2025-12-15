@@ -20,11 +20,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.feature.R;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
 
 @AndroidEntryPoint
 public class MyGroupsFragment extends Fragment {
@@ -36,6 +38,9 @@ public class MyGroupsFragment extends Fragment {
     private View progressBar;
     private View emptyView;
     private Long targetMemberId; // 조회할 멤버 ID
+
+    @Inject
+    TokenManager tokenManager;
 
     @Nullable
     @Override
@@ -49,12 +54,17 @@ public class MyGroupsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // arguments에서 memberId 가져오기 (없으면 null로 본인 조회)
-        if (getArguments() != null) {
-            targetMemberId = getArguments().getLong("memberId", -1L);
-            if (targetMemberId == -1L) {
-                targetMemberId = null; // 본인의 그룹 조회
+        // arguments에서 memberId 가져오기
+        if (getArguments() != null && getArguments().containsKey("memberId")) {
+            long argMemberId = getArguments().getLong("memberId", -1L);
+            if (argMemberId > 0) {
+                targetMemberId = argMemberId;
             }
+        }
+
+        // targetMemberId가 여전히 null이면 현재 로그인한 사용자 ID 사용
+        if (targetMemberId == null || targetMemberId <= 0) {
+            targetMemberId = tokenManager.getMemberId();
         }
 
         initToolbar(view);

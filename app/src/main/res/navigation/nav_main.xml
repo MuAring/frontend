@@ -68,6 +68,21 @@
         <action
             android:id="@+id/action_groupProfile_to_groupMember"
             app:destination="@id/groupMemberFragment" />
+
+        <!-- 보관함으로 이동하는 액션 추가 -->
+        <action
+            android:id="@+id/action_groupProfile_to_groupArchive"
+            app:destination="@id/groupArchiveFragment" />
+    </fragment>
+
+    <!-- 그룹 보관함 추가 -->
+    <fragment
+        android:id="@+id/groupArchiveFragment"
+        android:name="org.maru.muaring.feature.group.ui.GroupArchiveFragment"
+        tools:layout="@layout/fragment_group_archive">
+        <argument
+            android:name="groupId"
+            app:argType="long" />
     </fragment>
 
 <!--    그룹 멤버 목록-->

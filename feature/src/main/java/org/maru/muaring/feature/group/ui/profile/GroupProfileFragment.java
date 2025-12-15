@@ -204,6 +204,37 @@ public class GroupProfileFragment extends Fragment {
             System.out.println("DEBUG >>> textStatGroupLevel is NULL");
         }
 
+        // ========== 보관함 섹션 클릭 리스너 추가 ==========
+        LinearLayout layoutArchiveSection = root.findViewById(R.id.layout_archive_section);
+        if (layoutArchiveSection != null) {
+            layoutArchiveSection.setOnClickListener(v -> navigateToGroupArchive());
+        }
+
+    }
+
+    // ========== 보관함으로 이동하는 메서드 추가 ==========
+    private void navigateToGroupArchive() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putLong("groupId", groupId);
+
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            int actionId = getResources().getIdentifier(
+                    "action_groupProfile_to_groupArchive",
+                    "id",
+                    requireContext().getPackageName()
+            );
+
+            navController.navigate(actionId, args);
+        } catch (Exception e) {
+            Log.e("GroupProfile", "보관함 이동 실패", e);
+            Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void navigateToGroupMember() {

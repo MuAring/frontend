@@ -9,6 +9,7 @@ import org.maru.muaring.data.api.dto.GroupListResponse;
 import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
+import org.maru.muaring.data.api.dto.MusicArchiveDto;
 import org.maru.muaring.data.api.dto.MyGroupListResponse;
 import org.maru.muaring.data.api.dto.PageResponse;
 import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
@@ -74,7 +75,7 @@ public interface GroupApi {
      * 특정 멤버의 그룹 목록 조회 (새 API)
      * GET /members/{memberId}/groups
      */
-    @GET("members/{memberId}/groups")
+    @GET("/me/members/{memberId}/groups")
     Call<ApiResponse<MyGroupListResponse>> getMemberGroups(
             @Path("memberId") Long memberId,
             @Query("name") String name
@@ -102,6 +103,14 @@ public interface GroupApi {
     // 그룹 오늘 공유한 음악 조회
     @GET("/groups/{groupId}/posts/today")
     Call<ApiResponse<PageResponse<TodayMusicPostResponse>>> getTodayGroupFeed(
+            @Path("groupId") Long groupId,
+            @Query("page") int page,
+            @Query("size") int size
+    );
+
+    // 그룹 음악 보관함 조회
+    @GET("/groups/{groupId}/archive")
+    Call<ApiResponse<PageResponse<MusicArchiveDto>>> getGroupMusicArchive(
             @Path("groupId") Long groupId,
             @Query("page") int page,
             @Query("size") int size
