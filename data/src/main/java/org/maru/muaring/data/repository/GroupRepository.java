@@ -13,6 +13,7 @@ import org.maru.muaring.data.api.dto.GroupMemberResponse;
 import org.maru.muaring.data.api.dto.GroupProfileResponse;
 import org.maru.muaring.data.api.dto.GroupSummary;
 import org.maru.muaring.data.api.dto.InvitePreviewResponse;
+import org.maru.muaring.data.api.dto.MusicArchiveDto;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.data.api.dto.TodayMusicPostResponse;
 
@@ -66,9 +67,14 @@ public interface GroupRepository {
         void onError(Throwable t);
     }
 
+    LiveData<Resource<List<MyGroupSummary>>> getMemberGroupsWithSearch(Long memberId, String searchName);
+
     // 가입한 그룹 검색 메서드 (파라미터 있음)
     LiveData<Resource<List<MyGroupSummary>>> getMyGroupsWithSearch(String searchName);
 
     // 그룹 오늘의 공유한 음악 조회 메서드
     LiveData<Resource<TodayMusicPostResponse>> getTodayGroupFeed(Long groupId);
+
+    // 그룹 음악 보관함 조회
+    LiveData<Resource<List<MusicArchiveDto>>> getGroupMusicArchive(Long groupId, int page);
 }
