@@ -24,6 +24,7 @@ import org.maru.muaring.feature.R;
 import org.maru.muaring.feature.group.ui.CreateGroupActivity;
 import org.maru.muaring.feature.home.ui.adapter.GroupSelectorAdapter;
 import org.maru.muaring.feature.home.ui.model.HomeViewModel;
+import org.maru.muaring.feature.recommend.RecommendMusicFragment;
 import org.maru.muaring.feature.today.ui.TodayPostsFragment;
 
 import java.util.List;
@@ -39,6 +40,8 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
     private static final String TAG_TODAY_ME = "today_me";
     private static final String TAG_TODAY_GROUP_PREFIX = "today_group_";
+
+    private static final String TAG_RECOMMEND = "recommend_music";
 
     private HomeViewModel viewModel;
     private RecyclerView rvGroupSelector;
@@ -73,6 +76,9 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
         // 내 프로필 설정 관찰해서 프사 반영
         observeMyProfileSettings();
+
+        // 최근 많이 공유된 음악(지난 7일 기준) - 한 번만 붙이기
+        ensureRecommendMusicFragment(savedInstanceState);
 
         // 기본으로 "나"의 오늘의 음악 보여주기
         showTodayPostsFragment(null);
@@ -148,6 +154,20 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
         });
 
     }
+
+    private void ensureRecommendMusicFragment(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) return; // 회전/복원 시 중복 add 방지
+
+        FragmentManager fm = getChildFragmentManager();
+        Fragment existing = fm.findFragmentByTag(TAG_RECOMMEND);
+
+        if (existing == null) {
+            fm.beginTransaction()
+                    .add(R.id.container_recommend_music, new RecommendMusicFragment(), TAG_RECOMMEND)
+                    .commit();
+        }
+    }
+
 
     /**
      * replace()로 새로 만드는 게 아니라,
