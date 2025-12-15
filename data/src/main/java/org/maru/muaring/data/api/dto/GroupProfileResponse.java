@@ -1,75 +1,67 @@
 package org.maru.muaring.data.api.dto;
 
+import com.google.gson.annotations.SerializedName;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class GroupProfileResponse {
 
+    @SerializedName("groupId")
     private Long groupId;
+
+    @SerializedName("name")
     private String name;
+
+    @SerializedName("description")
     private String description;
+
+    @SerializedName("groupCategories")
     private List<String> groupCategories;
+
+    @SerializedName("totalMusicCount")
     private Integer totalMusicCount;
+
+    @SerializedName("totalPostCount")
     private Integer totalPostCount;
+
+    @SerializedName("memberCount")
     private Integer memberCount;
+
+    @SerializedName("imageUrl")
     private String imageUrl;
+
+    @SerializedName("createdAt")
     private String createdAt;
 
-    // 레벨 관련 필드 추가
-    private Integer level;               // 현재 레벨 (1~5)
-    private Long exp;                    // 현재 누적 EXP
-    private Long nextLevelExp;           // 다음 레벨이 요구하는 총 EXP (없으면 null)
-    private Long remainingExpToNext;     // 다음 레벨까지 남은 EXP (최대 레벨이면 0)
+    @SerializedName("level")
+    private Integer level;
 
+    @SerializedName("exp")
+    private Long exp;
 
-    public Long getGroupId() {
-        return groupId;
-    }
+    @SerializedName("nextLevelExp")
+    private Long nextLevelExp;
 
-    public String getName() {
-        return name;
-    }
+    @SerializedName("remainingExpToNext")
+    private Long remainingExpToNext;
 
-    public String getDescription() {
-        return description;
-    }
+    // 그룹 가입 여부
+    @SerializedName("isJoined")
+    private Boolean isJoined;
 
-    public List<String> getGroupCategories() {
-        return groupCategories;
-    }
-
-    public Integer getTotalMusicCount() {
-        return totalMusicCount;
-    }
-
-    public Integer getTotalPostCount() {
-        return totalPostCount;
-    }
-
-    public Integer getMemberCount() {
-        return memberCount;
-    }
-
-    public String getImageUrl() {
-        return imageUrl;
-    }
-
-    public String getCreatedAt() {
-        return createdAt;
-    }
-
-    public Integer getLevel() {
-        return level;
-    }
-
-    public Long getExp() {
-        return exp;
-    }
-
-    public Long getNextLevelExp() {
-        return nextLevelExp;
-    }
-
-    public Long getRemainingExpToNext() {
-        return remainingExpToNext;
-    }
+    // Getters
+    public Long getGroupId() { return groupId; }
+    public String getName() { return name; }
+    public String getDescription() { return description; }
+    public List<String> getGroupCategories() { return groupCategories; }
+    public Integer getTotalMusicCount() { return totalMusicCount; }
+    public Integer getTotalPostCount() { return totalPostCount; }
+    public Integer getMemberCount() { return memberCount; }
+    public String getImageUrl() { return imageUrl; }
+    public String getCreatedAt() { return createdAt; }
+    public Integer getLevel() { return level; }
+    public Long getExp() { return exp; }
+    public Long getNextLevelExp() { return nextLevelExp; }
+    public Long getRemainingExpToNext() { return remainingExpToNext; }
+    public Boolean getIsJoined() { return isJoined; }
 }
