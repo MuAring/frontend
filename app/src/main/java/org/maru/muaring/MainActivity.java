@@ -5,12 +5,17 @@ import android.view.View;
 import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleObserver;
+import androidx.lifecycle.OnLifecycleEvent;
+import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.core.common.CommentInputController;
+import org.maru.muaring.feature.nearby.ui.LocationManager;
 import org.maru.muaring.feature.search.ui.SearchNavigator;
 import dagger.hilt.android.AndroidEntryPoint;
 import jakarta.inject.Inject;
@@ -20,6 +25,9 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator, 
 
     @Inject
     TokenManager tokenManager;
+
+    @Inject
+    LocationManager locationManager;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -49,6 +57,10 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator, 
         bottom.setOnItemSelectedListener(item -> {
             return NavigationUI.onNavDestinationSelected(item, nav);
         });
+
+        ProcessLifecycleOwner.get()
+                .getLifecycle()
+                .addObserver(new AppLifecycleObserver());
 
     }
 
@@ -196,6 +208,19 @@ public class MainActivity extends AppCompatActivity implements SearchNavigator, 
         View commentInput = findViewById(R.id.comment_input);
         if (commentInput != null) {
             commentInput.setVisibility(visible ? View.VISIBLE : View.GONE);
+        }
+    }
+
+    public class AppLifecycleObserver implements LifecycleObserver {
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_START)
+        public void onEnterForeground() {
+            locationManager.start();
+        }
+
+        @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
+        public void onEnterBackground() {
+            locationManager.stop();
         }
     }
 }

@@ -71,6 +71,10 @@ public class MapFragment extends Fragment {
     LocationRepository locationRepository;
 
     @Inject
+    LocationManager locationManager;
+
+
+    @Inject
     NearbyRepository nearbyRepository;
 
     @Nullable
@@ -99,8 +103,7 @@ public class MapFragment extends Fragment {
         });
 
         mapView.start(new MapLifeCycleCallback() {
-            @Override
-            public void onMapDestroy() {}
+            @Override public void onMapDestroy() {}
 
             @Override
             public void onMapError(@Nullable Exception e) {
@@ -111,7 +114,11 @@ public class MapFragment extends Fragment {
             public void onMapReady(@NonNull KakaoMap map) {
                 kakaoMap = map;
                 initMap();
-                checkPermission();
+
+                Location location = locationManager.getLastKnownLocation();
+                if (location != null) {
+                    moveCameraToLocation(location);
+                }
             }
         });
 
@@ -126,111 +133,34 @@ public class MapFragment extends Fragment {
         kakaoMap.moveCamera(cameraUpdate);
     }
 
-    private void checkPermission() {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
+    private void moveCameraToLocation(Location location) {
+        if (kakaoMap == null) return;
 
-            requestPermissions(
-                    new String[]{
-                            Manifest.permission.ACCESS_FINE_LOCATION,
-                            Manifest.permission.ACCESS_COARSE_LOCATION
-                    },
-                    LOCATION_PERMISSION_REQUEST
-            );
-            return;
-        }
-        startLocationUpdates();
+        LatLng current = LatLng.from(
+                location.getLatitude(),
+                location.getLongitude()
+        );
+
+        CameraUpdate cameraUpdate =
+                CameraUpdateFactory.newCenterPosition(current, 16);
+
+        kakaoMap.moveCamera(cameraUpdate);
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onResume() {
+        super.onResume();
 
-        if (requestCode == LOCATION_PERMISSION_REQUEST) {
-            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                startLocationUpdates();
-            }
-        }
+        Location location = locationManager.getLastKnownLocation();
+        if (location == null) return;
+
+        fetchTodayNearbyMusic(
+                location.getLatitude(),
+                location.getLongitude(),
+                0.3
+        );
     }
 
-    private void startLocationUpdates() {
-
-        LocationRequest locationRequest = LocationRequest.create()
-                .setInterval(2000)
-                .setFastestInterval(1000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult result) {
-                Location location = result.getLastLocation();
-                if (location == null || kakaoMap == null) return;
-
-                double lat = location.getLatitude();
-                double lng = location.getLongitude();
-
-                LatLng current = LatLng.from(lat, lng);
-                kakaoMap.moveCamera(CameraUpdateFactory.newCenterPosition(current, 16));
-
-                if (lat == 0.0 && lng == 0.0) {
-                    Log.w("Location", "아직 유효한 위치 아님");
-                    return;
-                }
-
-                if (lastSentLocation == null) {
-                    lastSentLocation = new Location(location);
-                    sendLocation(lat, lng);
-                    return;
-                }
-
-                float distance = location.distanceTo(lastSentLocation);
-
-                if (distance >= MIN_DISTANCE) {
-                    lastSentLocation = location;
-                    sendLocation(lat, lng);
-                    Log.d("LOCATION", "20m 이상 이동: 서버 전송됨 (" + distance + "m)");
-                } else {
-                    Log.d("LOCATION", "20m 미만 이동: 전송 안함 (" + distance + "m)");
-                }
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION) ==
-                PackageManager.PERMISSION_GRANTED) {
-
-            fusedLocationClient.requestLocationUpdates(
-                    locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper()
-            );
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (fusedLocationClient != null && locationCallback != null) {
-            fusedLocationClient.removeLocationUpdates(locationCallback);
-        }
-    }
-
-    private void sendLocation(double lat, double lng) {
-        LocationRequestDTO request = new LocationRequestDTO(lat, lng);
-
-        locationRepository.updateLocation(request, new Callback<Void>() {
-            @Override
-            public void onSuccess(Void result) {
-                Log.d("Location", "위치 전송 성공");
-                fetchTodayNearbyMusic(lat, lng, 0.3);
-            }
-
-            @Override
-            public void onError(Exception e) {
-                Log.e("Location", "위치 전송 실패: " + e.getMessage());
-            }
-        });
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
