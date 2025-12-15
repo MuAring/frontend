@@ -186,8 +186,12 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
 
         Fragment target = fm.findFragmentByTag(targetTag);
         if (target == null) {
-            // 처음 보는 groupId면 새로 만들고 add
-            target = TodayPostsFragment.newInstance(groupId);
+            // groupId에 따라 다른 팩토리로 생성
+            if (groupId == null) {
+                target = TodayPostsFragment.newInstanceForHome();
+            } else {
+                target = TodayPostsFragment.newInstanceForGroup(groupId);
+            }
             txHelper.add(R.id.container_today_posts, target, targetTag);
         }
 
@@ -196,8 +200,12 @@ public class HomeFragment extends Fragment implements GroupSelectorAdapter.Liste
         for (Fragment f : fragments) {
             if (f == null) continue;
             if (f == target) continue;
-            txHelper.hide(f);
+
+            if (f instanceof TodayPostsFragment) {
+                txHelper.hide(f);
+            }
         }
+
         txHelper.show(target);
 
         txHelper.commit();

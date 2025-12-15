@@ -41,10 +41,10 @@ public class MemberSharedMusicFragment extends Fragment {
         title.setText("공유한 음악");
         back.setOnClickListener(v -> requireActivity().onBackPressed());
 
-        // ===== TodayPostsFragment (나 모드) 붙이기 =====
+        // 멤버 프로필 전용: 다른 xml + 제목 숨김 + /post/me/today
         if (savedInstanceState == null) {
-            TodayPostsFragment child =
-                    TodayPostsFragment.newInstance(null, false);
+            TodayPostsFragment child = TodayPostsFragment
+                    .newInstanceForProfile(false, true);
 
             getChildFragmentManager()
                     .beginTransaction()
