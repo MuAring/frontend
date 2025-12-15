@@ -18,9 +18,19 @@ public interface PostApi {
     @GET("/post/followee/today")
     Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getTodayPostsForMe();
 
+    // 내 공유한 음악 (내 게시물만)
+    @GET("/post/me")
+    Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getPostsForMeOnly();
+
     // 그룹 기준 오늘의 음악
     @GET("/groups/{groupId}/posts/today")
     Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getTodayPostsForGroup(
+            @Path("groupId") Long groupId
+    );
+
+    // 그룹 공유한 음악
+    @GET("/groups/{groupId}/posts")
+    Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> getGroupPosts(
             @Path("groupId") Long groupId
     );
 

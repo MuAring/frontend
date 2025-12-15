@@ -13,7 +13,6 @@ import org.maru.muaring.data.repository.LikeRepository;
 import org.maru.muaring.data.repository.PostRepository;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Inject;
@@ -31,8 +30,7 @@ public class TodayPostsViewModel extends ViewModel {
             new MediatorLiveData<>();
     public LiveData<Resource<List<MusicPostFeedResponse>>> posts = _posts;
 
-
-    // ViewModel이 "현재 화면 상태"를 들고 있어야 덮어쓰기 안 당함
+    // 화면 상태 유지용
     private List<MusicPostFeedResponse> currentList = new ArrayList<>();
 
     @Inject
@@ -46,43 +44,24 @@ public class TodayPostsViewModel extends ViewModel {
         this.libraryRepository = libraryRepository;
     }
 
-    public void loadForGroup(Long groupId) {
-        _posts.setValue(Resource.loading(null));
-        LiveData<Resource<List<MusicPostFeedResponse>>> source =
-                postRepository.getTodayPostsForGroup(groupId);
-
-        _posts.addSource(source, res -> {
-            if (res == null) return;
-
-            if (res.status == Resource.Status.SUCCESS) {
-                currentList = (res.data != null) ? new ArrayList<>(res.data) : new ArrayList<>();
-                _posts.setValue(Resource.success(currentList));
-            } else if (res.status == Resource.Status.ERROR) {
-                _posts.setValue(Resource.error(res.message, currentList));
-            } else {
-                _posts.setValue(Resource.loading(currentList));
-            }
-
-            if (res.status != Resource.Status.LOADING) {
-                _posts.removeSource(source);
-            }
-        });
-    }
-
-    public void loadForMe() {
+    // =====================================================
+    // 공통 로딩 로직
+    // =====================================================
+    private void loadPosts(LiveData<Resource<List<MusicPostFeedResponse>>> source) {
         _posts.setValue(Resource.loading(currentList));
 
-        LiveData<Resource<List<MusicPostFeedResponse>>> source =
-                postRepository.getTodayPostsForMe();
-
         _posts.addSource(source, res -> {
             if (res == null) return;
 
             if (res.status == Resource.Status.SUCCESS) {
-                currentList = (res.data != null) ? new ArrayList<>(res.data) : new ArrayList<>();
+                currentList = (res.data != null)
+                        ? new ArrayList<>(res.data)
+                        : new ArrayList<>();
                 _posts.setValue(Resource.success(currentList));
+
             } else if (res.status == Resource.Status.ERROR) {
                 _posts.setValue(Resource.error(res.message, currentList));
+
             } else {
                 _posts.setValue(Resource.loading(currentList));
             }
@@ -93,18 +72,42 @@ public class TodayPostsViewModel extends ViewModel {
         });
     }
 
-    // =========================
+    // =====================================================
+    // 외부에서 부르는 메서드들
+    // =====================================================
+
+    // 홈 (followee)
+    public void loadForMe() {
+        loadPosts(postRepository.getTodayPostsForMe());
+    }
+
+    // 그룹 (홈)
+    public void loadForGroup(Long groupId) {
+        loadPosts(postRepository.getTodayPostsForGroup(groupId));
+    }
+
+    // 멤버 프로필 (me)
+    public void loadForMeToday() {
+        loadPosts(postRepository.getPostsForMeOnly());
+    }
+
+    // 그룹 프로필
+    public void loadForGroupProfile(Long groupId) {
+        loadPosts(postRepository.getGroupPosts(groupId));
+    }
+
+    // =====================================================
     // 좋아요 토글
-    // =========================
+    // =====================================================
     public void toggleLike(Long postId) {
-        LiveData<Resource<LikeResponseDTO>> source = likeRepository.toggleLike(postId);
+        LiveData<Resource<LikeResponseDTO>> source =
+                likeRepository.toggleLike(postId);
+
         _posts.addSource(source, res -> {
             if (res == null) return;
 
             if (res.status == Resource.Status.SUCCESS && res.data != null) {
-                applyLikeResult(res.data); // 리스트 내부 반영
-            } else if (res.status == Resource.Status.ERROR) {
-                // 필요하면 토스트용 메시지 이벤트 따로 만들기
+                applyLikeResult(res.data);
             }
 
             if (res.status != Resource.Status.LOADING) {
@@ -117,7 +120,8 @@ public class TodayPostsViewModel extends ViewModel {
         List<MusicPostFeedResponse> newList = new ArrayList<>(currentList.size());
 
         for (MusicPostFeedResponse p : currentList) {
-            if (p != null && p.getPostId() != null && p.getPostId().equals(dto.getPostId())) {
+            if (p != null && p.getPostId() != null
+                    && p.getPostId().equals(dto.getPostId())) {
                 p.setIsLiked(dto.isLiked());
                 p.setLikeCount(dto.getNumOfLikes());
             }
@@ -128,35 +132,18 @@ public class TodayPostsViewModel extends ViewModel {
         _posts.setValue(Resource.success(currentList));
     }
 
-//    private void applyLikeResult(LikeResponseDTO dto) {
-//        Resource<List<MusicPostFeedResponse>> cur = _posts.getValue();
-//        List<MusicPostFeedResponse> oldList = (cur != null && cur.data != null) ? cur.data : Collections.emptyList();
-//
-//        List<MusicPostFeedResponse> newList = new ArrayList<>(oldList.size());
-//        for (MusicPostFeedResponse p : oldList) {
-//            if (p != null && p.getPostId() != null && p.getPostId().equals(dto.getPostId())) {
-//                // 같은 객체를 수정해도 되지만, submitList 다시 그릴 거라면 이 방식이 깔끔
-//                p.setIsLiked(dto.isLiked());
-//                p.setLikeCount(dto.getNumOfLikes());
-//            }
-//            newList.add(p);
-//        }
-//        _posts.setValue(Resource.success(newList));
-//    }
-
-    // =========================
+    // =====================================================
     // 보관함 추가
-    // =========================
+    // =====================================================
     public void addToLibrary(Long musicId, String category) {
-        LiveData<Resource<LibraryMusicDTO>> source = libraryRepository.addMusicToLibrary(musicId, category);
+        LiveData<Resource<LibraryMusicDTO>> source =
+                libraryRepository.addMusicToLibrary(musicId, category);
 
         _posts.addSource(source, res -> {
             if (res == null) return;
 
             if (res.status == Resource.Status.SUCCESS) {
                 applyLibraryResult(musicId, true);
-            } else if (res.status == Resource.Status.ERROR) {
-                android.util.Log.e("TodayVM", "addToLibrary ERROR: " + res.message);
             }
 
             if (res.status != Resource.Status.LOADING) {
@@ -165,9 +152,9 @@ public class TodayPostsViewModel extends ViewModel {
         });
     }
 
-    // =========================
-    // 보관함 삭제 (서버는 deleteMultiple이라 list로 던져야 함)
-    // =========================
+    // =====================================================
+    // 보관함 삭제
+    // =====================================================
     public void removeFromLibrary(Long musicId) {
         LiveData<Resource<Void>> source =
                 libraryRepository.deleteOneMusicFromLibrary(musicId);
@@ -177,8 +164,6 @@ public class TodayPostsViewModel extends ViewModel {
 
             if (res.status == Resource.Status.SUCCESS) {
                 applyLibraryResult(musicId, false);
-            } else if (res.status == Resource.Status.ERROR) {
-                // 실패 시 필요하면 롤백/토스트
             }
 
             if (res.status != Resource.Status.LOADING) {
@@ -187,12 +172,12 @@ public class TodayPostsViewModel extends ViewModel {
         });
     }
 
-
     private void applyLibraryResult(Long musicId, boolean inLibrary) {
         List<MusicPostFeedResponse> newList = new ArrayList<>(currentList.size());
 
         for (MusicPostFeedResponse p : currentList) {
-            if (p != null && p.getMusicId() != null && p.getMusicId().equals(musicId)) {
+            if (p != null && p.getMusicId() != null
+                    && p.getMusicId().equals(musicId)) {
                 p.setInLibrary(inLibrary);
             }
             newList.add(p);

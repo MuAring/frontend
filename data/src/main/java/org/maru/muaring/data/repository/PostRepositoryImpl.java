@@ -73,6 +73,49 @@ public class PostRepositoryImpl implements PostRepository {
     }
 
     @Override
+    public LiveData<Resource<List<MusicPostFeedResponse>>> getPostsForMeOnly() {
+        Log.d("PostRepositoryImpl", "getPostsForMeOnly called");
+        MutableLiveData<Resource<List<MusicPostFeedResponse>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        postApi.getPostsForMeOnly()
+                .enqueue(new retrofit2.Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Response<ApiResponse<PageResponse<MusicPostFeedResponse>>> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
+
+                            PageResponse<MusicPostFeedResponse> page = response.body().getData();
+
+                            List<MusicPostFeedResponse> list;
+                            if (page != null && page.getContent() != null) {
+                                list = page.getContent();
+                            } else {
+                                list = Collections.emptyList();
+                            }
+
+                            result.setValue(Resource.success(list));
+                        } else {
+                            result.setValue(Resource.error("오늘의 내 음악 조회 실패", null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Throwable t
+                    ) {
+                        t.printStackTrace();
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
+
+    @Override
     public LiveData<Resource<List<MusicPostFeedResponse>>> getTodayPostsForGroup(Long groupId) {
         Log.d("PostRepositoryImpl", "getTodayPostsForGroup called with groupId: " + groupId);
         MutableLiveData<Resource<List<MusicPostFeedResponse>>> result = new MutableLiveData<>();
@@ -123,6 +166,49 @@ public class PostRepositoryImpl implements PostRepository {
         return result;
     }
 
+    @Override
+    public LiveData<Resource<List<MusicPostFeedResponse>>> getGroupPosts(Long groupId) {
+        Log.d("PostRepositoryImpl", "getGroupPosts called, groupId=" + groupId);
+
+        MutableLiveData<Resource<List<MusicPostFeedResponse>>> result = new MutableLiveData<>();
+        result.setValue(Resource.loading(null));
+
+        postApi.getGroupPosts(groupId)
+                .enqueue(new retrofit2.Callback<ApiResponse<PageResponse<MusicPostFeedResponse>>>() {
+                    @Override
+                    public void onResponse(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Response<ApiResponse<PageResponse<MusicPostFeedResponse>>> response
+                    ) {
+                        if (response.isSuccessful() && response.body() != null) {
+
+                            PageResponse<MusicPostFeedResponse> page = response.body().getData();
+
+                            List<MusicPostFeedResponse> list;
+                            if (page != null && page.getContent() != null) {
+                                list = page.getContent();
+                            } else {
+                                list = Collections.emptyList();
+                            }
+
+                            result.setValue(Resource.success(list));
+                        } else {
+                            result.setValue(Resource.error("그룹 프로필 피드 조회 실패", null));
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(
+                            Call<ApiResponse<PageResponse<MusicPostFeedResponse>>> call,
+                            Throwable t
+                    ) {
+                        t.printStackTrace();
+                        result.setValue(Resource.error("네트워크 오류: " + t.getMessage(), null));
+                    }
+                });
+
+        return result;
+    }
 
 
     // 프로필의 오늘 공유한 음악 조회 메서드

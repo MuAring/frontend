@@ -14,7 +14,9 @@ import java.util.List;
 public interface PostRepository {
 
     LiveData<Resource<List<MusicPostFeedResponse>>> getTodayPostsForMe();
+    LiveData<Resource<List<MusicPostFeedResponse>>> getPostsForMeOnly();
     LiveData<Resource<List<MusicPostFeedResponse>>> getTodayPostsForGroup(Long groupId);
+    LiveData<Resource<List<MusicPostFeedResponse>>> getGroupPosts(Long groupId);
     // 프로필의 오늘 공유한 음악 조회
     LiveData<Resource<TodayPostResponse>> getTodayPostByMember(Long memberId);
     void getPostDetail(Long postId, Callback<PostDetailReadResponse> callback);
