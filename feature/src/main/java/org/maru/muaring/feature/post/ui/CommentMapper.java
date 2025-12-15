@@ -21,7 +21,7 @@ public class CommentMapper {
                     comment.getCommentId(),
                     false,
                     comment.getMemberNickname(),
-                    null,                       // 프로필 URL 없으면 null
+                    comment.getProfileImgUrl(),                       // 프로필 URL 없으면 null
                     comment.getContent()
             ));
 
@@ -32,7 +32,7 @@ public class CommentMapper {
                             reply.getReplyId(),
                             true,
                             reply.getMemberNickname(),
-                            null,
+                            reply.getProfileImgUrl(),
                             reply.getContent()
                     ));
                 }

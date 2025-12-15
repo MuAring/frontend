@@ -9,6 +9,7 @@ public class ReplyReadResponse {
     private String content;
     private Long memberId;
     private String memberNickname;
+    private String profileImgUrl;
     private Boolean isDeleted;
     private String createdAt;
 }
