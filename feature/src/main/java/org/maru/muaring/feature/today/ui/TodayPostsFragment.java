@@ -75,6 +75,7 @@ public class TodayPostsFragment extends Fragment implements TodayPostsAdapter.Li
         }
 
         RecyclerView rv = view.findViewById(R.id.rvTodayPosts);
+        rv.setNestedScrollingEnabled(false);
         rv.setLayoutManager(new LinearLayoutManager(getContext()));
         adapter = new TodayPostsAdapter(this);
         rv.setAdapter(adapter);

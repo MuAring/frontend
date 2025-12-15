@@ -178,7 +178,7 @@ public class SearchResultAdapter extends RecyclerView.Adapter<SearchResultAdapte
                     ivMusicIcon.setImageResource(
                             org.maru.muaring.design.R.drawable.ic_today_music_inactive
                     );
-                    tvMusicInfo.setText("오늘의 음악을 등록하지 않았습니다.");
+                    tvMusicInfo.setText("오늘의 음악이 없습니다.");
                     tvMusicInfo.setTextColor(
                             itemView.getResources().getColor(
                                     org.maru.muaring.design.R.color.text_light_gray
