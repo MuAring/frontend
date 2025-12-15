@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import org.maru.muaring.core.TokenManager;
+import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.TodayPostResponse;
 import org.maru.muaring.feature.R;
@@ -53,7 +54,7 @@ public class MemberProfileReadFragment extends Fragment {
 
     // 버튼들
     private Button btnEditProfile;
-    private Button btnAlarm;
+//    private Button btnAlarm;
     private Button btnFollow;
     private Button btnFollowed;
 
@@ -137,10 +138,52 @@ public class MemberProfileReadFragment extends Fragment {
         observeTodayPost();
         showListMode();
         loadHistory(memberId);
+
         if (memberId != -1L) {
             viewModel.loadMemberProfile(memberId);
             viewModel.loadTodayPost(memberId);
         }
+
+
+        btnFollow.setOnClickListener(v -> {
+            if (memberId == null || memberId == -1L) return;
+
+            viewModel.followMember(memberId, new Callback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    Toast.makeText(requireContext(), "팔로우를 시작합니다.", Toast.LENGTH_SHORT).show();
+                    btnFollow.setVisibility(View.GONE);
+                    btnFollowed.setVisibility(View.VISIBLE);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(requireContext(), "팔로우 중 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+        btnFollowed.setOnClickListener(v -> {
+            if (memberId == null || memberId == -1L) return;
+
+            viewModel.unfollowMember(memberId, new Callback<Void>() {
+                @Override
+                public void onSuccess(Void result) {
+                    Toast.makeText(requireContext(), "팔로우가 취소되었습니다.", Toast.LENGTH_SHORT).show();
+                    btnFollow.setVisibility(View.VISIBLE);
+                    btnFollowed.setVisibility(View.GONE);
+                }
+
+                @Override
+                public void onError(Exception e) {
+                    Toast.makeText(requireContext(), "팔로우 취소 중 문제가 발생했습니다.", Toast.LENGTH_SHORT).show();
+                }
+            });
+        });
+
+
+        observeFollowState();
+
     }
 
     private void bindViews(View v) {
@@ -149,7 +192,7 @@ public class MemberProfileReadFragment extends Fragment {
         toolbarTitle = toolBar.findViewById(R.id.toolbar_title);
         profileImage = v.findViewById(R.id.image_profile);
         profileName = v.findViewById(R.id.text_profile_name);
-        btnAlarm = v.findViewById(R.id.btn_alarm);
+//        btnAlarm = v.findViewById(R.id.btn_alarm);
         btnFollow = v.findViewById(R.id.btn_follow);
         btnFollowed = v.findViewById(R.id.btn_followed);
         historySection = v.findViewById(R.id.include_history);
@@ -275,17 +318,17 @@ public class MemberProfileReadFragment extends Fragment {
 
         if (isMe) {
             btnEditProfile.setVisibility(View.VISIBLE);
-            btnAlarm.setVisibility(View.VISIBLE);
+//            btnAlarm.setVisibility(View.VISIBLE);
             btnFollowed.setVisibility(View.GONE);
             btnFollow.setVisibility(View.GONE);
         } else if (response.isFollowing()) {
             btnEditProfile.setVisibility(View.GONE);
-            btnAlarm.setVisibility(View.GONE);
+//            btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.VISIBLE);
             btnFollow.setVisibility(View.GONE);
         } else {
             btnEditProfile.setVisibility(View.GONE);
-            btnAlarm.setVisibility(View.GONE);
+//            btnAlarm.setVisibility(View.GONE);
             btnFollowed.setVisibility(View.GONE);
             btnFollow.setVisibility(View.VISIBLE);
         }
@@ -315,6 +358,18 @@ public class MemberProfileReadFragment extends Fragment {
             NavController navController =
                     NavHostFragment.findNavController(MemberProfileReadFragment.this);
             navController.navigate(R.id.followFragment, bundle);
+        });
+    }
+
+    private void observeFollowState() {
+        viewModel.getIsFollowing().observe(getViewLifecycleOwner(), isFollowing -> {
+            if (Boolean.TRUE.equals(isFollowing)) {
+                btnFollow.setVisibility(View.GONE);
+                btnFollowed.setVisibility(View.VISIBLE);
+            } else {
+                btnFollow.setVisibility(View.VISIBLE);
+                btnFollowed.setVisibility(View.GONE);
+            }
         });
     }
 

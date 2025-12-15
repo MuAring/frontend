@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginTop="55dp"
+    android:layout_marginBottom="100dp"
     android:id="@+id/homeFragment">
 
     <!-- 홈 상단 로고 + 알림 -->
@@ -23,14 +24,38 @@
         android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"/>
 
-    <!-- 하단: 오늘의 음악 프래그먼트가 들어가는 자리 -->
-    <FrameLayout
-        android:id="@+id/container_today_posts"
+    <!-- 여기부터 같이 스크롤 -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingTop="8dp"/>
+        android:fillViewport="true"
+        android:overScrollMode="never">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- 중간: 음악 추천 -->
+            <FrameLayout
+                android:id="@+id/container_recommend_music"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp" />
+
+            <!-- 하단: 오늘의 음악 -->
+            <FrameLayout
+                android:id="@+id/container_today_posts"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"/>
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
 </LinearLayout>

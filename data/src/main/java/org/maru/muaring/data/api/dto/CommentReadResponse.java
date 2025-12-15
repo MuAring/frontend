@@ -10,6 +10,7 @@ public class CommentReadResponse {
     private String content;
     private Long memberId;
     private String memberNickname;
+    private String profileImgUrl;
     private Boolean isDeleted;
     private String createdAt;
     private List<ReplyReadResponse> replies;

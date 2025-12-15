@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:paddingRight="5dp"
-        android:text="오늘의 음악을 등록하지 않았습니다."
+        android:text="오늘의 음악이 없습니다."
         android:textSize="12sp"
         android:textColor="@color/text_today_music"
         android:includeFontPadding="false"
