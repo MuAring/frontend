@@ -55,7 +55,7 @@ public class GroupSharedMusicFragment extends Fragment {
 
         // ===== TodayPostsFragment를 child로 붙이기 =====
         if (savedInstanceState == null) {
-            TodayPostsFragment child = TodayPostsFragment.newInstance(groupId, false);
+            TodayPostsFragment child = TodayPostsFragment.newInstanceForGroupProfile(groupId);
 
             getChildFragmentManager()
                     .beginTransaction()
