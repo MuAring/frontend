@@ -48,14 +48,15 @@
             android:layout_gravity="center_horizontal"
             android:layout_marginTop="8dp">
 
-            <Button
+            <androidx.appcompat.widget.AppCompatButton
                 android:id="@+id/btn_edit_profile"
                 android:layout_width="wrap_content"
                 android:layout_height="36dp"
-                android:layout_marginEnd="8dp"
+
+                android:paddingHorizontal="20dp"
                 android:text="프로필 편집"
-                android:textColor="@color/white"
-                android:background="@drawable/bg_button_group_join"/>
+                android:textColor="@color/black"
+                android:background="@drawable/bg_button_slim_outline_gray" />
 
 <!--            <Button-->
 <!--                android:id="@+id/btn_alarm"-->

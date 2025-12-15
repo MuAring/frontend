@@ -47,7 +47,6 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
 
     // 음악 카드
     private View musicCardView;
-
     private ImageView ivAlbum;
     private TextView tvMusicTitle;
     private TextView tvArtist;
@@ -59,6 +58,9 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
     private ImageView ivLike;
     private boolean isLiked;
     private int likeCount;
+
+    // 댓글
+    private int commentCount;
 
     // 댓글 입력창
     private EditText etAddComment;
@@ -225,6 +227,11 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
                         : R.drawable.ic_heart_outline
         );
 
+        // 댓글
+        commentCount = response.getCommentCount() != null
+                ? response.getCommentCount()
+                : 0;
+
         // 좋아요 업데이트
         likeSection.setOnClickListener(v -> {
             boolean prevLiked = isLiked;
@@ -272,11 +279,13 @@ public class PostDetailFragment extends Fragment implements CommentAdapter.Comme
             String content = etAddComment.getText().toString().trim();
             if (content.isEmpty()) return;
 
+            commentCount++;
             if (replyTargetCommentId == null) {
                 viewModel.addComment(postId, content);
             } else {
                 viewModel.addReply(replyTargetCommentId, content, postId);
             }
+            tvCommentCount.setText(String.valueOf(commentCount));
         });
     }
 
