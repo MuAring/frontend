@@ -72,7 +72,10 @@ public class LibraryAdapter extends RecyclerView.Adapter<LibraryAdapter.MusicVie
             }
 
             callback.onSelectionChanged(selectedIds.size());
-            notifyItemChanged(holder.getAdapterPosition());
+            int pos = holder.getAdapterPosition();
+            if (pos != RecyclerView.NO_POSITION) {
+                notifyItemChanged(pos);
+            }
         });
     }
 

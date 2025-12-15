@@ -20,11 +20,13 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.maru.muaring.core.TokenManager;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MyGroupSummary;
 import org.maru.muaring.feature.R;
 
 import dagger.hilt.android.AndroidEntryPoint;
+import jakarta.inject.Inject;
 
 @AndroidEntryPoint
 public class MyGroupsFragment extends Fragment {
@@ -35,6 +37,10 @@ public class MyGroupsFragment extends Fragment {
     private EditText etSearch;
     private View progressBar;
     private View emptyView;
+    private Long targetMemberId; // 조회할 멤버 ID
+
+    @Inject
+    TokenManager tokenManager;
 
     @Nullable
     @Override
@@ -48,6 +54,19 @@ public class MyGroupsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // arguments에서 memberId 가져오기
+        if (getArguments() != null && getArguments().containsKey("memberId")) {
+            long argMemberId = getArguments().getLong("memberId", -1L);
+            if (argMemberId > 0) {
+                targetMemberId = argMemberId;
+            }
+        }
+
+        // targetMemberId가 여전히 null이면 현재 로그인한 사용자 ID 사용
+        if (targetMemberId == null || targetMemberId <= 0) {
+            targetMemberId = tokenManager.getMemberId();
+        }
+
         initToolbar(view);
         initViews(view);
         initViewModel();
@@ -56,13 +75,19 @@ public class MyGroupsFragment extends Fragment {
         observeData();
 
         // 초기 데이터 로드
-        viewModel.loadMyGroups(null);
+        viewModel.loadMemberGroups(targetMemberId, null);
     }
 
     private void initToolbar(View view) {
         View toolbar = view.findViewById(R.id.toolbar);
         TextView toolbarTitle = toolbar.findViewById(R.id.toolbar_title);
-        toolbarTitle.setText("가입한 그룹");
+
+        // 본인 조회인지 다른 사용자 조회인지에 따라 제목 변경
+        if (targetMemberId == null) {
+            toolbarTitle.setText("가입한 그룹");
+        } else {
+            toolbarTitle.setText("가입한 그룹");
+        }
 
         ImageButton btnBack = toolbar.findViewById(R.id.btn_back);
         btnBack.setOnClickListener(v -> {
@@ -143,7 +168,7 @@ public class MyGroupsFragment extends Fragment {
             @Override
             public void afterTextChanged(Editable s) {
                 String query = s.toString().trim();
-                viewModel.searchGroups(query.isEmpty() ? null : query);
+                viewModel.searchGroups(targetMemberId, query.isEmpty() ? null : query);
             }
         });
     }

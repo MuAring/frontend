@@ -21,6 +21,7 @@ public class MyGroupsViewModel extends ViewModel {
     private final GroupRepository groupRepository;
     private final MediatorLiveData<Resource<List<MyGroupSummary>>> groups = new MediatorLiveData<>();
     private final MutableLiveData<String> searchQuery = new MutableLiveData<>();
+    private Long currentMemberId; // 현재 조회 중인 멤버 ID
 
     @Inject
     public MyGroupsViewModel(GroupRepository groupRepository) {
@@ -31,21 +32,35 @@ public class MyGroupsViewModel extends ViewModel {
         return groups;
     }
 
-    public void loadMyGroups(String searchName) {
-        // 새로운 검색 메서드 사용
+    /**
+     * 특정 멤버의 그룹 목록 로드
+     * @param memberId 조회할 멤버 ID (null이면 본인 조회)
+     * @param searchName 검색어 (null이면 전체 조회)
+     */
+    public void loadMemberGroups(Long memberId, String searchName) {
+        currentMemberId = memberId;
+
         LiveData<Resource<List<MyGroupSummary>>> source =
-                groupRepository.getMyGroupsWithSearch(searchName);
+                groupRepository.getMemberGroupsWithSearch(memberId, searchName);
 
         groups.addSource(source, groups::setValue);
     }
 
-    public void searchGroups(String query) {
+    /**
+     * 그룹 검색
+     * @param memberId 조회할 멤버 ID
+     * @param query 검색어
+     */
+    public void searchGroups(Long memberId, String query) {
         searchQuery.setValue(query);
-        loadMyGroups(query);
+        loadMemberGroups(memberId, query);
     }
 
+    /**
+     * 현재 멤버의 그룹 목록 새로고침
+     */
     public void refreshGroups() {
         String currentQuery = searchQuery.getValue();
-        loadMyGroups(currentQuery);
+        loadMemberGroups(currentMemberId, currentQuery);
     }
 }

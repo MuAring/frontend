@@ -95,11 +95,14 @@
             android:paddingRight="24dp">
 
             <LinearLayout
+                android:id="@+id/layout_member_shared_music_section"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center_vertical|center_horizontal"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:clickable="true"
+                android:focusable="true">
 
                 <TextView
                     android:id="@+id/text_stat_shared"

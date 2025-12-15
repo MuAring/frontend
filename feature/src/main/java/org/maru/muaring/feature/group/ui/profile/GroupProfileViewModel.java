@@ -39,6 +39,9 @@ public class GroupProfileViewModel extends ViewModel {
     private final MediatorLiveData<Resource<TodayMusicPostResponse>> todayMusic =
             new MediatorLiveData<>();
 
+    // 가입 상태 관리
+    private final MediatorLiveData<Resource<Void>> joinStatus = new MediatorLiveData<>();
+
     @Inject
     public GroupProfileViewModel(GroupRepository groupRepository,
                                  HistoryRepository historyRepository) {
@@ -76,6 +79,29 @@ public class GroupProfileViewModel extends ViewModel {
                     groupProfile.setValue(Resource.error(res.message, null));
                     groupProfile.removeSource(source);
                     break;
+            }
+        });
+    }
+
+    // 그룹 가입 메서드
+    public LiveData<Resource<Void>> getJoinStatus() {
+        return joinStatus;
+    }
+
+    public void joinPublicGroup(Long groupId) {
+        joinStatus.setValue(Resource.loading(null));
+
+        groupRepository.joinPublicGroup(groupId, new GroupRepository.JoinGroupCallback() {
+            @Override
+            public void onSuccess() {
+                joinStatus.setValue(Resource.success(null));
+                // 가입 성공 후 프로필 다시 로드
+                loadGroupProfile(groupId);
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                joinStatus.setValue(Resource.error(t.getMessage(), null));
             }
         });
     }

@@ -45,6 +45,8 @@ public class GroupProfileFragment extends Fragment {
     // Toolbar
     private TextView toolbarTitle;
     private ImageButton toolbarBack;
+
+    // 가입 버튼
     private ImageButton toolbarAction;
 
     // Profile UI
@@ -57,6 +59,9 @@ public class GroupProfileFragment extends Fragment {
     private TextView textStatSharedMusic;
     private TextView textStatArchive;
     private TextView textStatMemberCount;
+
+    // 공유한 음악 섹션(칸 전체)
+    private LinearLayout layoutSharedMusicSection;
 
     // 그룹 오늘 공유한 음악 UI
     private View includeTodayShared;
@@ -85,6 +90,7 @@ public class GroupProfileFragment extends Fragment {
 
     // Group ID (전달받음)
     private Long groupId;
+    private Boolean isJoined = false;  // 가입 상태 저장
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -128,6 +134,7 @@ public class GroupProfileFragment extends Fragment {
         observeProfile();
         observeTodayMusic();
         observeHistory();
+        observeJoinStatus();
 
         // 기본은 리스트 모드
         showListMode();
@@ -149,12 +156,33 @@ public class GroupProfileFragment extends Fragment {
 
         toolbarTitle.setText("그룹 프로필");
         toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+        // 가입 버튼 기본 설정
         toolbarAction.setVisibility(View.VISIBLE);
-        toolbarAction.setOnClickListener(v -> {
-            // TODO: 그룹 설정 이동
-        });
+        toolbarAction.setOnClickListener(v -> handleJoinButtonClick());
     }
 
+    // 가입 버튼 클릭 처리
+    private void handleJoinButtonClick() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (isJoined) {
+            Toast.makeText(requireContext(), "이미 가입한 그룹입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 가입 확인 다이얼로그 표시
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("그룹 가입")
+                .setMessage("이 그룹에 가입하시겠습니까?")
+                .setPositiveButton("가입", (dialog, which) -> {
+                    viewModel.joinPublicGroup(groupId);
+                })
+                .setNegativeButton("취소", null)
+                .show();
+    }
 
     // ====================== Profile Section ======================
     private void initProfileSection(@NonNull View root) {
@@ -169,6 +197,17 @@ public class GroupProfileFragment extends Fragment {
         textStatArchive = root.findViewById(R.id.text_stat_archive);
         textStatMemberCount = root.findViewById(R.id.text_stat_member_count);
 
+        // 공유한 음악 섹션(칸 전체) 클릭 연결
+        layoutSharedMusicSection = root.findViewById(R.id.layout_shared_music_section);
+        if (layoutSharedMusicSection != null) {
+            layoutSharedMusicSection.setOnClickListener(v -> navigateToSharedMusicList());
+        } else {
+            // 혹시 id 추가 안 했으면 숫자 텍스트라도 클릭되게 백업
+            if (textStatSharedMusic != null) {
+                textStatSharedMusic.setOnClickListener(v -> navigateToSharedMusicList());
+            }
+        }
+
         // 멤버 섹션 클릭 리스너 추가
         LinearLayout layoutMemberSection = root.findViewById(R.id.layout_member_section);
         if (layoutMemberSection != null) {
@@ -180,6 +219,54 @@ public class GroupProfileFragment extends Fragment {
             System.out.println("DEBUG >>> textStatGroupLevel is NULL");
         }
 
+        // ========== 보관함 섹션 클릭 리스너 추가 ==========
+        LinearLayout layoutArchiveSection = root.findViewById(R.id.layout_archive_section);
+        if (layoutArchiveSection != null) {
+            layoutArchiveSection.setOnClickListener(v -> navigateToGroupArchive());
+        }
+
+    }
+
+    // ========== 보관함으로 이동하는 메서드 추가 ==========
+    private void navigateToGroupArchive() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        Bundle args = new Bundle();
+        args.putLong("groupId", groupId);
+
+        try {
+            NavController navController = NavHostFragment.findNavController(this);
+            int actionId = getResources().getIdentifier(
+                    "action_groupProfile_to_groupArchive",
+                    "id",
+                    requireContext().getPackageName()
+            );
+
+            navController.navigate(actionId, args);
+        } catch (Exception e) {
+            Log.e("GroupProfile", "보관함 이동 실패", e);
+            Toast.makeText(requireContext(), "화면 전환에 실패했습니다.", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // 공유한 음악 리스트로 이동
+    private void navigateToSharedMusicList() {
+        if (groupId == null || groupId <= 0) return;
+
+        Bundle args = new Bundle();
+        args.putLong("arg_group_id", groupId);
+
+        NavController navController = NavHostFragment.findNavController(this);
+
+        int actionId = getResources().getIdentifier(
+                "action_groupProfile_to_groupSharedMusic",
+                "id",
+                requireContext().getPackageName()
+        );
+        navController.navigate(actionId, args);
     }
 
     private void navigateToGroupMember() {
@@ -342,8 +429,48 @@ public class GroupProfileFragment extends Fragment {
     }
 
 
+    // 가입 상태 관찰
+    private void observeJoinStatus() {
+        viewModel.getJoinStatus().observe(getViewLifecycleOwner(), res -> {
+            if (res == null) return;
+
+            switch (res.status) {
+                case LOADING:
+                    // 로딩 중 버튼 비활성화
+                    toolbarAction.setEnabled(false);
+                    break;
+
+                case SUCCESS:
+                    Toast.makeText(requireContext(), "그룹에 가입되었습니다!", Toast.LENGTH_SHORT).show();
+                    toolbarAction.setEnabled(true);
+                    // 프로필이 자동으로 다시 로드되어 isJoined가 업데이트됨
+                    break;
+
+                case ERROR:
+                    String errorMsg = res.message != null ? res.message : "그룹 가입에 실패했습니다.";
+
+                    // 에러 메시지 파싱
+                    if (errorMsg.contains("400")) {
+                        errorMsg = "이미 가입한 그룹입니다.";
+                    } else if (errorMsg.contains("409")) {
+                        errorMsg = "그룹이 가득 찼습니다.";
+                    } else if (errorMsg.contains("404")) {
+                        errorMsg = "그룹을 찾을 수 없습니다.";
+                    }
+
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                    toolbarAction.setEnabled(true);
+                    break;
+            }
+        });
+    }
+
     private void bindProfile(GroupProfileResponse profile) {
         if (profile == null) return;
+
+        // 가입 여부 저장 및 아이콘 업데이트
+        isJoined = profile.getIsJoined() != null && profile.getIsJoined();
+        updateJoinButtonIcon();
 
         // 이름
         textProfileName.setText(profile.getName());
@@ -389,6 +516,22 @@ public class GroupProfileFragment extends Fragment {
             layoutCategoryContainer.setVisibility(View.GONE);
         }
 
+    }
+
+    // 가입 버튼 아이콘 업데이트
+    private void updateJoinButtonIcon() {
+        if (toolbarAction == null) return;
+
+        if (isJoined) {
+            // 가입 완료 상태
+            toolbarAction.setImageResource(org.maru.muaring.design.R.drawable.ic_group_al_join);
+            toolbarAction.setEnabled(false);  // 이미 가입했으면 클릭 불가
+        } else {
+
+            // 미가입 상태
+            toolbarAction.setImageResource(org.maru.muaring.design.R.drawable.ic_group_join);
+            toolbarAction.setEnabled(true);
+        }
     }
 
     private void bindCategoryChips(List<String> categories) {
