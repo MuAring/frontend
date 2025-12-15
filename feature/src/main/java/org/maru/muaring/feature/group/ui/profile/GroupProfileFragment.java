@@ -45,6 +45,7 @@ public class GroupProfileFragment extends Fragment {
     // Toolbar
     private TextView toolbarTitle;
     private ImageButton toolbarBack;
+    // 가입 버튼
     private ImageButton toolbarAction;
 
     // Profile UI
@@ -85,6 +86,7 @@ public class GroupProfileFragment extends Fragment {
 
     // Group ID (전달받음)
     private Long groupId;
+    private Boolean isJoined = false;  // 가입 상태 저장
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -128,6 +130,7 @@ public class GroupProfileFragment extends Fragment {
         observeProfile();
         observeTodayMusic();
         observeHistory();
+        observeJoinStatus();
 
         // 기본은 리스트 모드
         showListMode();
@@ -149,12 +152,33 @@ public class GroupProfileFragment extends Fragment {
 
         toolbarTitle.setText("그룹 프로필");
         toolbarBack.setOnClickListener(v -> requireActivity().onBackPressed());
+        // 가입 버튼 기본 설정
         toolbarAction.setVisibility(View.VISIBLE);
-        toolbarAction.setOnClickListener(v -> {
-            // TODO: 그룹 설정 이동
-        });
+        toolbarAction.setOnClickListener(v -> handleJoinButtonClick());
     }
 
+    // 가입 버튼 클릭 처리
+    private void handleJoinButtonClick() {
+        if (groupId == null || groupId <= 0) {
+            Toast.makeText(requireContext(), "그룹 정보를 불러올 수 없습니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (isJoined) {
+            Toast.makeText(requireContext(), "이미 가입한 그룹입니다.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // 가입 확인 다이얼로그 표시
+        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("그룹 가입")
+                .setMessage("이 그룹에 가입하시겠습니까?")
+                .setPositiveButton("가입", (dialog, which) -> {
+                    viewModel.joinPublicGroup(groupId);
+                })
+                .setNegativeButton("취소", null)
+                .show();
+    }
 
     // ====================== Profile Section ======================
     private void initProfileSection(@NonNull View root) {
@@ -342,8 +366,48 @@ public class GroupProfileFragment extends Fragment {
     }
 
 
+    // 가입 상태 관찰
+    private void observeJoinStatus() {
+        viewModel.getJoinStatus().observe(getViewLifecycleOwner(), res -> {
+            if (res == null) return;
+
+            switch (res.status) {
+                case LOADING:
+                    // 로딩 중 버튼 비활성화
+                    toolbarAction.setEnabled(false);
+                    break;
+
+                case SUCCESS:
+                    Toast.makeText(requireContext(), "그룹에 가입되었습니다!", Toast.LENGTH_SHORT).show();
+                    toolbarAction.setEnabled(true);
+                    // 프로필이 자동으로 다시 로드되어 isJoined가 업데이트됨
+                    break;
+
+                case ERROR:
+                    String errorMsg = res.message != null ? res.message : "그룹 가입에 실패했습니다.";
+
+                    // 에러 메시지 파싱
+                    if (errorMsg.contains("400")) {
+                        errorMsg = "이미 가입한 그룹입니다.";
+                    } else if (errorMsg.contains("409")) {
+                        errorMsg = "그룹이 가득 찼습니다.";
+                    } else if (errorMsg.contains("404")) {
+                        errorMsg = "그룹을 찾을 수 없습니다.";
+                    }
+
+                    Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_SHORT).show();
+                    toolbarAction.setEnabled(true);
+                    break;
+            }
+        });
+    }
+
     private void bindProfile(GroupProfileResponse profile) {
         if (profile == null) return;
+
+        // 가입 여부 저장 및 아이콘 업데이트
+        isJoined = profile.getIsJoined() != null && profile.getIsJoined();
+        updateJoinButtonIcon();
 
         // 이름
         textProfileName.setText(profile.getName());
@@ -389,6 +453,22 @@ public class GroupProfileFragment extends Fragment {
             layoutCategoryContainer.setVisibility(View.GONE);
         }
 
+    }
+
+    // 가입 버튼 아이콘 업데이트
+    private void updateJoinButtonIcon() {
+        if (toolbarAction == null) return;
+
+        if (isJoined) {
+            // 가입 완료 상태
+            toolbarAction.setImageResource(org.maru.muaring.design.R.drawable.ic_group_al_join);
+            toolbarAction.setEnabled(false);  // 이미 가입했으면 클릭 불가
+        } else {
+
+            // 미가입 상태
+            toolbarAction.setImageResource(org.maru.muaring.design.R.drawable.ic_group_join);
+            toolbarAction.setEnabled(true);
+        }
     }
 
     private void bindCategoryChips(List<String> categories) {

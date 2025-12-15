@@ -30,11 +30,11 @@
     기본은 invisible으로 설정하되 필요할 때 visiable java에서 변경하세용 -->
     <ImageButton
         android:id="@+id/toolbar_action"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
-        android:layout_marginEnd="4dp"
+        android:layout_marginEnd="20dp"
         android:visibility="invisible"
         android:scaleType="centerCrop"
         android:background="?attr/selectableItemBackgroundBorderless"
