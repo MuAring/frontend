@@ -2,11 +2,14 @@ package org.maru.muaring.feature.member.ui;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MediatorLiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
+import org.maru.muaring.core.common.Callback;
 import org.maru.muaring.core.util.Resource;
 import org.maru.muaring.data.api.dto.MemberProfileReadResponse;
 import org.maru.muaring.data.api.dto.MusicHistoryResponse;
 import org.maru.muaring.data.api.dto.TodayPostResponse;
+import org.maru.muaring.data.repository.FollowRepository;
 import org.maru.muaring.data.repository.HistoryRepository;
 import org.maru.muaring.data.repository.MemberRepository;
 import org.maru.muaring.data.repository.PostRepository;
@@ -24,7 +27,12 @@ public class MemberProfileReadViewModel extends ViewModel {
     private final MemberRepository memberRepository;
     private final HistoryRepository historyRepository;
     private final PostRepository postRepository;
+    private final FollowRepository followRepository;
 
+    private final MutableLiveData<Boolean> isFollowing = new MutableLiveData<>();
+    public LiveData<Boolean> getIsFollowing() {
+        return isFollowing;
+    }
     private final MediatorLiveData<Resource<MemberProfileReadResponse>> memberProfile =
             new MediatorLiveData<>();
 
@@ -35,11 +43,16 @@ public class MemberProfileReadViewModel extends ViewModel {
 
     private LiveData<Resource<TodayPostResponse>> currentTodayPostSource;
     @Inject
-    public MemberProfileReadViewModel(MemberRepository memberRepository,
-                                      HistoryRepository historyRepository, PostRepository postRepository) {
+    public MemberProfileReadViewModel(
+            MemberRepository memberRepository,
+            HistoryRepository historyRepository,
+            PostRepository postRepository,
+            FollowRepository followRepository
+    ) {
         this.memberRepository = memberRepository;
         this.historyRepository = historyRepository;
         this.postRepository = postRepository;
+        this.followRepository = followRepository;
 
         memberProfile.setValue(Resource.loading(null));
         memberHistory.setValue(Resource.loading(Collections.emptyList()));
@@ -140,5 +153,13 @@ public class MemberProfileReadViewModel extends ViewModel {
                     break;
             }
         });
+    }
+
+    public void followMember(Long targetMemberId, Callback<Void> callback) {
+        followRepository.followMember(targetMemberId, callback);
+    }
+
+    public void unfollowMember(Long targetMemberId, Callback<Void> callback) {
+        followRepository.unfollowMember(targetMemberId, callback);
     }
 }
