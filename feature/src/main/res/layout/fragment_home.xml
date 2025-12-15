@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:layout_marginTop="55dp"
-    android:layout_marginBottom="80dp"
+    android:layout_marginBottom="100dp"
     android:id="@+id/homeFragment">
 
     <!-- 홈 상단 로고 + 알림 -->
@@ -24,7 +24,8 @@
         android:overScrollMode="never"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="horizontal"
-        android:layout_marginTop="20dp"/>
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"/>
 
     <!-- 여기부터 같이 스크롤 -->
     <androidx.core.widget.NestedScrollView

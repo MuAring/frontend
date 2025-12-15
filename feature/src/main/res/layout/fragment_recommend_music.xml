@@ -4,8 +4,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingHorizontal="16dp"
-    android:layout_marginTop="12dp">
+    android:paddingHorizontal="16dp">
 
     <TextView
         android:id="@+id/txt_title"
@@ -15,7 +14,7 @@
         android:textStyle="bold"
         android:textSize="20sp"
         android:textColor="#183C27"
-        android:layout_marginBottom="6dp" />
+        android:layout_marginBottom="4dp" />
 
     <!-- 카드 컨테이너 -->
     <androidx.cardview.widget.CardView
